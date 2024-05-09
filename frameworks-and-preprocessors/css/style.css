@@ -36,3 +36,13 @@ label {
     border: 2px dashed #00f;
   }
 }
+
+h2 {
+  color: tomato;
+
+  /* Style next sibling without using & nesting selector. */
+  + p {
+    color: #fff;
+    background-color: #000;
+  }
+}
