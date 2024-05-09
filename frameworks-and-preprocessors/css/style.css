@@ -7,7 +7,7 @@
 }
 
 .container {
-  height: 100vh;
+  height: auto;
   width: 80%;
   margin: 0 auto;
   border: 4px solid #aff;
@@ -91,6 +91,29 @@ label {
     .success-heading::before {
       /* Equivalent to `.notice.success .success-heading::before` */
       content: '✓ ';
+    }
+  }
+}
+
+.wrapper {
+  display: flex;
+  margin-top: 1rem;
+  gap: 0.4rem;
+  font-family: system-ui;
+}
+
+.card {
+  padding: 0.4rem;
+  border: 1px solid #000;
+  border-radius: 0.4rem;
+
+   & h2 {
+    /* Equivalent to `.card h2` */
+    color: slateblue;
+
+    .featured & {
+      /* Equivalent to `:is(.card h2):is(.featured h2)` */
+      color: tomato;
     }
   }
 }
