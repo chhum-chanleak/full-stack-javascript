@@ -37,12 +37,60 @@ label {
   }
 }
 
-h2 {
+.heading h2 {
   color: tomato;
 
   /* Style next sibling without using & nesting selector. */
   + p {
     color: #fff;
     background-color: #000;
+  }
+}
+
+.notices {
+  display: flex;
+  flex-direction: column;
+  width: 90%;
+  margin: 0 auto;
+  gap: 0.4rem;
+}
+
+.notice {
+  width: 90%;
+  display: flex;
+  justify-content: center;
+  border-radius: 1rem;
+  border: 1px solid #000;
+  background-color: #ffc107;
+  color: #000;
+  padding: 1rem;
+
+  .notice-heading::before {
+    /* Equivalent to `.notice .notice-heading::before` */
+    content: 'i ';
+  }
+
+  &.warning {
+    /* Equivalent to `.notice.warning` */
+    background-color: #d81b60;
+    border-color: #d81b60;
+    color: #fff;
+
+    .warning-heading::before {
+      /* Equivalent to `.notice.warning .warning-heading::before` */
+      content: '! ';
+    }
+  }
+
+  &.success {
+    /* Equivalent to `.notice.success` */
+    background-color: #004d40;
+    border-color: #004d40;
+    color: #fff;
+
+    .success-heading::before {
+      /* Equivalent to `.notice.success .success-heading::before` */
+      content: '✓ ';
+    }
   }
 }
