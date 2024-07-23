@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Emmet</title>
+</head>
+<body>
+
+  <!-- Wrap with Abbreviation -->
+  <!-- #page>p{Hello, world!} -->
+  <div id="page">
+  <p>Hello, world!</p>
+  </div>
+
+  <!-- .wrapper>h1{Title}+.content -->
+  <div class="wrapper">
+  <h1>Title</h1>
+  <div class="content"></div>
+  </div>
+
+  <!-- #page>p{Hello, world! -->
+  <div id="page">
+  <p>Hello, world!</p>
+  </div>
+
+  <!-- ul>li*5 -->
+  <ul>
+  <li></li>
+  <li></li>
+  <li></li>
+  <li></li>
+  <li></li>
+  </ul>
+
+  <!-- Wrapping individual lines -->
+  <!-- nav>ul.nav>li.nav-item$*>a -->
+  <!-- About
+  News
+  Products
+  Contacts -->
+  <nav>
+    <ul class="nav">
+      <li class="nav-item1">
+        <a href="">About</a>
+      </li>
+      <li class="nav-item2">
+        <a href="">News</a>
+      </li>
+      <li class="nav-item3">
+        <a href="">Products</a>
+      </li>
+      <li class="nav-item4">
+        <a href="">Contacts</a>
+      </li>
+    </ul>
+  </nav>
+
+  <!-- * Unordered item 1
+  * Unordered item 2
+  * Unordered item 3
+
+  1. Ordered item 1
+  2. Ordered item 2
+  3. Ordered item 3 -->
+  <!-- ul>li* -->
+  <ul>
+    <li>* Unordered item 1</li>
+    <li>* Unordered item 2</li>
+    <li>* Unordered item 3</li>
+  </ul>
+
+  <!-- Removing list markers -->
+  <!-- ul.nav>li.nav-item$*>a|t -->
+  <ul class="nav">
+    <li class="nav-item1">
+      <a href="|">Ordered item 1</a>
+    </li>
+    <li class="nav-item2">
+      <a href="|">Ordered item 2</a>
+    </li>
+    <li class="nav-item3">
+      <a href="|">Ordered item 3</a>
+    </li>
+  </ul>
+
+  <!-- Controlling output position -->
+  <!-- ul>li[title=$#]*>{$#}+img[alt=$#] -->
+  <ul>
+    <li title="About">
+      About
+      <img src="" alt="About">
+    </li>
+    <li title="News">
+      News
+      <img src="" alt="News">
+    </li>
+    <li title="Products">
+      Products
+      <img src="" alt="Products">
+    </li>
+    <li title="Contacts">
+      Contacts
+      <img src="" alt="Contacts">
+    </li>
+  </ul>
+</body>
+</html>
