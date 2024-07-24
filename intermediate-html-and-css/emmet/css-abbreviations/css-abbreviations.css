@@ -1,0 +1,57 @@
+*,
+*::before,
+*::after {
+
+  /* Supplying values with units */
+  /* m10 */
+  margin: 10px;
+  /* m10-20 */
+  margin: 10px 20px;
+  /* m-10--20 */
+  margin: -10px -20px;
+  /* m:5 */
+  margin: 5px;
+  /* m5 */
+  margin: 5px;
+  /* m1.5 */
+  margin: 1.5em;
+  /* m1.5ex */
+  margin: 1.5ex;
+  /* m10foo */
+  margin: 10foo;
+  /* m10ex20em */
+  margin: 10ex 20em;
+  /* m10ex-5 */
+  margin: 10ex -5px;
+
+  /* Value aliases */
+  /* w100p */
+  width: 100%;
+  /* m10p30e5x */
+  margin: 10% 30em 5ex;
+
+  /* Color values */
+  /* c#3 */
+  color: #333;
+  /* bd5#0s */
+  border: 5px #000 solid;
+  /* c#1 */
+  color: #111;
+  /* c#e0 */
+  color: #e0e0e0;
+  /* c#fc0 */
+  color: #fc0;
+
+  /* Unit-less property */
+  /* lh2 */
+  line-height: 2;
+  /* fw400 */
+  font-weight: 400;
+
+  /* !important modifier */
+  /* p1!+m10e! */
+  padding: 1px !important;
+  margin: 10em !important;
+
+}
+

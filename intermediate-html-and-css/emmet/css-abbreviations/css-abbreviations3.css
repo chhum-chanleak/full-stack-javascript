@@ -1,0 +1,31 @@
+*,
+*::before,
+*::after {
+
+  margin: 10px;
+  margin: 10px 20px;
+  margin: -10px -20px;
+  margin: 5px;
+  margin: 5px;
+  margin: 1.5em;
+  margin: 1.5ex;
+  margin: 10foo;
+  margin: 10ex 20em;
+  margin: 10ex -5px;
+
+  width: 100%;
+  margin: 10% 30em 5ex;
+
+  color: #333;
+  border: 5px #000 solid;
+  color: #111;
+  color: #e0e0e0;
+  color: #fc0;
+
+  line-height: 2;
+  font-weight: 400;
+
+  padding: 1px !important;
+  margin: 10em 1px !important;
+
+}
