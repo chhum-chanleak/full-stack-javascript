@@ -1,0 +1,17 @@
+circle {
+  fill: #f0f;
+}
+
+rect {
+  fill: #ff0;
+  x: 4;
+  y: 4;
+  height: 40px;
+  width: 60px;
+}
+
+path {
+  d: path('M150, 10 L40, 200 L260, 200 L260 200Z');
+  fill: #4c6edb;
+  transition: all 0.35s ease;
+}
