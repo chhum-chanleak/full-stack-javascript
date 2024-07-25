@@ -1,0 +1,59 @@
+/* Variables */
+:root {
+  --color-1: #f00;
+  --color-2: #0f0;
+  --color-3: #00f;
+  --color-4: #ff0;
+  --color-4: #f0f;
+}
+
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.shape {
+  cy: 50;
+  r: 20;
+  animation: moveCircle 1250ms ease-in-out both infinite;
+}
+
+.shape:nth-child(1) {
+  cx: 60;
+  fill: var(--color-1);
+}
+
+.shape:nth-child(2) {
+  cx: 120;
+  fill: var(--color-2);
+  animation-delay: 100ms;;
+}
+
+.shape:nth-child(3) {
+  cx: 180;
+  fill: var(--color-3);
+  animation-delay: 200ms;
+}
+
+.shape:nth-child(4) {
+  cx: 240;
+  fill: var(--color-4);
+  animation-delay: 300ms;
+}
+
+.shape:nth-child(5) {
+  cx: 300;
+  fill: var(--color-5);
+  animation-delay: 400ms;
+}
+
+@keyframes moveCircle {
+  50% {
+    cy: 150;
+    r: 13;
+  }
+}
+
