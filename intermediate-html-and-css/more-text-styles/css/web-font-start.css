@@ -10,6 +10,10 @@ body {
   width: 80%;
   max-width: 800px;
   margin: 0 auto;
+  font-family: "Edu AU VIC WA NT Hand", cursive;
+  font-optical-sizing: auto;
+  font-weight: 700;
+  font-style: normal;
 }
 
 /* Typography */
