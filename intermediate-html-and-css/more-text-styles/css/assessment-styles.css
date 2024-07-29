@@ -1,0 +1,106 @@
+/* General setup */
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0 auto;
+  min-width: 1000px;
+  max-width: 1400px;
+}
+
+/* Layout */
+
+section {
+  float: left;
+  width: 50%;
+}
+
+aside {
+  float: left;
+  width: 30%;
+}
+
+nav {
+  float: left;
+  width: 20%;
+}
+
+footer {
+  clear: both;
+}
+
+header, section, aside, nav, footer {
+  padding: 20px;
+}
+
+/* header and footer */
+
+header, footer {
+  border-top: 5px solid #a66;
+  border-bottom: 5px solid #a66;
+}
+
+/* WRITE YOUR CODE BELOW HERE */
+
+body {
+  font-size: 10px;
+  line-height: 1.5;
+  letter-spacing: 1px;
+  word-spacing: 4px;
+}
+
+h1, h2, h3, h4, h5 {
+  font-size: 1rem;
+  letter-spacing: 2px;
+}
+
+h1 {
+  text-align: center;
+}
+
+section h2 {
+  text-indent: 20px;
+}
+
+a {
+  color: #a66;
+  outline: none;
+}
+
+a:hover, a:focus {
+  text-decoration: none;
+}
+
+a:active {
+  font-weight: 700;
+}
+
+img {
+  width: 16px;
+  height: 16px;
+}
+
+nav ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+nav ul li {
+  border: 1px #a66 solid;
+  width: 80px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+}
+
+nav a {
+  text-decoration: none;
+  list-style: none;
+}
+
+
