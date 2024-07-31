@@ -48,3 +48,68 @@ img {
   height: 16px;
   width: 16px;
 }
+
+body {
+  font-family: 
+  -apple-system, /* macOS and iOS */
+  BlinkMacSystemFont, /* macOS Safari */
+  "Segoe UI", /* Windows */
+  Roboto, /* Android and Chrome OS */
+  Oxygen, /* Linux */
+  Ubuntu, /* Linux */
+  Cantarell, /* Linux */
+  "Fira Sans", /* Linux */
+  "Droid Sans", /* Older Android */
+  "Helvetica Neue", /* macOS */
+  Arial, /* Fallback sans-serif */
+  sans-serif;
+  font-size: 10px;
+  line-height: 1.5;
+  letter-spacing: 1px;
+  word-spacing: 2px;
+}
+
+h1, h2, h3, h4, h5 {
+  font-size: 1rem;
+  letter-spacing: 1px;
+}
+
+header, footer {
+  text-align: center;
+}
+
+section p {
+  text-indent: 2rem;
+}
+
+a {
+  color: #a66;
+}
+
+a:focus {
+  text-decoration: none;
+  outline: none;
+}
+
+a:active {
+  font-weight: 700;
+}
+
+nav ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+
+  & li {
+    border: 1px #a66 solid;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  & a {
+    text-decoration: none;
+  }
+}
