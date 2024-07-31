@@ -1,0 +1,122 @@
+/* General setup */
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0 auto;
+  min-width: 1000px;
+  max-width: 1400px;
+}
+
+/* Layout */
+
+section {
+  float: left;
+  width: 50%;
+}
+
+aside {
+  float: left;
+  width: 30%;
+}
+
+nav {
+  float: left;
+  width: 20%;
+}
+
+footer {
+  clear: both;
+}
+
+header, section, aside, nav, footer {
+  padding: 20px;
+}
+
+/* header and footer */
+
+header, footer {
+  border-top: 5px solid #a66;
+  border-bottom: 5px solid #a66;
+}
+
+/* WRITE YOUR CODE BELOW HERE */
+
+body {
+  font-family: 
+  -apple-system, /* macOS and iOS */
+  BlinkMacSystemFont, /* macOS Safari */
+  "Segoe UI", /* Windows */
+  Roboto, /* Android and Chrome OS */
+  Oxygen, /* Linux */
+  Ubuntu, /* Linux */
+  Cantarell, /* Linux */
+  "Fira Sans", /* Linux */
+  "Droid Sans", /* Older Android */
+  "Helvetica Neue", /* macOS */
+  Arial, /* Fallback sans-serif */
+  sans-serif;
+  font-size: 10px;
+  line-height: 1.5;
+  word-spacing: 2px;
+}
+
+section {
+  
+  & p:nth-child(2){
+    text-indent: 1rem;
+  }
+
+  & p:nth-child(5){
+    text-indent: 1rem;
+  }
+
+  & img {
+    width: 12px;
+    height: 12px;
+  }
+}
+
+a {
+  color: #a66;
+}
+
+h2 {
+  font-size: 1rem;
+  letter-spacing: 1px;
+}
+
+a:hover, a:focus {
+  text-decoration: none;
+  outline: none;
+}
+
+a:active {
+  font-weight: 700;
+}
+
+nav ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+
+  & li {
+    border: 1px #a66 solid;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  & a {
+    text-decoration: none;
+    font-size: 1rem;
+  }
+}
+
+header, footer {
+  text-align: center;
+}
