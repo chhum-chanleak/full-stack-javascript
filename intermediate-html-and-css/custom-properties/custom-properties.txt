@@ -23,4 +23,17 @@ body {
   --color@home: red;
   --black&blue: black;
   --black^2: black;
+
+ /* Valid values for custom properties */ 
+  --brand-color: #990000;
+  --transparent-black: rgba(0, 0, 0, 0.5);
+  
+  --spacing: 0.66rem;
+  --max-reading-length: 70ch;
+  --brandAngle: 22deg;
+
+  --visibility: hidden;
+  --my-name: "Chris Coyier";
 }
+
+https://www.theodinproject.com/paths/full-stack-javascript
