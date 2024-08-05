@@ -1,0 +1,26 @@
+Naming custom properties
+
+/* Nope, not within a selector */
+--foo: 1;
+
+body {
+  /* No, 0 or 1 dash won't work */
+  foo: 1;
+  -foo: 1; 
+
+  /* Yep! */
+  --foo: 1;
+
+  /* OK, but they're different properties */
+  --FOO: 1;
+  --Foo: 1;
+  
+  /* Totally fine */
+  --mainColor: red;
+  --main-color: red;
+
+  /* Special characters are a no */
+  --color@home: red;
+  --black&blue: black;
+  --black^2: black;
+}
