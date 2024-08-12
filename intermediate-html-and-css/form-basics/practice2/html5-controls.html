@@ -46,6 +46,30 @@
         </li>
       </ul>
     </form>
+
+    <!-- html controls 2 -->
+    <form>
+      <ul>
+        <li>
+          <label for="max-invite">Select maximum number of invitations</label>
+          <input type="range" min="1" max="30" value="10" id="max-invite">
+          <output for="max-invite" class="invite-output"></output>
+        </li>
+        <li>
+          <button>Submit</button>
+        </li>
+      </ul>
+    </form>
+    <script>
+      const invite = document.querySelector('#max-invite');
+      const output = document.querySelector('.invite-output');
+
+      output.textContent = invite.value;
+
+      invite.addEventListener('input', function() {
+        output.textContent = invite.value;
+      });
+    </script>
   </body>
 
 </html>
