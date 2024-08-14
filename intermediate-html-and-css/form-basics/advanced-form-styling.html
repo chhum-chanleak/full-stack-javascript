@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Advanced form styling</title>
+
+  <style>
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      border: 1px solid #000;
+      padding: 1rem;
+      margin-bottom: 1rem;
+
+      /* Use 'appearance: none' to remove default browser's styles */
+      & input {        
+        appearance: none;
+      }
+
+      & input[type='search'] {
+        border-radius: 4px;
+      }
+
+      & input[type='checkbox'] {
+        position: relative;
+        width: 1rem;
+        height: 1rem;
+        border: 1px solid #000;
+        vertical-align: sub;
+        cursor: pointer;
+        color: #0f0;
+      }
+
+      & input[type='checkbox']::before {
+        content: '✔';
+        position: absolute;
+        left: 0.05rem;
+        visibility: hidden;
+      }
+
+      & input[type='checkbox']:checked::before {
+        visibility: visible;
+      }
+
+      & input[type='checkbox']:disabled {
+        border: #aaa 1px solid;
+      }
+
+      & select {
+        appearance: none;
+        padding: 4px;
+        width: 80px;
+        cursor: pointer;
+      }
+
+      & .select-wrapper {
+        position: relative;
+      }
+
+      & .select-wrapper::after {
+        content: '▼';
+        font-size: 1rem;
+        position: absolute;
+        left: 60px;
+        top: 4px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <form>
+    <div>
+      <label for="search">Search:</label>
+      <input type="search" id="search" name="search">
+    </div>
+
+    <div>
+      <label for="text">Text:</label>
+      <input type="text" id="text" name="text">
+    </div>
+
+    <div>  
+      <label for="date">Date:</label>
+      <input type="datetime-local" id="date" name="date">
+    </div>
+
+    <div>
+      <label for="radio">Radio:</label>
+      <input type="radio" id="radio" name="radio">
+    </div>
+
+    <div>
+      <label for="checkbox">Checkbox:</label>
+      <input type="checkbox" id="checkbox" name="checkbox">
+    </div>
+
+    <div>
+      <input type="submit" value="submit">
+      <input type="button" value="button">
+    </div>
+  </form>
+
+  <!-- Bad elements to style -->
+  <form>
+    <fieldset>
+      <legend>Fruit preferences</legend>
+  
+      <p>
+        <label>
+          <input type="checkbox" name="fruit" value="cherry" />
+          I like cherry
+        </label>
+      </p>
+      <p>
+        <label>
+          <input type="checkbox" name="fruit" value="banana" disabled />
+          I can't like banana
+        </label>
+      </p>
+      <p>
+        <label>
+          <input type="checkbox" name="fruit" value="strawberry" />
+          I like strawberry
+        </label>
+      </p>
+    </fieldset>
+  </form>
+
+  <!-- Ugly elements to style -->
+  <form>
+    <label for="select">Select a fruit</label>
+    <div class="select-wrapper">
+      <select id="select" name="select">
+        <option>Banana</option>
+        <option>Cherry</option>
+        <option>Lemon</option>
+      </select>
+    </div>
+  </form>
+</body>
+</html>
