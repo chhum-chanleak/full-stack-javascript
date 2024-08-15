@@ -67,7 +67,61 @@
         left: 60px;
         top: 4px;
       }
-    }
+
+      & .valid.invalid > input + span {
+        position: relative;
+      }
+
+      & .valid.invalid > input + span::before {
+        position: absolute;
+        right: -12px;
+        top: 2px;
+      }
+
+      & .valid.invalid > input:invalid {
+        border: 2px red solid;
+      }
+
+      & .valid.invalid > input:invalid + span::before {
+        content: 'x';
+        color: red;
+      }
+
+      & .valid.invalid > input:valid + span::before {
+        content: '✓';
+        color: #0f0;
+      }
+
+      & .valid.invalid > input + span::after {
+        font-size: 0.5rem;
+        position: absolute;
+        padding: 4px;
+        top: -25px;
+        left: -40px;
+      }
+
+      & .valid.invalid > input:required + span::after {
+        content: 'Required';
+        background: #000;
+        color: #fff;
+      }
+
+      & .valid.invalid > input:out-of-range + span::after {
+        background: #f00;
+        content: 'Outside allowable value range';
+        width: 100px;
+        left: -80px;
+      }
+
+      & input[type="text"]:disabled {
+      background: #eee;
+      border: 1px solid #ccc;
+     }
+
+     & .disabled-label {
+      color: #aaa;
+     }
+ }
   </style>
 </head>
 <body>
@@ -139,6 +193,89 @@
         <option>Lemon</option>
       </select>
     </div>
+
+    <!-- UI pseudo-classes -->
+    <div class="valid invalid">
+      <label for="age">Age (must be 12+): </label>
+      <input id="age" name="age" type="number" min="12" max="120" required />
+      <span></span>
+    </div>
+
+    <fieldset id="shipping">
+      <legend>Shipping address</legend>
+      <div>
+        <label for="name1">Name: </label>
+        <input id="name1" name="name1" type="text" required />
+      </div>
+      <div>
+        <label for="address1">Address: </label>
+        <input id="address1" name="address1" type="text" required />
+      </div>
+      <div>
+        <label for="pcode1">Zip/postal code: </label>
+        <input id="pcode1" name="pcode1" type="text" required />
+      </div>
+    </fieldset>
+    <fieldset id="billing">
+      <legend>Billing address</legend>
+      <div>
+        <label for="billing-checkbox">Same as shipping address:</label>
+        <input type="checkbox" id="billing-checkbox" checked />
+      </div>
+      <div>
+        <label for="name" class="billing-label disabled-label">Name: </label>
+        <input id="name" name="name" type="text" disabled required />
+      </div>
+      <div>
+        <label for="address2" class="billing-label disabled-label">
+          Address:
+        </label>
+        <input id="address2" name="address2" type="text" disabled required />
+      </div>
+      <div>
+        <label for="pcode2" class="billing-label disabled-label">
+          Zip/postal code:
+        </label>
+        <input id="pcode2" name="pcode2" type="text" disabled required />
+      </div>
+    </fieldset>
+  
+    <div><button>Submit</button></div>
+  
   </form>
+
+  <script>
+    // Wait for the page to finish loading
+    document.addEventListener(
+      "DOMContentLoaded",
+      () => {
+        // Attach `change` event listener to checkbox
+        document
+          .getElementById("billing-checkbox")
+          .addEventListener("change", toggleBilling);
+      },
+      false,
+    );
+
+    function toggleBilling() {
+      // Select the billing text fields
+      const billingItems = document.querySelectorAll('#billing input[type="text"]');
+      // Select the billing text labels
+      const billingLabels = document.querySelectorAll(".billing-label");
+
+      // Toggle the billing text fields and labels
+      for (let i = 0; i < billingItems.length; i++) {
+        billingItems[i].disabled = !billingItems[i].disabled;
+
+        if (
+          billingLabels[i].getAttribute("class") === "billing-label disabled-label"
+        ) {
+          billingLabels[i].setAttribute("class", "billing-label");
+        } else {
+          billingLabels[i].setAttribute("class", "billing-label disabled-label");
+        }
+      }
+    }
+  </script>
 </body>
 </html>
