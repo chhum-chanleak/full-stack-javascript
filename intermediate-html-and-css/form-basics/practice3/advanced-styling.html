@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8"/>
+    <title>Advanced styling: Task 1</title>
+    <style>
+      body {
+        background-color: #fff;
+        color: #333;
+        font: 1em / 1.4 Helvetica Neue, Helvetica, Arial, sans-serif;
+        padding: 1em;
+        margin: 0;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      form {
+        --border-radius: 4px;
+        --spacing-padding: 1rem;
+
+        border: 1px solid #000;
+        border-radius: var(--border-radius);
+        padding: var(--spacing-padding);
+        display: flex;
+        align-items: center;
+        margin-bottom: 1rem;
+
+        & button,
+        input[type='text'],
+        select {
+          appearance: none;
+          border: 1px solid #000;
+          font-family: inherit;
+          font-size: 100%;
+          padding: 4px; margin: 0;
+          display: inline-block;
+          width: 200px;
+          height: 20px;
+          border-radius: var(--border-radius);
+        }
+
+       & input:hover, input:focus {
+        outline: none;
+        border: 2px solid #000;
+       }
+
+       & div {
+        position: relative;
+       }
+
+       & img {
+        width: 10px;
+        height: 10px;
+        position: absolute;
+        top: -5px;
+        left: -14px;
+        z-index: 1;
+       }
+
+       fieldset {
+        
+        & input[type='radio'] {
+          appearance: none;
+          border: 1px solid #000;
+          width: 16px;
+          height: 16px;
+          border-radius: 50%;
+          cursor: pointer;
+        }
+
+        & input[type='radio']:hover, & input[type='radio']:focus {
+          border: 2px solid #000;
+        }
+
+        & input[type='radio']:checked {
+          background-color: #333;
+        }
+
+        & li {
+          display: flex;
+          flex-direction: column;
+          margin-bottom: 1rem;
+        }
+
+        & button {
+          width: 100px;
+          height: 40px;
+          padding: 4px;
+        }
+      }
+
+      & .feedback {
+
+        & > div {
+          position: relative;
+        }
+
+        & input:invalid {
+          border: 1px solid #f00;
+        }
+
+        & input:valid {
+          border: 1px solid #0f0;
+        }
+
+        & input[id='fname'] + span, input[id='lname'] + span {
+          display: inline-block;
+          height: 20px;
+          width: 60px;
+          background: #000;
+          padding: 4px;
+          position: relative;
+          top: 4px;
+          border-radius: 4px;
+        }
+
+        & input[id='fname'] + span::before, input[id='lname'] + span::before {
+          content: 'Required';
+          color: #fff;
+          font-size: 0.8rem;
+          position: absolute;
+          top: 2px;
+
+        }
+
+        & input[type='email'] {
+          width: 200px;
+          border-radius: 4px;
+        }
+
+        & input:focus, input:hover {
+          border-width: 2px 
+        }
+
+        & button {
+          cursor: pointer;
+        }
+      }
+    }
+
+
+    </style>
+  </head>
+
+  <body>
+    <!-- Advanced form styling 1 -->
+    <form>
+      <input type="search" name="search" id="search" aria-label="Search our site">
+      <div>
+        <img src="../assets/search-24px.png" alt="Search-icon">
+      </div>
+    </form>
+
+    <!-- Advanced form styling 2 -->
+    <form>
+      <fieldset>
+        <legend>Who is your favorite pony?</legend>
+        <ul>
+          <li>
+            <label for="pinkie">Pinkie Pie</label>
+            <input type="radio" id="pinkie" name="pony" value="pinkie">
+          </li>
+          <li>
+            <label for="rainbow">Rainbow Dash</label>
+            <input type="radio" id="rainbow" name="pony" value="rainbow">
+          </li>
+          <li>
+            <label for="twilight">Twilight Sparkle</label>
+            <input type="radio" id="twilight" name="pony" value="twilight">
+          </li>
+        </ul>
+      </fieldset>
+    </form>
+
+    <!-- Advanced form styling 3 -->
+    <form>
+      <fieldset class="feedback">
+        <legend>Feedback form</legend>
+
+        <p>Required fields are labelled with "required".</p>
+        <div>
+          <label for="fname">First name: </label>
+          <input id="fname" name="fname" type="text" required>
+          <span></span>
+        </div>
+        <div>
+          <label for="lname">Last name: </label>
+          <input id="lname" name="lname" type="text" required>
+          <span></span>
+        </div>
+        <div>
+          <label for="email">Email address: </label>
+          <input id="email" name="email" type="email">
+          <span></span>
+        </div>
+        <div>
+          <button>Submit</button>
+        </div>
+      </fieldset>
+    </form>
+  </body>
+
+</html>
