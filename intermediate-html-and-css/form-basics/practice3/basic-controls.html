@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8"/>
+    <title>Basic controls: Task 1</title>
+    <style>
+      body {
+        background-color: #fff;
+        color: #333;
+        font: 1em / 1.4 Helvetica Neue, Helvetica, Arial, sans-serif;
+        padding: 1em;
+        margin: 0;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      form {
+        --spacing-padding: 1rem;
+
+        border: 1px solid #000;
+        padding: var(--spacing-padding);
+        margin-bottom: 1rem;
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- Basic controls 1 -->
+    <form>
+      <ul>
+        <li>
+          <label for="id">User ID</label>
+          <input type="text" id="id" name="id">
+        </li>
+        <li>
+          <label for="password">Password</label>
+          <input type="text" id="password" name="password">
+        </li>
+        <li>
+          <button type="submit">Submit</button>
+        </li>
+      </ul>
+    </form>
+
+    <!-- Basic controls 2 -->
+    <form>
+      <fieldset class="radio-buttons">
+        <legend>Who is your favorite pony?</legend>
+        <ul>
+          <li>
+            <label for="pinkie">Pinkie Pie</label>
+            <input type="radio" id="pinkie" name="pony" checked>
+          </li>
+          <li>
+            <label for="rainbow">Rainbow Dash</label>
+            <input type="radio" id="rainbow" name="pony">
+          </li>
+          <li>
+            <label for="twilight">Twilight Sparkle</label>
+            <input type="radio" id="twilight" name="pony">
+          </li>
+        </ul>
+      </fieldset>
+      <fieldset class='check-boxes'>
+        <legend>Hotdog preferences</legend>
+        <ul>
+          <li>
+            <label for="vegan">Vegan</label>
+            <input type="checkbox" id="vegan" name="vegan">
+          </li>
+          <li>
+            <label for="onions">Onions</label>
+            <input type="checkbox" id="onions" name="onions">
+          </li>
+          <li>
+            <label for="pickle">Pickle</label>
+            <input type="checkbox" id="pickle" name="pickle">
+          </li>
+        </ul>
+      </fieldset>
+      <button>Submit</button>
+    </form>
+
+    <!-- Basic controls 3 -->
+    <form>
+      <ul>
+        <li>
+          <label for="gallery-img">Choose gallery images to upload</label>
+          <input type="file" accept=".jpg, .png, .svg" multiple="multiple">
+        </li>
+      </ul>
+      <button>Submit</button>
+    </form>
+  </body>
+
+</html>
