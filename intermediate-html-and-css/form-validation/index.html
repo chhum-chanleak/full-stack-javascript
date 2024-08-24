@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Form Validation</title>
+
+  <style>
+
+    :root {
+      --spacing-padding: 1rem;
+      --spacing-gap: 4px;
+      --border-radius: 4px;
+    }
+
+    *, *::before, *::after {
+      padding: 0;
+      margin: 0;
+      box-sizing: border-box;
+    }
+
+    form {
+
+      & input {
+        border-radius: var(--border-radius);        
+      }
+
+      & input[type='text']:focus, input[type='text']:hover {
+        outline: none;
+        background-color: #0001;
+      }
+
+      & input[type='text']:invalid {
+        border: 1px solid #f00;
+      }
+
+      & input[type='text']:valid {
+        border: 1px solid #0f0;
+      }
+
+      & button {
+        cursor: pointer;
+      }
+    }
+
+  </style>
+
+</head>
+<body>
+  <form action="">
+    <label for="choose">Would you prefer a banana or cherry?</label>
+    <input type="text" id="choose" name="i-like" required pattern="[Bb]anana|[Cc]herry">
+    <button>Submit</button>
+  </form>
+
+  <!-- Constraining te values of your entries -->
+  <form>
+    <div>
+      <label for="choose">Would you prefer a banana or a cherry?</label>
+      <input
+        type="text"
+        id="choose"
+        name="i-like"
+        required
+        minlength="6"
+        maxlength="6" />
+    </div>
+    <div>
+      <label for="number">How many would you like?</label>
+      <input type="number" id="number" name="amount" value="1" min="1" max="10" step="2"/>
+    </div>
+    <div>
+      <button>Submit</button>
+    </div>
+  </form>
+
+  <!-- Final version -->
+  <form>
+    <fieldset>
+      <legend>
+        Do you have a driver's license?<span aria-label="required">*</span>
+      </legend>
+      <!-- While only one radio button in a same-named group can be selected at a time,
+           and therefore only one radio button in a same-named group having the "required"
+           attribute suffices in making a selection a requirement -->
+      <input type="radio" required name="driver" id="r1" value="yes" /><label
+        for="r1"
+        >Yes</label
+      >
+      <input type="radio" required name="driver" id="r2" value="no" /><label
+        for="r2"
+        >No</label
+      >
+    </fieldset>
+    <p>
+      <label for="n1">How old are you?</label>
+      <!-- The pattern attribute can act as a fallback for browsers which
+           don't implement the number input type but support the pattern attribute.
+           Please note that browsers that support the pattern attribute will make it
+           fail silently when used with a number field.
+           Its usage here acts only as a fallback -->
+      <input
+        type="number"
+        min="12"
+        max="120"
+        step="1"
+        id="n1"
+        name="age"
+        pattern="\d+" />
+    </p>
+    <p>
+      <label for="t1"
+        >What's your favorite fruit?<span aria-label="required">*</span></label
+      >
+      <input
+        type="text"
+        id="t1"
+        name="fruit"
+        list="l1"
+        required
+        pattern="[Bb]anana|[Cc]herry|[Aa]pple|[Ss]trawberry|[Ll]emon|[Oo]range" />
+      <datalist id="l1">
+        <option>Banana</option>
+        <option>Cherry</option>
+        <option>Apple</option>
+        <option>Strawberry</option>
+        <option>Lemon</option>
+        <option>Orange</option>
+      </datalist>
+    </p>
+    <p>
+      <label for="t2">What's your email address?</label>
+      <input type="email" id="t2" name="email" />
+    </p>
+    <p>
+      <label for="t3">Leave a short message</label>
+      <textarea id="t3" name="msg" maxlength="140" rows="5"></textarea>
+    </p>
+    <p>
+      <button>Submit</button>
+    </p>
+  </form>
+  
+</body>
+</html>
