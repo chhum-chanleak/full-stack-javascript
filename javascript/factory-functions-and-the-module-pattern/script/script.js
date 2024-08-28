@@ -257,6 +257,27 @@ const obj3 = {
 };
 const { self, prot } = obj3;
 
+// Private variables and functions
+const createUser2 = (name1) => {
+  const discordName1 = `@${name1}`;
+  let reputation = 0; // Private variable
+  const getReputation = () => reputation; // Closure
+  const giveReputation = () => reputation++; // Closure
+
+  return {name1, discordName1, getReputation, giveReputation};
+};
+const josh = createUser2('josh');
+josh.giveReputation();
+josh.giveReputation(); // { discordName: "@josh", reputation: 2 }
+
+// Prototypal inheritance with factories
+const createPlayer = (name, level) => {
+  const {getReputation, giveReputation} = createUser2(name);
+
+  const increaseLevel = () => level++;
+  return {name, getReputation, giveReputation, increaseLevel};
+};
+
 
 console.log(a, b, x, y, rest);
 console.log(zerothEle, firstEle);
