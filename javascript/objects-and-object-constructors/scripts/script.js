@@ -118,4 +118,7 @@ Person.prototype.sayName = function() {
 Book.prototype.getAuthor = function() {
   console.log(`The author of the book is ${this.author}`);
 }
-// Make `Person` objects inherit from `Book'
+// Make Person objects inherit from Book
+Object.setPrototypeOf(Person.prototype, Book.prototype);
+// Don't do this!
+// Person.prototype = Book.prototype'
