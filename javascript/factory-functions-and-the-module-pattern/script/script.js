@@ -259,8 +259,8 @@ const { self, prot } = obj3;
 
 // Private variables and functions
 const createUser2 = (name1) => {
-  const discordName1 = `@${name1}`;
-  let reputation = 0; // Private variable
+  const discordName1 = `@${name1}`; // Private variable (surrounding state of closure)
+  let reputation = 0; // Private variable (surrounding state of closure)
   const getReputation = () => reputation; // Closure
   const giveReputation = () => reputation++; // Closure
 
@@ -278,6 +278,175 @@ const createPlayer = (name, level) => {
   return {name, getReputation, giveReputation, increaseLevel};
 };
 
+// Object.assign();
+
+// Use Object.assign to create a new object that has all user's properties and increaseLevel
+const createPlayer2 = (name, level) => {
+  const user = createUser2(name);
+
+  const increaseLevel = () => level++;
+  // {}(empty Object) is the target object, user(object) and {increaseLevel}(object) are the source object
+  return Object.assign({}, user, {increaseLevel});
+};
+
+// Demo: Object.assign();
+const target = {a: 1, b: 2};
+const source = {b: 4, c: 5};
+
+const returnedTarget = Object.assign(target, source); // {a: 1, b: 4, c: 5}, b is overwritten and now target has been modified
+returnedTarget === target; // true;
+// Cloning an object
+const obj4 = {a: 1};
+const copy = Object.assign({}, obj4);
+
+copy; //{a: 1}
+// Warning for Deep Clone
+const obj5 = { a: 0, b: { c: 0 } };
+const obj6 = Object.assign({}, obj5);
+console.log(obj2); // { a: 0, b: { c: 0 } }
+
+obj5.a = 1;
+console.log(obj5); // { a: 1, b: { c: 0 } }
+console.log(obj6); // { a: 0, b: { c: 0 } }
+
+obj6.a = 2;
+console.log(obj5); // { a: 1, b: { c: 0 } }
+console.log(obj6); // { a: 2, b: { c: 0 } }
+
+obj6.b.c = 3;
+console.log(obj5); // { a: 1, b: { c: 3 } }
+console.log(obj6); // { a: 2, b: { c: 3 } }
+// Deep Clone
+// Use structuredClone(obj); for nested objects
+const obj7 = { a: 0, b: { c: 0 } };
+const obj8 = structuredClone(obj7);
+obj7.a = 4;
+obj7.b.c = 4;
+console.log(obj8); // { a: 0, b: { c: 0 } }
+//Merging objects
+const o1 = {a: 1};
+const o2 = {b: 2};
+const o3 = {c: 3};
+
+const o4 = Object.assign(o1, o2, o3); // o1 is modified
+
+o4; // {a: 1, b: 2, c: 3};
+o1 === o4;
+// Merging objects with same properties
+const ob = {a: 1, b: 1, c: 1};
+const ob2 = {b: 2, c: 2};
+const ob3 = {c: 3};
+
+const ob4 = Object.assign({}, ob, ob2, ob3);
+
+ob4; // {a: 1, b: 2, c: 3};
+// Copying symbol-typed properties
+const b1 = {a: 1};
+const b2 = {[Symbol('foo')]: 2};
+
+const b4 = Object.assign({}, b1, b2);
+
+b4; // {a: 1, [Symbol('foo')]: 2}
+Object.getOwnPropertySymbols(b4); // [Symbol(foo)]
+// Properties on the prototype chain and non-enumerable properties cannot be copied
+const c1 = Object.create(
+  // foo is on obj's prototype chain because {foo: 1} is passed as first parameter.
+  {foo: 1},
+  {
+    bar: {
+      value: 2, // bar is  a non-enumerable property.
+    },
+    baz: {
+      value: 3,
+      enumerable: true, // baz is an own enumerable property.
+    },
+  },
+);
+
+const copy1 = Object.assign({}, c1);
+// Primitives will be wrapped to objects
+const v1 = 'abc';
+const v2 = true;
+const v3 = 10;
+const v4 = Symbol('foo');
+
+const v5 = Object.assign({}, v1, null, v2, undefined, v3, v4);
+// Primitives will be wrapped, null and undefined will be ignored.
+// Note, only string wrappers can have own enumerable properties.
+v5; // {0: 'a', 1: 'b', 2: 'c'} from v1 = 'abc' because strings are enumerable. Numbers Boolean and Symbol are not enumerable.
+
+// Exceptions will interrupt the ongoing copying task
+const target1 = Object.defineProperty({}, 'foo', // foo is the property name
+  {
+  value: 1, // value: 1 is value of foo as {foo: 1}
+  writable: false, // the property value cannot be changed.
+}); // target1.foo is a read-only property
+
+// TypeError: "foo" is read-only
+// The Exception is thrown when assigning target.foo
+
+// ===> Object.assign(target1, {bar: 2}, {foo2: 3, foo: 3, foo3: 3}, {baz: 4});
+target1.bar; // 2, the first source was copied successfully.
+target1.foo2; // 3, the first property of the second source was copied successfully.
+target1.foo; // 1, exception is thrown here.
+target1.foo3; // undefined, assign method has finished, foo3 will not be copied.
+target1.baz; // undefined, the third source will not be copied either.
+
+// Copying accessors
+const obj9 = {
+  foo: 1,
+
+  get bar() {
+    return 2;
+  },
+
+  get foo1() {
+    return this.foo;
+  }
+};
+
+let copy3 = Object.assign({}, obj);
+console.log(copy);
+// { foo: 1, bar: 2 }
+// The value of copy.bar is obj.bar's getter's return value.
+
+// This is an assign function that copies full descriptors
+function completeAssign(target4, ...sources) {
+  sources.forEach((source) => {
+    const descriptors = Object.keys(source).reduce((descriptors, key) => {
+      descriptors[key] = Object.getOwnPropertyDescriptor(source, key);
+      return descriptors;
+    }, {});
+
+    // By default, Object.assign copies enumerable Symbols, too
+    Object.getOwnPropertySymbols(source).forEach((sym) => {
+      const descriptor = Object.getOwnPropertyDescriptor(source, sym);
+      if (descriptor.enumerable) {
+        descriptors[sym] = descriptor;
+      }
+    });
+    Object.defineProperties(target4, descriptors);
+  });
+  return target4;
+}
+
+copy3 = completeAssign({}, obj);
+
+
+// The module pattern: IIFEs
+const calculator = (function() {
+  const add = (a, b) => a + b;
+  const sub = (a, b) => a - b;
+  const mul = (a, b) => a * b;
+  const div = (a, b) => a / b;
+  
+  return {add, sub, mul, div};
+})();
+
+calculator.add(1, 2); // 3
+calculator.sub(3, 4); // -1
+calculator.mul(3, 8); // 24
+calculator.div(200, 4); // 50
 
 console.log(a, b, x, y, rest);
 console.log(zerothEle, firstEle);
