@@ -66,3 +66,25 @@ Exposer.first(); // output: This is a method I want to expose!
 Exposer.second(); // output: Inside a private!
 Exposer.getPrivateVariable; // output: 11
 Exposer.methodToExpose; // output: undefined
+
+// Another example
+const createSupplier = (() => {
+  const name = "General Motors";
+  const field = 'automobile';
+  const year = '2001'; // Private variable
+
+  // Private method
+  const getSupplierYear = () => year;
+
+  return {
+    name,
+    field,
+    getYear: getSupplierYear,
+  };
+})();
+
+createSupplier.name; // output: General Motors
+createSupplier.field; // output: automobile
+createSupplier.year; // output: undefined
+createSupplier.getYear; // output: 2001
+
