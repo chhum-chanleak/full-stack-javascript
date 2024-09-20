@@ -295,10 +295,10 @@ class SubClass extends BaseClass {
     this.#message = msg;
   }
 
-  constructor() {
-    this.#decoratedMessage = "hello world";
-    console.log(this.#decoratedMessage);
-  }
+  // constructor() {
+  //   this.#decoratedMessage = "hello world";
+  //   console.log(this.#decoratedMessage);
+  // }
   // Unlike public methods, private methods are not accessible on the .prototype property of their class.
 
 
@@ -397,22 +397,276 @@ SubClass.getPrivateIni(obj); // output: true
 
 // Private constructors are used to prevent the creation of new instances of a class outside of the class itself. This is often done to enforce a singleton pattern, where only one instance of a class should exist throughout the application.
 class PrivateConstructor {
-static #isInternalConstructing = false;
+  static #isInternalConstructing = false;
 
-constructor() {
-  if (!PrivateConstructor.#isInternalConstructing) {
-    throw new TypeError("PrivateConstructor is not constructable");
+  constructor() {
+    if (!PrivateConstructor.#isInternalConstructing) {
+      throw new TypeError("PrivateConstructor is not constructable");
+    }
+    PrivateConstructor.#isInternalConstructing = false;
+    // More initialization logic
   }
-  PrivateConstructor.#isInternalConstructing = false;
-  // More initialization logic
+
+  // static factory method
+  static create() {
+    PrivateConstructor.#isInternalConstructing = true;
+    const instance = new PrivateConstructor();
+    return instance;
+  }
 }
 
-static create() {
-  PrivateConstructor.#isInternalConstructing = true;
-  const instance = new PrivateConstructor();
-  return instance;
-}
-}
-
-new PrivateConstructor(); // TypeError: PrivateConstructor is not constructable
+// new PrivateConstructor(); // TypeError: PrivateConstructor is not constructable
 PrivateConstructor.create(); // PrivateConstructor {}
+
+// Constructor
+// The constructor method is a special method for creating and initializing an object created with a class. There can only be one special method with the name "constructor" in a class — a SyntaxError is thrown if the class contains more than one occurrence of a constructor method.
+
+// A constructor can use the 'super' keyword to call the constructor of the super class.
+class Circle {
+  // A constructor
+  constructor(radius) {
+    this.radius = radius;
+  }
+}
+// Alternatively, if your instance properties' values do not depend on the constructor's arguments, you can define them as class fields.
+
+// Static initialization blocks
+// Static initialization blocks allow flexible initialization of static properties, including the evaluation of statements during initialization, while granting access to the private scope.
+// Static initialization blocks are declared within a class. It contains statements to be evaluated during class initialization. This permits more flexible initialization logic than static properties, such as using try...catch or setting multiple fields from a single value. Initialization is performed in the context of the current class declaration, with access to private state, which allows the class to share information of its private properties with other classes or functions declared in the same scope (analogous to "friend" classes in C++).
+// Static initialization blocks are a special type of code block that is executed only once, when the class is first loaded by the JavaScript engine. They are primarily used to initialize static properties and perform other setup tasks that need to be done before any instances of the class are created.
+// Any static initialization of a super class is performed first, before that of its sub classes.
+// The scope of the variables declared inside the static block is local to the block. This includes var, function, const, and let declarations. var declarations will not be hoisted out of the static block.
+var y = "Outer y";
+
+class A {
+  static field = "Inner y";
+  static {
+    // var y only hoisted inside block
+    console.log(y); // undefined <-- not 'Outer y'
+
+    var y = this.field;
+  }
+}
+
+// var y defined in static block is not hoisted
+// outside the block
+console.log(y); // 'Outer y'
+
+// The 'this' inside a static block refers to the constructor object of the class. super.property can be used to access static properties of the super class. Note however that it is a syntax error to call super() in a class static initialization block, or to use the arguments object.
+
+// Multiple blocks
+// The code below demonstrates a class with static initialization blocks and interleaved static field initializers. The output shows that the blocks and fields are evaluated in execution order.
+class MyClass3 {
+  static field1 = console.log("static field1");
+  static {
+    console.log("static block1");
+  }
+  static field2 = console.log("static field2");
+  static {
+    console.log("static block2");
+  }
+}
+// 'static field1'
+// 'static block1'
+// 'static field2'
+// 'static block2'
+
+// Note that any static initialization of a super class is performed first, before that of its sub classes.
+
+// Using this and super
+// The 'this' inside a static block refers to the constructor object of the class. This code shows how to access a public static field.
+class A3 {
+  static field = "static field";
+  static {
+    console.log(this.field);
+  }
+}
+// output: 'static field'
+
+// The 'super.property' syntax can be used inside a static block to reference static properties of a super class.
+class B3 extends A3 {
+  static {
+    console.log(super.field);
+  }
+}
+// output: 'static field'
+
+// Key characteristics of static initialization blocks:
+// Execution timing: They are executed before any instance of the class is created.
+// Scope: They have access to static properties and methods of the class.
+// Syntax: They are enclosed within curly braces {} and preceded by the static keyword.
+class ClassWithSIB {
+  static {
+    // …
+  }
+}
+
+// Multiple static blocks can be declared, and these can be interleaved with the declaration of static fields and methods (all static items are evaluated in declaration order).
+
+// Methods
+// Methods are defined on the prototype of each class instance and are shared by all instances. Methods can be plain functions, async functions, generator functions, or async generator functions. For more information, see method definitions.
+
+// Static methods and fields
+// The static keyword defines a static method or field for a class. Static properties (fields and methods) are defined on the class itself instead of each instance. Static methods are often used to create utility functions for an application, whereas static fields are useful for caches, fixed-configuration, or any other data that doesn't need to be replicated across instances.
+
+// Field declarations
+// With the class field declaration syntax, the constructor example can be written as:
+class Circle2 {
+  // class fields
+  radius = 4;
+  pi;
+  // A constructor
+  // The constructor method is a special method of a class for creating and initializing an object instance of that class.
+
+  //   There are some additional syntax restrictions:
+  // A class method called constructor cannot be a getter, setter, async, or generator.
+  // A class cannot have more than one constructor method.
+  // The constructor follows normal method syntax, so parameter default values, rest parameters, etc. can all be used.
+  constructor(radius) {
+    this.radius = radius;
+    this.pi = pi;
+  }
+}
+// Using new on a class goes through the following steps:
+
+// 1. (If it's a derived class) The constructor body before the super() call is evaluated. This part should not access this because it's not yet initialized.
+// 2. (If it's a derived class) The super() call is evaluated, which initializes the parent class through the same process.
+// 3. The current class's fields are initialized.
+// 4. The constructor body after the super() call (or the entire body, if it's a base class) is evaluated.
+
+// Overriding and Extending: Sub classes can override properties or methods inherited from the parent class by defining their own versions with the same name. This allows for customization and specialization of behavior. Additionally, sub classes can extend the parent class's functionality by adding new properties or methods.
+
+// Class fields are similar to object properties, not variables, so we don't use keywords such as 'const' to declare them. In JavaScript, private properties use a special identifier syntax, so modifier keywords like 'public' and 'private' should not be used either.
+// As seen above, the fields can be declared with or without a default value. Fields without default values default to undefined. By declaring fields up-front, class definitions become more self-documenting, and the fields are always present, which help with optimizations.
+
+// Private properties
+// Using private fields, the definition can be refined as below.
+// It's an error to reference private fields from outside of the class; they can only be read or written within the class body. By defining things that are not visible outside of the class, you ensure that your classes' users can't depend on internals, which may change from version to version.
+// In JavaScript, private properties are declared using the # prefix. This syntax ensures that these properties are only accessible within the class itself and its methods. This is known as encapsulation, a core principle of object-oriented programming that helps protect the internal state of an object and prevents unauthorized access.
+
+// Private fields can only be declared up-front in a field declaration. They cannot be created later through assigning to them, the way that normal properties can.
+class Rectangle2 {
+  #height = 0;
+  #width;
+  constructor(height, width) {
+    this.#height = height;
+    this.#width = width;
+  }
+}
+
+// Inheritance
+// The 'extends' keyword is used in class declarations or class expressions to create a class as a child of another constructor (either a class or a function).
+class Animal2 {
+  constructor(name) {
+    this.name = name;
+  }
+
+  speak() {
+    console.log(`${this.name} makes a noise.`);
+  }
+}
+
+class Dog2 extends Animal2 {
+  // If there is a constructor present in the subclass, it needs to first call super() before using this. The super keyword can also be used to call corresponding methods of super class.
+  constructor(name) {
+    super(name); // call the super class constructor and pass in the name parameter
+  }
+
+  speak() {
+    console.log(`${this.name} barks.`);
+  }
+}
+
+const d = new Dog2("Mitzie");
+d.speak(); // Mitzie barks.
+
+// Evaluation order
+// When a class declaration or class expression is evaluated, its various components are evaluated in the following order:
+
+// 1. The extends clause, if present, is first evaluated. It must evaluate to a valid constructor function or null, or a TypeError is thrown.
+// 2. The constructor method is extracted, substituted with a default implementation if constructor is not present. However, because the constructor definition is only a method definition, this step is not observable.
+// 3. The class elements' property keys are evaluated in the order of declaration. If the property key is computed, the computed expression is evaluated, with the this value set to the this value surrounding the class (not the class itself). None of the property values are evaluated yet.
+// 4. Methods and accessors are installed in the order of declaration. Instance methods and accessors are installed on the prototype property of the current class, and static methods and accessors are installed on the class itself. Private instance methods and accessors are saved to be installed on the instance directly later. This step is not observable.
+// 5. The class is now initialized with the prototype specified by extends and implementation specified by constructor. For all steps above, if an evaluated expression tries to access the name of the class, a ReferenceError is thrown because the class is not initialized yet.
+// 6. The class elements' values are evaluated in the order of declaration:
+  // For each instance field (public or private), its initializer expression is saved. The initializer is evaluated during instance creation, at the start of the constructor (for base classes) or immediately before the super() call returns (for derived classes).
+  // For each static field (public or private), its initializer is evaluated with this set to the class itself(className.classField), and the property is created on the class.
+// Static initialization blocks are evaluated with this set to the class itself.
+// 7. The class is now fully initialized and can be used as a constructor function.
+
+// Examples
+// Binding this with instance and static methods
+// When a static or instance method is called without a value for 'this', such as by assigning the method to a variable and then calling it, the this value will be undefined inside the method. This behavior is the same even if the "use strict" directive isn't present, because code within the class body is always executed in strict mode.
+class Animal3 {
+  speak() {
+    return this;
+  }
+  static eat() {
+    return this;
+  }
+}
+
+const object5 = new Animal3();
+object5.speak(); // the Animal3 object
+const speak = object5.speak;
+speak(); // undefined
+
+Animal3.eat(); // class Animal3
+const eat = Animal3.eat;
+eat(); // undefined
+
+// G. extends
+// The extends keyword is used in class declarations or class expressions to create a class that is a child of another class.
+// Ex: class ChildClass extends ParentClassEx:  { /* … */ }
+
+class ParentClass4 {}
+class ChildClass4 extends ParentClass4 {}
+
+// Allows inheritance of static properties
+Object.getPrototypeOf(ChildClass4) === ParentClass4;
+// Allows inheritance of instance properties
+Object.getPrototypeOf(ChildClass4.prototype) === ParentClass4.prototype;
+
+// Species
+// You might want to return Array objects in your derived array class MyArray. The species pattern lets you override default constructors.
+
+// For example, when using methods such as Array.prototype.map() that return the default constructor, you want these methods to return a parent Array object, instead of the MyArray object. The Symbol.species symbol lets you do this:
+class MyArray extends Array {
+  // Overwrite species to the parent Array constructor
+  static get [Symbol.species]() {
+    return Array;
+  }
+}
+
+const a = new MyArray(1, 2, 3);
+const mapped = a.map((x) => x * x);
+
+console.log(mapped instanceof MyArray); // false
+console.log(mapped instanceof Array); // true
+
+// Mix-ins
+// Abstract subclasses or mix-ins are templates for classes. A class can only have a single superclass, so multiple inheritance from tooling classes, for example, is not possible. The functionality must be provided by the superclass.
+
+// A function with a superclass as input and a subclass extending that superclass as output can be used to implement mix-ins:
+const calculatorMixin = (Base) =>
+  class extends Base {
+    calc() {}
+};
+
+const randomizerMixin = (Base) =>
+  class extends Base {
+    randomize() {}
+};
+// A class that uses these mix-ins can then be written like this:
+class Foo {}
+class Bar extends calculatorMixin(randomizerMixin(Foo)) {} // Foo is the superclass
+
+// Avoiding inheritance
+// Inheritance is a very strong coupling relationship in object-oriented programming. It means all behaviors of the base class are inherited by the subclass by default, which may not always be what you want. For example, consider the implementation of a ReadOnlyMap:
+class ReadOnlyMap extends Map {
+  set() {
+    // throw new TypeError("A read-only map must be set at construction time.");
+  }
+}
+// It turns out that ReadOnlyMap is not constructible, because the Map() constructor calls the instance's set() method.
+const m = new ReadOnlyMap([["a", 1]]); // TypeError: A read-only map must be set at construction time.
