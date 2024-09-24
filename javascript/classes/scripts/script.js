@@ -81,7 +81,7 @@ class Animal {
   
   // Using 'super' in method definitions
   // Only functions defined as methods have access to the 'super' keyword.
-  // he super keyword in JavaScript is used to access properties and methods of the parent class from within a child class. It provides a way to call the parent class's constructor or methods, ensuring that the inheritance hierarchy is properly followed.
+  // the super keyword in JavaScript is used to access properties and methods of the parent class from within a child class. It provides a way to call the parent class's constructor or methods, ensuring that the inheritance hierarchy is properly followed.
 
   // notAMethod: function () {
   //   console.log(super.prop); // SyntaxError: 'super' keyword unexpected here
@@ -155,7 +155,7 @@ class SubClass extends BaseClass {
   // B. getter  
   // A getter must have exactly zero parameters.
   get message() {
-    return 'No message.'; // Return msg from BaseClass(Parent).
+    return 'No message.'; // Return 'No message.'
   }
 
   get test() {
@@ -269,7 +269,7 @@ class SubClass extends BaseClass {
   static publicStaticMethod() {
     return ClassWithPrivateStaticField.#privateStaticField;
   }
-  // You are advised to always access private static fields through the class name, not through this, so inheritance doesn't break the method.
+  // You are advised to always access private static fields through the class name, not through 'this', so inheritance doesn't break the method.
 
   // Private methods
   // Private methods include private instance methods and private static methods. Private methods are only accessible from inside the class declaration.
@@ -301,7 +301,6 @@ class SubClass extends BaseClass {
   // }
   // Unlike public methods, private methods are not accessible on the .prototype property of their class.
 
-
   // Private static methods
   // Like their public counterparts, private static methods:
   // are added to the class constructor at class evaluation time, and
@@ -323,7 +322,11 @@ console.log(obj.message);
 // Defining a getter on existing objects using defineProperty
 
 // Define a getter called get3 that returns 3 for 'obj'
-Object.defineProperty(obj, ["get" + 3], {
+Object.defineProperty(
+  // Object to be modified
+  obj,
+  // Property that will be assign to first parameter(obj);
+  ["get" + 3], {
   get() {
     return 3;
   }
@@ -342,7 +345,7 @@ Object.defineProperty(obj, sound, {
 SubClass.className; // output: 'SubClass'
 
 // get vs defineProperty
-// When using get the property will be defined on the instance's prototype, while using Object.defineProperty() the property will be defined on the instance it is applied to.
+// When using 'get', the property will be defined on the instance's prototype, while using Object.defineProperty() the property will be defined on the instance it is applied to.
 class Example {
   get hello() {
     return "Hello, world!";
@@ -371,7 +374,7 @@ Object.defineProperty(obj, 'id', {
 });
 
 // This is a best practice.
-// even declaring an empty class field is beneficial, because it indicates the existence of the field, which allows type checkers as well as human readers to statically analyze the shape of the class.
+// Even declaring an empty class field is beneficial, because it indicates the existence of the field, which allows type checkers as well as human readers to statically analyze the shape of the class.
 // The code below seems repetitive, but consider the case where 'this' is dynamically mutated: the explicit field declaration makes it clear which fields will definitely be present on the instance.
 class Person {
   name;
@@ -441,7 +444,6 @@ var y = "Outer y";
 class A {
   static field = "Inner y";
   static {
-    // var y only hoisted inside block
     console.log(y); // undefined <-- not 'Outer y'
 
     var y = this.field;
@@ -473,7 +475,7 @@ class MyClass3 {
 
 // Note that any static initialization of a super class is performed first, before that of its sub classes.
 
-// Using this and super
+// Using 'this' and 'super'
 // The 'this' inside a static block refers to the constructor object of the class. This code shows how to access a public static field.
 class A3 {
   static field = "static field";
@@ -518,7 +520,7 @@ class Circle2 {
   // A constructor
   // The constructor method is a special method of a class for creating and initializing an object instance of that class.
 
-  //   There are some additional syntax restrictions:
+  // There are some additional syntax restrictions:
   // A class method called constructor cannot be a getter, setter, async, or generator.
   // A class cannot have more than one constructor method.
   // The constructor follows normal method syntax, so parameter default values, rest parameters, etc. can all be used.
@@ -527,13 +529,14 @@ class Circle2 {
     this.pi = pi;
   }
 }
-// Using new on a class goes through the following steps:
+// Using 'new' on a class goes through the following steps:
 
-// 1. (If it's a derived class) The constructor body before the super() call is evaluated. This part should not access this because it's not yet initialized.
+// 1. (If it's a derived class) The constructor body before the super() call is evaluated. This part should not access 'this' because it's not yet initialized.
 // 2. (If it's a derived class) The super() call is evaluated, which initializes the parent class through the same process.
 // 3. The current class's fields are initialized.
 // 4. The constructor body after the super() call (or the entire body, if it's a base class) is evaluated.
 
+// Polymorphism
 // Overriding and Extending: Sub classes can override properties or methods inherited from the parent class by defining their own versions with the same name. This allows for customization and specialization of behavior. Additionally, sub classes can extend the parent class's functionality by adding new properties or methods.
 
 // Class fields are similar to object properties, not variables, so we don't use keywords such as 'const' to declare them. In JavaScript, private properties use a special identifier syntax, so modifier keywords like 'public' and 'private' should not be used either.
@@ -572,6 +575,7 @@ class Dog2 extends Animal2 {
     super(name); // call the super class constructor and pass in the name parameter
   }
 
+  // speak() is overridden in subclass. This is action is called 'Polymorphism'.
   speak() {
     console.log(`${this.name} barks.`);
   }
@@ -585,17 +589,17 @@ d.speak(); // Mitzie barks.
 
 // 1. The extends clause, if present, is first evaluated. It must evaluate to a valid constructor function or null, or a TypeError is thrown.
 // 2. The constructor method is extracted, substituted with a default implementation if constructor is not present. However, because the constructor definition is only a method definition, this step is not observable.
-// 3. The class elements' property keys are evaluated in the order of declaration. If the property key is computed, the computed expression is evaluated, with the this value set to the this value surrounding the class (not the class itself). None of the property values are evaluated yet.
+// 3. The class elements' property keys are evaluated in the order of declaration. If the property key is computed, the computed expression is evaluated, with the 'this' value set to the 'this' value surrounding the class (not the class itself). None of the property values are evaluated yet.
 // 4. Methods and accessors are installed in the order of declaration. Instance methods and accessors are installed on the prototype property of the current class, and static methods and accessors are installed on the class itself. Private instance methods and accessors are saved to be installed on the instance directly later. This step is not observable.
 // 5. The class is now initialized with the prototype specified by extends and implementation specified by constructor. For all steps above, if an evaluated expression tries to access the name of the class, a ReferenceError is thrown because the class is not initialized yet.
 // 6. The class elements' values are evaluated in the order of declaration:
   // For each instance field (public or private), its initializer expression is saved. The initializer is evaluated during instance creation, at the start of the constructor (for base classes) or immediately before the super() call returns (for derived classes).
-  // For each static field (public or private), its initializer is evaluated with this set to the class itself(className.classField), and the property is created on the class.
-// Static initialization blocks are evaluated with this set to the class itself.
+  // For each static field (public or private), its initializer is evaluated with 'this' set to the class itself(className.classField), and the property is created on the class.
+// Static initialization blocks are evaluated with 'this' set to the class itself.
 // 7. The class is now fully initialized and can be used as a constructor function.
 
 // Examples
-// Binding this with instance and static methods
+// Binding 'this' with instance and static methods
 // When a static or instance method is called without a value for 'this', such as by assigning the method to a variable and then calling it, the this value will be undefined inside the method. This behavior is the same even if the "use strict" directive isn't present, because code within the class body is always executed in strict mode.
 class Animal3 {
   speak() {
@@ -617,7 +621,7 @@ eat(); // undefined
 
 // G. extends
 // The extends keyword is used in class declarations or class expressions to create a class that is a child of another class.
-// Ex: class ChildClass extends ParentClassEx:  { /* … */ }
+// Ex: class ChildClass extends ParentClass { /* … */ }
 
 class ParentClass4 {}
 class ChildClass4 extends ParentClass4 {}
@@ -646,6 +650,7 @@ console.log(mapped instanceof Array); // true
 
 // Mix-ins
 // Abstract subclasses or mix-ins are templates for classes. A class can only have a single superclass, so multiple inheritance from tooling classes, for example, is not possible. The functionality must be provided by the superclass.
+// A mix-in is a technique in object-oriented programming that allows you to add new methods or properties to an existing object or class without creating a new subclass. This is particularly useful when you want to share common functionality across multiple objects or classes without creating a complex inheritance hierarchy.
 
 // A function with a superclass as input and a subclass extending that superclass as output can be used to implement mix-ins:
 const calculatorMixin = (Base) =>
@@ -660,6 +665,40 @@ const randomizerMixin = (Base) =>
 // A class that uses these mix-ins can then be written like this:
 class Foo {}
 class Bar extends calculatorMixin(randomizerMixin(Foo)) {} // Foo is the superclass
+
+// More class mix-ins example
+
+// Step 1. Create a Mix-in Class:
+// Define a class that contains the methods or properties you want to mix in.
+// Example:
+class Mixin {
+  greet() {
+      console.log('Hello!');
+  }
+}
+
+// Step 2. Extend the Target Class:
+// Create a new class that extends the target class you want to modify.
+// Inside the constructor, use Object.assign() to apply the mix-in methods to the instance.
+// Example:
+class Person {
+  constructor(name) {
+      this.name = name;
+  }
+}
+
+class GreetingPerson extends Person {
+  constructor(name) {
+      super(name);
+      Object.assign(this, new Mixin());
+  }
+}
+
+// Step 3. Use the Mix-in Methods:
+// Create an instance of the extended class and call the mix-in methods.
+// Example:
+const personA = new GreetingPerson('Alice');
+personA.greet(); // Output: Hello!
 
 // Avoiding inheritance
 // Inheritance is a very strong coupling relationship in object-oriented programming. It means all behaviors of the base class are inherited by the subclass by default, which may not always be what you want. For example, consider the implementation of a ReadOnlyMap:
