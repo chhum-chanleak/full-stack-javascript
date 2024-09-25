@@ -61,7 +61,7 @@ try {
 User;
 
 // 4. Class Expression
-const otherClass =  class  MyClass{
+const otherClass =  class  MyClass {
   sayHi() {
     console.log(MyClass); // MyClass name is visible only inside the class.
   }
@@ -87,7 +87,7 @@ new Dog().sayHi(); // output: "Woof woof";
 class Cat {
   constructor(name) {
     // Invoke the setter
-    this.name = name;
+    this._name = name;
   }
 
   get name() {
@@ -132,7 +132,7 @@ const eel = new Eel();
 eel.sayHi(); // output: "Hello, Ego"
 eel.name; // output: "Ego"
 
-// The important difference of class fields is that they are set on individual objects, not User.prototype
+// The important difference of class fields is that they are set on individual objects, not Eel.prototype
 Eel.prototype.name // output: undefined
 
 // We can also assign values using more complex expressions and function calls:
