@@ -12,8 +12,12 @@
 # classes with private constructor for 'singleton pattern'
 # Static initialization blocks
 # Inheritance
+# Composition
+# 'Has-a' and 'Is-a'
 # Evaluation order (extents, constructor, property key and computed key, methods and accessors, Static initialization blocks, class   initialization)
 # Species
 # Mix-ins
 # Polymorphism
 # Abstract classes
+# Diamond problem
+# interface
