@@ -104,7 +104,7 @@ myCar.start(); // output: "Engine started" "Wheels rotating"
 // Inheritance: Other classes can inherit from abstract classes to acquire their structure and common methods.
 // Template for derived classes: Abstract classes define a common interface or contract that derived classes must adhere to.
 
-// Code below can only used in TypeScript files
+// Code below can only be used in TypeScript files
 
 // abstract class Shape {
 //   abstract area(): number;
@@ -154,5 +154,61 @@ myCar.start(); // output: "Engine started" "Wheels rotating"
 // class Cat extends Animal {
 //   makeSound() {
 //     console.log("Meow!");
+//   }
+// }
+
+// 4. Interfaces
+// 'interface' declarations can only be used in TypeScript files.
+// In coding, a contract refers to an agreement or specification that defines the expected behavior of a piece of code. It outlines the inputs, outputs, and constraints that the code should adhere to. Contracts can be formal or informal, but they are essential for ensuring code quality, maintainability, and interoperability.
+
+// Types of Contracts:
+
+// Formal Contracts:
+
+// Interfaces: In languages like Java and TypeScript, interfaces define a set of methods that a class must implement. They provide a formal contract for the class's behavior.
+// Specifications: Formal specifications, often written in a specialized language like Z or VDM, can be used to rigorously define the behavior of a system or component.
+// Informal Contracts:
+
+// Comments: Comments within the code can describe the intended behavior of a function, class, or module. While not as formal as specifications, they can still provide valuable documentation.
+// Naming Conventions: Consistent naming conventions can help convey the purpose and expected behavior of code elements.
+// In the context of interfaces, a contract refers to a formal agreement or specification that outlines the behavior a class must adhere to.
+
+// When a class implements an interface, it is essentially signing a contract to provide implementations for all the methods defined in the interface. This ensures that objects of different classes that implement the same interface can be treated consistently, promoting polymorphism and loose coupling.   
+
+// Key aspects of contracts in interfaces:
+
+// Method signatures: Interfaces define the names, return types, and parameters of the methods that a class must implement.
+// Behavior specification: The contract specifies the expected behavior of these methods, but it doesn't provide the actual implementation.
+// Polymorphism: Interfaces enable polymorphism, allowing objects of different classes that implement the same interface to be treated as if they were of the same type.
+// Loose coupling: Using interfaces promotes loose coupling between classes, making the code more modular and easier to maintain.
+
+// Example
+// interface Drawable {
+//   draw(): void;
+// }
+
+// class Circle implements Drawable {
+//   radius: number;
+
+//   constructor(radius: number) {
+//     this.radius = radius;
+//   }
+
+//   draw() {
+//     console.log("Drawing a circle");
+//   }
+// }
+
+// class Rectangle implements Drawable {
+//   width: number;
+//   height: number;
+
+//   constructor(width: number, height: number) {
+//     this.width = width;
+//     this.height = height;
+//   }
+
+//   draw() {
+//     console.log("Drawing a rectangle");
 //   }
 // }
