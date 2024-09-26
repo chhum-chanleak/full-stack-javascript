@@ -681,13 +681,17 @@ class Mixin {
 // Create a new class that extends the target class you want to modify.
 // Inside the constructor, use Object.assign() to apply the mix-in methods to the instance.
 // Example:
-class Person {
+class Person5 {
   constructor(name) {
       this.name = name;
   }
+
+  sayHello() {
+    console.log('Hello');
+  }
 }
 
-class GreetingPerson extends Person {
+class GreetingPerson extends Person5 {
   constructor(name) {
       super(name);
       Object.assign(this, new Mixin());
@@ -698,7 +702,7 @@ class GreetingPerson extends Person {
 // Create an instance of the extended class and call the mix-in methods.
 // Example:
 const personA = new GreetingPerson('Alice');
-personA.greet(); // Output: Hello!
+personA.sayHello(); // Output: Hello!
 
 // Avoiding inheritance
 // Inheritance is a very strong coupling relationship in object-oriented programming. It means all behaviors of the base class are inherited by the subclass by default, which may not always be what you want. For example, consider the implementation of a ReadOnlyMap:
