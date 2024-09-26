@@ -55,3 +55,17 @@ Identifiers are names given to variables, functions, classes, and other entities
 Imported bindings in JavaScript refer to the entities (variables, functions, classes, etc.) that are made accessible from other modules or scripts through the import statement. This mechanism allows for modularization, code organization, and reusability. -->
 # Dynamic import
 # <script type="module"></script>
+
+# CommonJS modules
+<!-- module.exports.add = function(a, b) {
+        return a + b;
+} 
+
+module.exports.subtract = function(a, b) {
+        return a - b;
+}
+
+const {add, subtract} = require('./util')
+
+console.log(add(5, 5)) // 10
+console.log(subtract(10, 5)) // 5 -->
