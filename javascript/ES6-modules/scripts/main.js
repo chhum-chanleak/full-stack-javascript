@@ -1,1 +1,1 @@
-console.log("Hello, world!");
+export const greeting = "Hello, world! This is main.js";
