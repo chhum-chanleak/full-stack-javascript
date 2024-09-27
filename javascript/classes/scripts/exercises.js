@@ -171,9 +171,214 @@ class Manager extends Employee {
 const Chhum = new Manager('Chhum', 2000, 'IT');
 
 // 7. Write a JavaScript program that creates a class `Book` with properties for title, author, and publication year. Include a method to display book details. Create a subclass called 'Ebook' that inherits from the 'Book' class and includes an additional property for book price. Override the display method to include the book price. Create an instance of the 'Ebook' class and display its details.
+class Book {
+  title;
+  author;
+  publishDate;
+
+  constructor(title, author, publishDate) {
+    this.title = title;
+    this.author = author;
+    this.publishDate = publishDate;
+  }
+
+  showDetails() {
+    console.log(`
+      title: ${this.title},
+      author: ${this.author},
+      publish-date: ${this.publishDate}
+      `)
+  }
+}
+
+class Ebook extends Book {
+  price;
+
+  constructor(title, author, publishDate, price) {
+    super(title, author, publishDate);
+    this.price = price;
+  }
+
+  // Polymorphism
+  showDetails() {
+    console.log(`
+      title: ${this.title},
+      author: ${this.author},
+      publish-date: ${this.publishDate},
+      price: $${this.price}
+      `)
+  }
+}
+
+const audioBook = new Ebook('How to think like a computer scientist.', 'Allen Downey', '06.06.2006', 14);
+
 // 8. Write a JavaScript program that creates a class called 'Animal' with properties for species and sound. Include a method to make the animal's sound. Create a subclass called 'Dog' that inherits from the 'Animal' class and adds an additional property for color. Override the make sound method to include the dog's color. Create an instance of the 'Dog' class and make it make its sound.
+class Animal {
+  species;
+  sound;
+
+  constructor(species, sound) {
+    this.species = species;
+    this.sound = sound;
+  }
+
+  makeSound() {
+    console.log(`${this.species} makes ${this.sound} noise.`);
+  }
+}
+
+// Is-a relationship
+class Dog extends Animal {
+  color;
+
+  constructor(species, sound, color) {
+    super(species, sound);
+    this.color = color;
+  }
+
+  makeSound() {
+    console.log(`${this.species} with ${this.color} color makes ${this.sound} noise.`);
+  }
+}
+
+const boxer = new Dog('Boxer', 'Woof', 'Brown');
+
 // 9. Write a JavaScript program that creates a class called Bank with properties for bank names and branches. Include methods to add a branch, remove a branch, and display all branches. Create an instance of the Bank class and perform operations to add and remove branches.
+ class Bank {
+  names;
+  branches;
+
+  constructor(names, branches) {
+    this.names = names;
+    this.branches = branches;
+  }
+
+  addBranch(branch) {
+    this.branches.push(branch);
+    this.showBranches();
+  }
+
+  removeBranch(branch) {
+    const newArray = [];
+
+    for (let i = 0; i < this.branches.length; i += 1) {
+      if (this.branches[i] !== branch) {
+        newArray.push(this.branches[i]);
+      }
+    }
+    this.branches = [...newArray];
+    this.showBranches();
+  }
+
+  showBranches() {
+    for (let i = 0; i < this.branches.length; i += 1) {
+      console.log(`${this.branches[i]}`);
+    }
+  }
+ }
+
+ const bank = new Bank(['ABA', 'AC'], ['Phnom Penh', 'Phnom Rung']);
+
 // 10. Write a JavaScript program that creates a class called Product with properties for product ID, name, and price. Include a method to calculate the total price by multiplying the price by the quantity. Create a subclass called PersonalCareProduct that inherits from the Product class and adds an additional property for the warranty period. Override the total price calculation method to include the warranty period. Create an instance of the PersonalCareProduct class and calculate its total price.
+class Product {
+  id;
+  name;
+  price;
+  quantity;
+
+  constructor(id, name, price, quantity) {
+    this.id = id;
+    this.name = name;
+    this.price = price;
+    this.quantity = quantity;
+  }
+
+  total() {
+    return this.price * this.quantity;
+  }
+}
+
+class PersonalCareProduct extends Product {
+  warrantyPeriod;
+
+  constructor(id, name, price, quantity, warrantyPeriod) {
+    super(id, name, price, quantity);
+    this.warrantyPeriod = warrantyPeriod;
+  }
+
+  // Polymorphism
+  total() {
+    return (this.price + this.warrantyPeriod) * this.quantity;
+  }
+}
+
+const lotion = new PersonalCareProduct('01', 'Vaseline', 1000, 2, 200);
+
 // 11. Write a JavaScript program that creates a class called BankAccount with properties for account number, account holder name, and balance. Include methods to deposit, withdraw, and transfer money between accounts. Create multiple instances of the BankAccount class and perform operations such as depositing, withdrawing, and transferring money.
+class BankAccount2 {
+  number;
+  holder;
+  #balance = 2000;
+
+  constructor(number, holder) {
+    this.number = number;
+    this.holder = holder;
+  }
+
+  get balance() {
+    return `$${this.#balance}`;
+  }
+
+  deposit(amount) {
+    this.#balance += amount;
+  }
+
+  withdraw(amount) {
+    this.#balance -= amount;
+  }
+
+  transfer(receiver, amount) {
+    receiver.deposit(amount);
+    this.withdraw(amount);
+  }
+}
+
+const myAccount = new BankAccount2('71', 'Chum');
+const sokha = new BankAccount2('99', 'Sokha');
+
 // 12. Write a JavaScript program that creates a class called University with properties for university name and departments. Include methods to add a department, remove a department, and display all departments. Create an instance of the University class and add and remove departments.
+class University {
+  name;
+  departments;
+
+  constructor(name, departments) {
+    this.name = name;
+    this.departments = departments;
+  }
+
+  showDepartments() {
+    for (let i = 0; i < this.departments.length; i += 1) {
+      console.log(`${this.departments[i]}`);
+    }
+  }
+
+  addDepartment(department) {
+    this.departments.push(department);
+  }
+
+  removeDepartment(department) {
+    const newArray = [];
+
+    for (let i = 0; i < this.departments.length; i += 1) {
+      if (this.departments[i] !== department) {
+        newArray.push(this.departments[i]);
+      }
+    }
+    this.departments = [...newArray];
+  }
+}
+
+const university = new University('RUPP', ['Computer Science', 'Biochemistry', 'Mathematics', 'Physic']);
+
+
 
