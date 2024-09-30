@@ -20,9 +20,11 @@ id = '29';
 const inheritance = {
     price: 200,
     model: 'Honda',
+    location: 'USA',
 };
 const inheritance2 = {
     price: 20000,
+    model: 'Penthouse',
     location: 'United States',
 };
 // Literal Types:
@@ -128,4 +130,7 @@ myColor; // output: 2
 const myTuple = ['Hello', 69, false];
 // Access elements of the tuple by their index.
 const [message, position, state] = myTuple;
+message; // output: Hello
+position; // output: 69
+state; // output: false
 // Try modifying elements of the tuple and observe the compiler's response.

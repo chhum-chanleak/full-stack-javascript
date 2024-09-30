@@ -31,15 +31,17 @@ interface House {
   location: string;
 }
 // Create an intersection type using the two interfaces.
-type Intersection = Car | House;
+type Intersection = Car & House;
 // Create a variable with the intersection type and assign it an object that satisfies both interfaces.
 const inheritance: Intersection = {
   price: 200,
   model: 'Honda',
+  location: 'USA',
 }
 
 const inheritance2: Intersection = {
   price: 20000,
+  model: 'Penthouse',
   location: 'United States',
 }
 
