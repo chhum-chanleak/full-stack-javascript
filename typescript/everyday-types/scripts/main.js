@@ -1,6 +1,15 @@
 "use strict";
 // The primitives: string, number, and boolean
 // JavaScript has three very commonly used primitives: string, number, and boolean. Each has a corresponding type in TypeScript. As you might expect, these are the same names you’d see if you used the JavaScript typeof operator on a value of those types:
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 // string represents string values like "Hello, world"
 // number is for numbers like 42. JavaScript does not have a special runtime value for integers, so there’s no equivalent to int or float - everything is simply number
 // boolean is for the two values true and false
@@ -50,8 +59,10 @@ add(9, 6); // output: 15
 // Much like variable type annotations, you usually don’t need a return type annotation because TypeScript will infer the function’s return type based on its return statements. The type annotation in the above example doesn’t change anything. Some codebases will explicitly specify a return type for documentation purposes, to prevent accidental changes, or just for personal preference.
 // Functions Which Return Promises
 // If you want to annotate the return type of a function which returns a promise, you should use the Promise type:
-async function getFavoriteNumber() {
-    return 25;
+function getFavoriteNumber() {
+    return __awaiter(this, void 0, void 0, function* () {
+        return 25;
+    });
 }
 // Anonymous Functions
 // Anonymous functions are a little bit different from function declarations. When a function appears in a place where TypeScript can determine how it’s going to be called, the parameters of that function are automatically given types.
@@ -285,9 +296,9 @@ function liveDangerously(x) {
 // bigint
 // From ES2020 onwards, there is a primitive in JavaScript used for very large integers, BigInt:
 // Creating a bigint via the BigInt function
-const oneHundred = BigInt(100);
-// Creating a BigInt via the literal syntax
-const anotherHundred = 100n;
+// const oneHundred: bigint = BigInt(100);
+// // Creating a BigInt via the literal syntax
+// const anotherHundred: bigint = 100n;
 // You can learn more about BigInt in the TypeScript 3.2 release notes.
 // symbol
 // There is a primitive in JavaScript used to create a globally unique reference via the function Symbol():
