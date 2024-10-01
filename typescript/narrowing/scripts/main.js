@@ -173,6 +173,41 @@ function assertIsString(value) {
     }
 }
 function greet(name) {
+    // This returns a type guard.
     assertIsString(name);
+    // So 'name' under this line has a type of 'string'.
     return `Hello, ${name}.`;
+}
+// function handleShape(shape: Shape) {
+//// Oopsie!
+// // This comparison appears to be unintentional because the types '"circle" | "square"' and '"rect"' have no overlap.
+//   if (shape.kind === "rect") {
+//     // ...
+//   }
+// }
+function getArea(shape) {
+    if (shape.kind === 'circle') {
+        // 'shape.radius' is possibly 'undefined'.
+        // Use '!' here for non-null assertion.
+        return Math.PI * (shape.radius ** 2);
+    }
+}
+function getArea2(shape) {
+    switch (shape.kind) {
+        case 'circle': return Math.PI * (shape.radius ** 2);
+        case 'square': return shape.sideLength ** 2;
+    }
+}
+// 12. The 'never' type
+// When narrowing, you can reduce the options of a union to a point where you have removed all possibilities and have nothing left. In those cases, TypeScript will use a never type to represent a state which shouldn’t exist.
+// 13. Exhaustiveness checking:
+function getArea3(shape) {
+    switch (shape.kind) {
+        case 'circle': return Math.PI * (shape.radius ** 2);
+        case 'square': return shape.sideLength ** 2;
+        default:
+            // All types have been removed
+            const _exhaustiveCheck = shape;
+            return _exhaustiveCheck;
+    }
 }
