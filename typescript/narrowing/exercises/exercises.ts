@@ -1,14 +1,45 @@
 // 1. typeof Type Guards
+// Type Guards in TypeScript are a mechanism to refine the type of a variable based on runtime checks. They are essential for writing type-safe code, especially when dealing with variables of type 'any' or when you need to narrow down the type based on specific conditions.
+
 // Exercise: Create a function that takes a value as input and returns a string indicating its type (e.g., "number", "string", "boolean", "object", "undefined", "null", "symbol", "bigint"). Use typeof to determine the type.
+const isString = (value: any): string => {
+  if (typeof(value) !== "string") {
+    throw new Error("Value does not have a type of string");
+  }
+  return value;
+};
 
 // 2. Truthiness Narrowing
+// Truthiness Narrowing in TypeScript is a technique used to refine the type of a variable based on its truthiness or falsiness. This means that the type of a variable can be narrowed down to a more specific type if you know that it's either truthy or falsy.
+
 // Exercise: Write a function that takes a value as input and returns "truthy" or "falsy" based on its truthiness. Use truthiness narrowing to refine the type based on the value.
+const greet2 = (msg: string | null | undefined): string => {
+  // Check msg' value when it is neither equal to null nor undefined.
+  if (msg != null) {
+    // When msg is truthy, return msg.
+    if (msg) {
+      return msg
+    }
+  }
+  throw new Error("Parameter must have a type of 'string' and not be empty string.");
+};
 
 // 3. Equality Narrowing
-// Exercise: Create a function that takes a number as input and returns "even" or "odd". Use equality narrowing to check if the number is divisible by 2.
+// Equality Narrowing in TypeScript is a technique used to refine the type of a variable based on its equality to a specific value. This means that the type of a variable can be narrowed down to a more specific type if you know that it's equal to a particular value.
 
-// 4. The in Operator Narrowing
-// Exercise: Define an interface with multiple properties. Write a function that takes an object of that interface as input and returns a string indicating which property is present. Use the in operator to narrow the type based on the property.
+// Exercise: Create a function that takes a number as input and returns "even" or "odd". Use equality narrowing to check if the number is divisible by 2.
+const checkNum = (num: number): string => {
+  if ((num % 2) === 0) {
+    return 'even';
+  }
+  
+  return `odd`;
+};
+
+// 4. The 'in' Operator Narrowing
+// The 'in' Operator Narrowing in TypeScript is a technique used to refine the type of a variable based on the presence or absence of a specific property. This is particularly useful when working with objects that might have different properties or when dealing with discriminated unions.
+
+// Exercise: Create new shape interfaces called 'Rectangle' with properties name and width and height, Circle with properties name, radius. All properties for each interface are of type number. Define the getArea function to handle each interface object area (ex: radius ** 2 * pi). Test the getArea function with Circle and Rectangle objects to ensure it correctly calculates the area for each shape.
 
 // 5. instanceof Narrowing
 // Exercise: Create a base class and a derived class. Write a function that takes an object as input and returns a string indicating whether it's an instance of the base class or the derived class. Use instanceof to narrow the type based on the object's class.
