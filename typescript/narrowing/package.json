@@ -1,12 +1,16 @@
 {
   "name": "narrowing",
   "version": "1.0.0",
-  "description": "",
+  "description": "# 'typeof' type guards # Truthiness narrowing # Equality narrowing # The 'in' operator narrowing # 'instanceof' narrowing # Assignments # Control flow analysis # Using type predicates # Assertion functions # Non-null assertion # Discriminated unions # The never type # Exhaustiveness checking",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "node": "^22.9.0"
+  },
+  "devDependencies": {}
 }
