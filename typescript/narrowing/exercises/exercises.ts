@@ -39,31 +39,171 @@ const checkNum = (num: number): string => {
 // 4. The 'in' Operator Narrowing
 // The 'in' Operator Narrowing in TypeScript is a technique used to refine the type of a variable based on the presence or absence of a specific property. This is particularly useful when working with objects that might have different properties or when dealing with discriminated unions.
 
-// Exercise: Create new shape interfaces called 'Rectangle' with properties name and width and height, Circle with properties name, radius. All properties for each interface are of type number. Define the getArea function to handle each interface object area (ex: radius ** 2 * pi). Test the getArea function with Circle and Rectangle objects to ensure it correctly calculates the area for each shape.
+// Exercise: Create a function that takes a Person object as input and returns a string greeting.
+// The greeting should include the person's name and age if it's available.
+interface Person4 {
+  name: string;
+  age?: number;
+}
+
+const personGreeting = (obj: Person4): void => {
+  if ('age' in obj) {
+    console.log(`Hello, my name is ${obj.name}, I am ${obj.age} years old.`);
+  } else {
+    console.log(`Hello, my name is ${obj.name}.`);
+  }
+};
 
 // 5. instanceof Narrowing
+// The 'instanceof' operator in TypeScript is another powerful tool for type narrowing, allowing you to refine the type of a variable based on its runtime type.
+
 // Exercise: Create a base class and a derived class. Write a function that takes an object as input and returns a string indicating whether it's an instance of the base class or the derived class. Use instanceof to narrow the type based on the object's class.
+interface Ape {
+  type: string;
+  location: string;
+}
+
+class Human implements Ape {
+  type: string;
+  location: string;
+
+  constructor(type: string, location: string) {
+    this.type = type;
+    this.location = location;
+  }
+}
+
+const human = new Human('Great ape', 'Cambodia');
+
+class BabyHuman extends Human {
+  appearance: string;
+
+  constructor(type: string, location: string, appearance: string) {
+    super(type, location);
+    this.appearance = appearance;
+  }
+}
+
+const babyHuman = new BabyHuman('Great ape', 'Cambodia', 'Cute');
+
+const getClass = (obj: Human | BabyHuman): string => {
+  // This will remove BabyHuman type.
+  if (obj instanceof Human) {
+    return `This object is an instance of Human class.`;
+  } else { // Here, obj has a type of BabyHuman.
+    return `This object i an instance of BabyHuman class.`;
+  }
+};
 
 // 6. Assignments
-// Exercise: Write a function that takes a variable as input and assigns a value to it based on its type. Use type guards to ensure that the value assigned is compatible with the variable's type.
+// Assignment narrowing is a powerful technique in TypeScript that allows you to refine the type of a variable based on the value it's assigned. This is particularly useful when working with variables of a union type, where the variable can hold values of multiple types.
+
+// Exercise: Write a function that takes a variable as input and assigns a value to it based on its type. Use 'type guards' to ensure that the value assigned is compatible with the variable's type.
+
+// This is a type guard function
+const isNumber2 = (value: any): value is number => {
+  return typeof(value) === 'number';
+};
+
+const getNumber = (value: string | number) => {
+  if(isNumber2(value)) {
+    return value;
+  }
+  return +value;
+};
+
+let id5: string | number;
+
+id5 = 2;
+id5; // id5 has a type of 'number'.
+
+id5 = "Hello";
+id5;
 
 // 7. Control Flow Analysis
+// Control flow analysis (CFA) in TypeScript is a process that helps the compiler understand how the program's execution flow can change based on different conditions. This information is crucial for type inference, type checking, and code optimization.
+
 // Exercise: Create a function that takes a value as input and returns a string based on its type. Use control flow analysis to ensure that all possible types are handled.
+const getType = (value: string | number | boolean): string => {
+  if (typeof(value) === 'boolean') {
+    return `${value} of type 'boolean'.`;
+  } else if (typeof(value) === 'number') {
+    return `${value} of type 'number'.`;
+  }
+  return `${value} of type string`;
+};
 
 // 8. Using Type Predicates
+// Type predicates in TypeScript are custom functions that can be used to narrow the type of a variable based on a specific condition. They are often used in conjunction with union types and type guards to improve type safety and code clarity.
+
 // Exercise: Define a type predicate that checks if a value is an array of numbers. Use this predicate in a function that calculates the sum of elements in a numeric array.
+const addNumber2 = (a: any, b: any): number => {
+  if (isNumber2(a) && isNumber2(b)) {
+    return a + b;
+  }
+  throw new Error("Both a and b must be of type 'number'");
+};
 
 // 9. Assertion Functions
+// Assertion function narrowing is a technique in TypeScript where a function is used to assert the type of a variable, narrowing its type based on the function's return value. This is particularly useful when dealing with union types or when you want to provide more context about the type of a value.
+
 // Exercise: Create an assertion function that checks if a value is a string. Use this assertion function in a function that converts a string to uppercase.
 
-// 10. Non-null Assertion
-// Exercise: Create a function that takes a string as input and returns its length. Use a non-null assertion to ensure that the string is not null or undefined before accessing its length.
+const isString2 = (value: any): value is string => typeof(value) === 'string';
 
-// 11. Discriminated Unions
+type ID4 = string | number;
+
+const getID3 = (value: ID4) => {
+  if (isString2(value)) {
+    // Here, value has a type of 'string'.
+    return value.toUpperCase();
+  }
+  
+  // Here, value has a type of 'number'.
+  return value;
+};
+
+// 10. Discriminated Unions
+// Discriminated Unions in TypeScript are a powerful technique for modeling complex data structures that can have multiple possible shapes. They allow you to define a union type where each member of the union has a unique property that can be used to discriminate between the different types.
+
 // Exercise: Define a discriminated union of two types with a common property. Write a function that takes an object of the discriminated union as input and returns a string based on the common property.
 
-// 12. The never Type
-// Exercise: Create a function that throws an error if a value is of a specific type. Use the never type to indicate that the function never returns.
+interface Circle {
+  kind: "circle";
+  radius: number;
+}
 
-// 13. Exhaustiveness Checking
+interface Rectangle {
+  kind: "rectangle";
+  width: number;
+  length: number;
+}
+
+type Shape4 = Circle | Rectangle;
+
+const getArea4 = (obj: Shape4): number => {
+  switch(obj.kind) {
+    case 'circle':
+      return obj.radius ** 2 * Math.PI;
+    case 'rectangle':
+      return obj.width * obj.length;
+  }
+};
+
+// 11. Exhaustiveness Checking and the 'never' Type
+// In TypeScript, exhaustive checking ensures that all possible cases within a union type are handled. This helps prevent runtime errors and improves code reliability. The 'never' type plays a crucial role in achieving exhaustive checking.
+
 // Exercise: Create a function that takes a discriminated union as input and returns a string based on the type. Use exhaustiveness checking to ensure that all possible types are handled.
+
+const getArea5 = (obj: Shape4): number => {
+  switch(obj.kind) {
+    case 'circle':
+      return obj.radius ** 2 * Math.PI;
+    case 'rectangle':
+      return obj.width * obj.length;
+    default:
+      // This case is unreachable
+      const _exhaustiveCheck: never = obj;
+      return _exhaustiveCheck;
+  }
+};
