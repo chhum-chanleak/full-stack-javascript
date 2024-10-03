@@ -120,7 +120,18 @@ const getArea4 = (obj) => {
             return obj.width * obj.length;
     }
 };
-// 11. The never Type
-// Exercise: Create a function that throws an error if a value is of a specific type. Use the never type to indicate that the function never returns.
-// 12. Exhaustiveness Checking
+// 11. Exhaustiveness Checking and the 'never' Type
+// In TypeScript, exhaustive checking ensures that all possible cases within a union type are handled. This helps prevent runtime errors and improves code reliability. The 'never' type plays a crucial role in achieving exhaustive checking.
 // Exercise: Create a function that takes a discriminated union as input and returns a string based on the type. Use exhaustiveness checking to ensure that all possible types are handled.
+const getArea5 = (obj) => {
+    switch (obj.kind) {
+        case 'circle':
+            return obj.radius ** 2 * Math.PI;
+        case 'rectangle':
+            return obj.width * obj.length;
+        default:
+            // This case is unreachable
+            const _exhaustiveCheck = obj;
+            return _exhaustiveCheck;
+    }
+};
