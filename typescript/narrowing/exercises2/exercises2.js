@@ -1,6 +1,6 @@
 "use strict";
 // 1. typeof Type Guards
-// Type Guards in TypeScript are a mechanism to refine the type of a variable based on runtime checks. They are essential for writing type-safe code, especially when dealing with variables of type 'any' or when you need to narrow down the type based on specific conditions.
+// Type Guards in TypeScript are a mechanism to refine the type of a variable based on runtime checks. They are essential for writing typesafe code, especially when dealing with variables of type 'any' or when you need to narrow down the type based on specific conditions.
 // Exercise: Create a function that takes a value as input and returns a string indicating its type (e.g., "number", "string", "boolean", "object", "undefined", "null", "symbol", "bigint"). Use typeof to determine the type.
 const isNumber3 = (value) => {
     if (typeof (value) === 'number') {
@@ -125,9 +125,16 @@ const getArea6 = (shape) => {
             return shape.width * shape.length;
     }
 };
-console.log(getArea6({ kind: "circle", radius: 12 }));
-console.log(getArea6({ kind: "rectangle", width: 10, length: 4 }));
-// Exercise: Define a discriminated union of two types with a common property. Write a function that takes an object of the discriminated union as input and returns a string based on the common property.
 // 10. Exhaustiveness Checking and the 'never' Type
-// In TypeScript, exhaustive checking ensures that all possible cases within a union type are handled. This helps prevent runtime errors and improves code reliability. The 'never' type plays a crucial role in achieving exhaustive checking.
+// In TypeScript, exhaustive checking ensures that all possible cases within a 'union type' are handled. This helps prevent runtime errors and improves code reliability. The 'never' type plays a crucial role in achieving exhaustive checking.
 // Exercise: Create a function that takes a discriminated union as input and returns a string based on the type. Use exhaustiveness checking to ensure that all possible types are handled.
+const getArea7 = (shape) => {
+    switch (shape.kind) {
+        case 'circle':
+            return (shape.radius ** 2) * Math.PI;
+        case 'rectangle':
+            return shape.width * shape.length;
+        default:
+            return shape; // Exhaustiveness checking
+    }
+};
