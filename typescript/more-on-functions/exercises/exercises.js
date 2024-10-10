@@ -1,19 +1,20 @@
 "use strict";
 // 1. Function Type Expressions
 // In TypeScript, a function type expression defines the types of parameters and the return type of a function, similar to call signatures but more commonly used for standalone functions. You can define the shape of a function using a function type and assign functions to variables accordingly.
-// Write Three Implementations:
-// Assign three different functions to the operation variable:
+// A function type expression is an 'inline' way to specify the type of a function when declaring a variable or parameter. It uses a similar syntax to define the parameters and return type directly.
+// Example:
+// // Using a function type expression for variable declaration
+// const multiply: (a: number, b: number) => number = (x, y) => x * y;
+// console.log(multiply(4, 5)); // Output: 20
+// Exercise: Using Function Type Expressions
+// Task:
+// Define 3 Functions Type Expression:
 // One that performs addition.
-const addFTE = (a, b) => a + b;
 // One that performs subtraction.
-const subFTE = (a, b) => a - b;
 // One that performs division.
-const divFTE = (a, b) => a / b;
-// Create a Test Function:
-// Write a function performOperation that accepts two numbers and an operation function (typed as your function type expression). Inside, call the operation with the two numbers and print the result.
-const performOperation = (num1, num2, operation) => {
-    console.log(operation(num1, num2));
-};
+const performAddtion = (num1, num2) => num1 + num2;
+const performSubtraction = (num1, num2) => num1 - num2;
+const perFormDivision = (num1, num2) => num1 / num2;
 // Write three different implementations of this interface:
 // One for addition.
 const addNums = (a, b) => a + b;
@@ -113,19 +114,148 @@ function getUserInfo(user) {
 }
 const userId = getUserInfo("123abc");
 const userInfo = getUserInfo({ id: "123", name: 'Chhum' });
-// Implementation
-//    Overload Signatures and the Implementation Signature
-//    Writing Good Overloads
-//  Declaring this in a Function
-//  Other Types to Know About
-//    void
-//    object
-//    unknown
-//    never
-//    Function
-//  Rest Parameters and Arguments
-//    Rest Parameters
-//    Rest Arguments
-//  Parameter Destructuring
-//  Assignability of Functions
-//    Return type void
+function calculate(param1, param2) {
+    if (param2 && typeof (param2) === 'number') {
+        if (typeof (param1) === 'number') {
+            return param1 + param2;
+        }
+    }
+    else if (param2 && typeof (param2) === 'string') {
+        if (typeof (param1) === 'string') {
+            return `${param1}${param2}`;
+        }
+    }
+    else if (param2 === undefined) {
+        if (Array.isArray(param1)) {
+            return param1.length;
+        }
+    }
+    throw new Error("'Invalid arguments.");
+}
+;
+const sum3 = calculate(5, 10);
+const concate3 = calculate("Hello,", " World!");
+const size3 = calculate([1, 2, 3, 4]);
+// 6.2 Writing Good Overloads
+// Be specific in overload signatures and avoid overlaps.
+// Use type guards in the implementation to handle different types.
+// Keep overloads manageable in number and complexity.
+// Use optional parameters and union types where appropriate.
+// Use overloads to clarify different parameter structures.
+// Consider using generics for common logic across types.
+// 7. Declaring 'this' in a Function
+// In TypeScript, you can explicitly declare the type of 'this' in a function to ensure proper type safety, especially when dealing with methods that rely on 'this'. This is particularly useful when 'this' can be misused or needs to be of a specific type within the function context.
+// Exercise: Create a Person class with a method that uses 'this'
+// Task:
+// Create a class Person with a name property.
+// Write a method greet that prints a greeting using this.name.
+// Declare 'this' explicitly in the method to ensure it's of type Person.
+// Try calling the method and then assigning it to a variable and calling it again to see what happens.
+class Person2 {
+    constructor(name) {
+        this._name = name;
+    }
+    // 'this' keyword will not appear at 'runtime'. It's only used for type checking at compilation.
+    greet() {
+        console.log(`Hello, ${this._name}`);
+    }
+}
+const person = new Person2('Andy');
+const notGreet = person.greet; // Calling notGreet() will throw an error
+// Do this instead
+const yestGreet = person.greet.bind(person); // output: "Hello, Andy"
+const printInfo = (name, age) => {
+    console.log(`Name: ${name}, Age: ${age}`);
+};
+const printCarInfo = (obj) => {
+    console.log(`Make: ${obj.make}, Model: ${obj.model}, Year: ${obj.year}`);
+};
+const myCar = {
+    make: 'Japan',
+    model: 'Nissan',
+    year: 2012,
+};
+const processValue = (param) => {
+    if (typeof (param) === "string") {
+        return param.toUpperCase();
+    }
+    else if (typeof (param) === 'number') {
+        return param * 10;
+    }
+    throw new Error("Unsupported type.");
+};
+const assertUnreachable = (arg) => {
+    throw new Error(`Unexpected value ${arg}`);
+};
+const getArea = (shape) => {
+    switch (shape.kind) {
+        case "circle":
+            shape;
+            return `pi * r^2`;
+        case "square":
+            shape;
+            return `sideLength ** 2`;
+        case "triangle":
+            shape;
+            return `(1 / 2) * base * height`;
+        default:
+            // const _exhaustiveCheck: never = shape;
+            // return _exhaustiveCheck;
+            assertUnreachable(shape);
+    }
+};
+const circle2 = {
+    kind: "circle",
+    radius: 12,
+};
+const square2 = {
+    kind: 'square',
+    sideLength: 6,
+};
+const triangle2 = {
+    kind: "triangle",
+    base: 8,
+    height: 4,
+};
+// console.log(getArea(circle2)); // Ok
+// console.log(getArea(square2));  // Ok
+// console.log(getArea(triangle2)); // Ok
+// 8.5 Function
+// In TypeScript, a function type specifies the types of the arguments and the return type of a function.
+// Using a Variable Declaration
+let add;
+add = (x, y) => x + y; // Valid assignment
+const add2 = (x, y) => x + y; // Use the type alias
+// console.log(add(5, 10)); // Output: 15
+const subtract2 = (x, y) => x - y; // Another function using the same type
+// console.log(subtract2(10, 5)); // Output: 5
+// Exercise:
+// Create a function type that takes two strings and returns a boolean.
+// Implement a function based on this type that checks if the first string contains the second string.
+// Test the function with various inputs.
+// Using variable Declaration
+let concateVariable;
+concateVariable = (firstName, lastName) => firstName.length < lastName.length;
+const concate = (firstName, lastName) => firstName.length < lastName.length;
+const makeJoin = (...strs) => {
+    let concatenatedString = "";
+    for (let i = 0; i < strs.length; i += 1) {
+        concatenatedString += ` ${strs[i]}`;
+    }
+    return concatenatedString;
+};
+const showDetail = ({ id, name, price }) => console.log(`ID: ${id}, Name: ${name}, Price: ${price}`);
+const skinCare = {
+    id: '123abc',
+    name: 'Leg Lotion',
+    price: 12,
+};
+const printNumber = (num) => {
+    console.log(num);
+};
+const printOptionalNumber = (num) => {
+    console.log(num !== undefined ? num : 0);
+};
+// printNumber(3); // Ok
+printOptionalNumber(); //
+// Return type void

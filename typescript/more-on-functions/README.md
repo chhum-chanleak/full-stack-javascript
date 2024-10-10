@@ -14,7 +14,7 @@
 # Function Overloads
   # Overload Signatures and the Implementation Signature
   # Writing Good Overloads
-# Declaring this in a Function
+# Declaring 'this' in a Function
 # Other Types to Know About
   # void
   # object
