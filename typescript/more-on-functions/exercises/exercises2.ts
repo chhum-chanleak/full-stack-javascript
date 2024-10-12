@@ -6,39 +6,45 @@
 // // Using a function type expression for variable declaration
 // const multiply: (a: number, b: number) => number = (x, y) => x * y;
 
-// console.log(multiply(4, 5)); // Output: 20
-
 // Exercise: Using Function Type Expressions
 // Task:
 // Define 3 Functions Type Expression:
 // One that performs addition.
 // One that performs subtraction.
 // One that performs division.
+const addExpression = (a: number, b: number): number => a + b;
+const subtractExpression = (a: number, b:number): number => a -b;
+const divideExpression = (numerator: number, denominator: number): number => numerator / denominator;
 
-// console.log(performAddtion(3, 5)); // Ok
-// console.log(performSubtraction(3, 2)); // Ok
-// console.log(perFormDivision(6, 3)); // Ok
+// console.log(addExpression(2, 3));
+// console.log(subtractExpression(3, 3));
+// console.log(divideExpression(4, 2));
 
 // 2. Call Signatures
 // In TypeScript, a call signature defines the types of parameters and return values for functions within objects or types. It allows you to describe functions in the context of object types or interfaces.
 
-// Here’s an exercise to help reinforce your understanding of call signatures in TypeScript:
 // Exercise: Implementing Call Signatures
 // You are tasked with creating an interface that describes different mathematical operations using call signatures. Follow the steps below:
 // Define the interface:
 // Create an interface MathOperation that defines a call signature for a function that takes two numbers and returns a number.
 // Implement the interface:
-
 // Write three different implementations of this interface:
 // One for addition.
 // One for subtraction.
-
 // One for multiplication.
-
-
 // Test your functions:
 // Create a test function that accepts a MathOperation and applies it to two numbers, printing the result.
+interface MathOperation3 {
+  (num1: number, num2: number): number;
+}
 
+const addSignature: MathOperation3 = (num1, num2) => num1 + num2;
+const subtractSignature: MathOperation3 = (a, b) => a - b;
+const multiplySignature: MathOperation3 = (a, b) => a * b;
+
+// console.log(addSignature(1, 1));
+// console.log(subtractSignature(2, 3));
+// console.log(multiplySignature(4, 4));
 
 //  3. Construct Signatures
 // In TypeScript, a 'construct signature' is similar to a 'call signature', but it’s used to describe how objects can be constructed using the 'new' keyword. It defines the types of arguments that can be passed to a constructor when creating an instance of a class or an object type.
@@ -47,28 +53,40 @@
 // Task:
 // Create an Interface for a Class Constructor:
 // Define an interface PersonConstructor with a construct signature that accepts two parameters: name (a string) and age (a number). It should return a Person object.
-
 // Implement a Class:
 // Implement the Person class with the following properties:
 // name (a string)
 // age (a number)
 // The class should have a constructor that takes these parameters and assigns them to the class properties.
-
 // Create Instances Using the Constructor Interface:
 // Use the construct signature from the PersonConstructor interface to create instances of the Person class using the new keyword.
 // In the statement let myPerson: PersonConstructor = Person;, you're using TypeScript's type system to ensure that the Person class matches the structure defined by the PersonConstructor interface, which includes a construct signature.
 // Now myPerson is a class represents class 'Person'
+interface PersonConstructor3 {
+  new (name: string, age: number): ConstructPerson3;
+}
 
+class ConstructPerson3 {
+  _name: string;
+  _age: number;
+
+  constructor(name: string, age: number) {
+    this._name = name;
+    this._age = age;
+  }
+}
+
+const myPerson3: PersonConstructor3 = ConstructPerson3;
+
+const man = new myPerson3("noMe", 12);
+// console.log(man);
 
 // 4. Generic Functions
 // In TypeScript, generic functions allow you to create functions that work with any data type while maintaining type safety. By using generics, you can define a function that can accept parameters of different types and return a value of a corresponding type without losing the information about what types those are.
 
 // Exercise: Creating a Generic Function
 // Task:
-// Create a Generic Function:
 // Write a generic function wrapInArray that takes a single argument of any type and returns an array containing that argument.
-
-
 // Test Your Function:
 // Call wrapInArray with different types of arguments (e.g., a number, a string, and an object) and log the results.
 
