@@ -384,7 +384,7 @@ type OneOrManyOrNull<Type> =  OrNull<OneOrMany<Type>>;
   // 'xx' has a type of 'readonly string[]' so it cannot be assigned to mutable type 'string[]'.
   // yy = xx;
 
-  // 7.2 Tuple types
+  // 7.3 Tuple types
   // A tuple type is another sort of Array type that knows exactly how many elements it contains, and exactly which types it contains at specific positions.
   type StringNumberPair = [string, number];
   type DoSomethingTuple = (param: [string, number]) => void;
@@ -394,7 +394,7 @@ type OneOrManyOrNull<Type> =  OrNull<OneOrMany<Type>>;
     const b = pair[1];
     // const c = pair[2]; // Tuple type '[string, number]' of length '2' has no element at index '2'.
     // ...
-  }
+  };
 
   doSomethingTuple(["Hello", 12]); // Ok
 
@@ -403,7 +403,7 @@ type OneOrManyOrNull<Type> =  OrNull<OneOrMany<Type>>;
 
     console.log(inputString);
     console.log(hash);
-  }
+  };
 
   interface StringNumberPair2 {
     // specialized properties
@@ -421,7 +421,7 @@ type OneOrManyOrNull<Type> =  OrNull<OneOrMany<Type>>;
     const [x, y, z] = coord;
 
     console.log(`Provided coordinates had ${coord.length} dimensions.`);
-  }
+  };
 
   type StringNumberBooleans = [string, number, ...boolean[]];
   type StringBooleansNumber = [string, ...boolean[], number];
@@ -431,3 +431,30 @@ type OneOrManyOrNull<Type> =  OrNull<OneOrMany<Type>>;
   const b: StringNumberBooleans = ["World!", 2, false];
   const c: StringNumberBooleans = ["!", 3, true, false, true];
 
+  type ReadButtonInput = (...args: [string, number, ...boolean[]]) => void;
+  const readButtonInput: ReadButtonInput = function(args) {
+    // ...
+  };
+
+  // The same as
+  const readButtonInput2: ReadButtonInput = function(name, version, ...input) {
+    // ...
+  };
+
+  // 7.4 'readonly' Tuple Types
+  type ReadonlyTupleType = (pair: readonly [string, number]) => void;
+  const readonlyTupleType: ReadonlyTupleType = function(pair) {
+    // pair[0] = "hello!";
+    // Cannot assign to '0' because it is a read-only property.
+  };
+
+  // Initialize 'point' and set it to readonly using 'as const'.
+  let point = [3, 4] as const;
+
+  type DistanceFromOrigin = ([x, y]: [number, number]) => number;
+  const distanceFromOrigin: DistanceFromOrigin = function([x, y]) {
+    return Math.sqrt((x ** 2) + (y ** 2));
+  };
+
+  // distanceFromOrigin(point); // Argument of type 'readonly [3, 4]' is not assignable to parameter of type '[number, number]'.
+  // The type 'readonly [3, 4]' is 'readonly' and cannot be assigned to the mutable type '[number, number]'.

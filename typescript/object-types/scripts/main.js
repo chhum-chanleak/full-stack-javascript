@@ -147,3 +147,21 @@ const setCoordinate = function (coord) {
 const a = ["Hello", 1];
 const b = ["World!", 2, false];
 const c = ["!", 3, true, false, true];
+const readButtonInput = function (args) {
+    // ...
+};
+// The same as
+const readButtonInput2 = function (name, version, ...input) {
+    // ...
+};
+const readonlyTupleType = function (pair) {
+    // pair[0] = "hello!";
+    // Cannot assign to '0' because it is a read-only property.
+};
+// Initialize 'point' and set it to readonly using 'as const'.
+let point = [3, 4];
+const distanceFromOrigin = function ([x, y]) {
+    return Math.sqrt((x ** 2) + (y ** 2));
+};
+// distanceFromOrigin(point); // Argument of type 'readonly [3, 4]' is not assignable to parameter of type '[number, number]'.
+// The type 'readonly [3, 4]' is 'readonly' and cannot be assigned to the mutable type '[number, number]'.
