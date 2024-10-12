@@ -256,6 +256,7 @@ const printNumber = (num) => {
 const printOptionalNumber = (num) => {
     console.log(num !== undefined ? num : 0);
 };
-// printNumber(3); // Ok
-printOptionalNumber(); //
-// Return type void
+let showNumber = printNumber;
+let optionalNumber = printOptionalNumber;
+const numberShowString = (num) => num.toString();
+// let showString: NumberShowString = showNumber; // No ok
