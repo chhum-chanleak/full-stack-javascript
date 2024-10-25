@@ -25,6 +25,8 @@ type anotherAge = typeof MyArray[number]["age"];
 // Note
 // const key = "name";
 // type name = Person[key]; // No
+// Type 'key' cannot be used as an index type.
+// 'key' refers to a value, but is being used as a type here. Did you mean 'typeof key'?
 
 // Do this
 type key = "name";
