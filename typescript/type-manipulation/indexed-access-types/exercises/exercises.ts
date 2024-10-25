@@ -30,7 +30,7 @@ interface Car_1 {
   year: number;
 }
 
-type CarInfo = Car_1["brand" | "year"];  // CarInfo will be `string | number`
+type CarInfo_1 = Car_1["brand" | "year"];  // CarInfo will be `string | number`
 
 // Exercise 2:
 // Create a type UserContactInfo from the 'User_1' interface that combines the types of 'email' and 'phoneNumber'.
