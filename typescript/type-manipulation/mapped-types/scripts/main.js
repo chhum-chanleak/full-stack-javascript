@@ -1,2 +1,5 @@
 "use strict";
-console.log("Hello, world! mapped types.");
+// 1. Mapped types
+// type OnlyBoolsAndHorses = {
+//   [key: string]: boolean | Horse;
+// };
