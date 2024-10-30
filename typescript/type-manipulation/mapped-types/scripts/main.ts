@@ -71,7 +71,7 @@ type LazyPerson = Getters<Person_3>;
 
 // Remove the 'kind' property
 type RemoveKindField<Type> = {
-  [Property in keyof Type as Exclude<Property, "kind">]: Type[Property]
+  [Property in keyof Type as Exclude<Property, "kind">]: Type[Property];
 };
 
 interface Circle {
