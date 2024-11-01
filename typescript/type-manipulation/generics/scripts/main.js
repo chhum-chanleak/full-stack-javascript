@@ -34,32 +34,20 @@ function create(c) {
     return new c();
 }
 class BeeKeeper {
-    constructor() {
-        this.hasMask = true;
-    }
+    hasMask = true;
 }
 class ZooKeeper {
-    constructor() {
-        this.nametag = "Mikle";
-    }
+    nametag = "Mikle";
 }
 class Animal {
-    constructor() {
-        this.numLegs = 4;
-    }
+    numLegs = 4;
 }
 class Bee extends Animal {
-    constructor() {
-        super(...arguments);
-        this.numLegs = 6;
-        this.keeper = new BeeKeeper();
-    }
+    numLegs = 6;
+    keeper = new BeeKeeper();
 }
 class Lion extends Animal {
-    constructor() {
-        super(...arguments);
-        this.keeper = new ZooKeeper();
-    }
+    keeper = new ZooKeeper();
 }
 function createInstance(c) {
     return new c();
