@@ -197,7 +197,7 @@ const anyTypeStorage3 = new Storage3();
 // anyTypeStorage3.add(false); // Yes
 // console.log(anyTypeStorage3);
 
-const numberStorage = new Storage3<number>();
+const numberStorage2 = new Storage3<number>();
 
 // console.log(numberStorage);
 // numberStorage.add(2); // Yes

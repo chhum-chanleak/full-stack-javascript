@@ -141,8 +141,10 @@ const anyTypeStorage3 = new Storage3();
 // anyTypeStorage3.add(2); // Yes
 // anyTypeStorage3.add(false); // Yes
 // console.log(anyTypeStorage3);
-const numberStorage = new Storage3();
-console.log(numberStorage);
+const numberStorage2 = new Storage3();
+// console.log(numberStorage);
+// numberStorage.add(2); // Yes
+// numberStorage.add("Hello"); // No
 // 7. Variance Annotations
 // In TypeScript, variance refers to the way that types relate to each other in the context of inheritance and subtype relationships. There are three types of variance:
 // No Exercise
