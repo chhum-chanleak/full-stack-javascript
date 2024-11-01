@@ -11,9 +11,7 @@
 // peek(): T | undefined: Returns the last item without removing it.
 // isEmpty(): boolean: Checks if the stack is empty.
 class Stack2 {
-    constructor() {
-        this.items = [];
-    }
+    items = [];
     add(item) {
         this.items.push(item);
     }
@@ -45,6 +43,8 @@ const array = new Stack2();
 // getSecond(): T2: Returns the second value.
 // swap(): Pair<T2, T1>: Swaps the first and second values, returning a new Pair with reversed types.
 class Pair2 {
+    _mouse;
+    _keyboard;
     constructor(mouse, keyboard) {
         this._mouse = mouse;
         this._keyboard = keyboard;
@@ -62,9 +62,11 @@ class Pair2 {
     }
 }
 const merge2 = (obj1, obj2) => {
-    return Object.assign(Object.assign({}, obj1), obj2);
+    return { ...obj1, ...obj2, };
 };
 class SameObject {
+    _name;
+    _id;
     constructor(name, id) {
         this._name = name;
         this._id = id;
@@ -99,9 +101,7 @@ const compareByProperty2 = (obj1, obj2, key) => obj1[key] === obj2[key];
 // Create a generic class Repository that can store and manage objects of any type.
 // Implement methods for adding, retrieving, and listing items.
 class Repository2 {
-    constructor() {
-        this.items = [];
-    }
+    items = [];
     add(obj) {
         this.items.push(obj);
     }
@@ -125,9 +125,7 @@ class Repository2 {
 // Create a generic class Storage that accepts a type parameter with a default of any.
 // Implement methods to add and retrieve items.
 class Storage3 {
-    constructor() {
-        this.items = [];
-    }
+    items = [];
     add(item) {
         this.items.push(item);
     }

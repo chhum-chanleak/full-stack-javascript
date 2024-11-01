@@ -11,9 +11,7 @@
 // peek(): T | undefined: Returns the last item without removing it.
 // isEmpty(): boolean: Checks if the stack is empty.
 class Stack {
-    constructor() {
-        this.items = [];
-    }
+    items = [];
     push(item) {
         this.items.push(item);
     }
@@ -40,6 +38,8 @@ numberStack.isEmpty();
 // getSecond(): T2: Returns the second value.
 // swap(): Pair<T2, T1>: Swaps the first and second values, returning a new Pair with reversed types.
 class Pair {
+    _firstValue;
+    _secondValue;
     constructor(firstValue, secondValue) {
         this._firstValue = firstValue;
         this._secondValue = secondValue;
@@ -58,7 +58,10 @@ class Pair {
 }
 const pair = new Pair("2", 3);
 const merge = (obj1, obj2) => {
-    return Object.assign(Object.assign({}, obj1), obj2);
+    return {
+        ...obj1,
+        ...obj2,
+    };
 };
 const objA = { name: "Alice", age: 25 };
 const objB = { name: "Bob", city: "New York" };
@@ -88,9 +91,7 @@ const samePrice = compareByProperty(product1, product3, "price");
 // Create a generic class Repository that can store and manage objects of any type.
 // Implement methods for adding, retrieving, and listing items.
 class Repository {
-    constructor() {
-        this.items = [];
-    }
+    items = [];
     add(obj) {
         this.items.push(obj);
     }
@@ -112,9 +113,7 @@ const user3 = { id: 3, name: "Bo" }; // Yes
 // Create a generic class Storage that accepts a type parameter with a default of any.
 // Implement methods to add and retrieve items.
 class Storage2 {
-    constructor() {
-        this.items = [];
-    }
+    items = [];
     get retrieve() {
         return this.items;
     }
