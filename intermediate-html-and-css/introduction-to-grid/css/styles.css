@@ -1,7 +1,7 @@
 .grid-container {
-  display: grid;
-  grid-template-columns: 75px 75px 75px;
-  grid-template-rows: 75px 75px;
+  display: grid; /* Enabling grid */
+  grid-template-columns: 75px 75px 75px; /* three columns */
+  grid-template-rows: 75px 75px; /* two rows */
   gap: 32px;
 
   & .card {
