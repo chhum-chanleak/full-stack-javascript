@@ -1,0 +1,13 @@
+.container {
+  display: grid;
+  grid-template-columns: 100px 50px;
+  grid-template-rows: 100px 25px;
+  grid-auto-rows: 50px;
+  grid-template-areas: 
+    "top1 top2"
+    "bottom1 bottom2";
+
+  & > div {
+    border: 1px solid rgb(149, 149, 7);
+  }
+}
