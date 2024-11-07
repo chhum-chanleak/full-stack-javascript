@@ -1,0 +1,582 @@
+/* Global rules */
+*,
+*::before,
+*::after {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  line-height: 1.5;
+}
+body {
+  display: flex;
+  flex-flow: column nowrap;
+  gap: 2rem;
+}
+
+.item {
+  border: 2px solid #8e0d0d;
+}
+
+/*
+1. Setting up a grid
+To set up a ''CSS grid'', you need to:
+Define a container element as a grid with 'display: grid'.
+Use 'grid-template-columns' and 'grid-template-rows' to specify the number and size of rows and columns.
+
+Exercise: Create a Responsive Layout
+Let's create a responsive grid layout that adapts to the screen size. Try the following exercise:
+
+Create a container with a grid of items.
+Set it up so that:
+On large screens, it displays as 4 columns.
+On medium screens, it displays as 2 columns.
+On small screens, it displays as a single column.
+*/
+.setting-up-container {
+  display: grid;
+
+  & > .item {
+    background-color: #dc7777;
+  }
+}
+
+  /* Grid layout for large screens */
+  @media (min-width: 992px) {
+    .setting-up-container {
+      grid-template: repeat(2, 1fr) / repeat(4, 1fr);
+    }
+  }
+
+  /* Grid layout for medium screens */
+  @media (min-width: 768px) and (max-width: 991px) {
+    .setting-up-container {
+      grid-template: repeat(4, 1fr)/ repeat(2, 1fr);
+    }
+  }
+
+  /* Grid layout for small screens */
+  @media (max-width: 767px) {
+    .setting-up-container {
+      grid-template: repeat(7, 1fr) / repeat(1, 1fr);
+      grid-auto-rows: 100px;
+    }
+  }
+
+/*
+2. Fixed and flexible track sizes
+'CSS Grid' offers flexible control over the sizing of grid tracks (rows and columns), allowing you to create layouts with both fixed and flexible sizes. Let’s go over an exercise to practice using fixed and flexible track sizes.
+
+Exercise: Create a layout that resembles a sidebar layout with a fixed-width sidebar and a flexible main content area. Here’s the task:
+Define a grid with two columns:
+The first column should be 250px wide (fixed).
+The second column should take up the remaining space (flexible).
+Define rows where:
+The header and footer are 100px high (fixed).
+The main content area takes up the remaining space (flexible).
+*/
+.fixed-and-flexible-container {
+  display: grid;
+  grid-template: repeat(1, 100px 1fr 1fr 100px) / repeat(1, 250px 1fr);
+
+  & > .item {
+    background-color: #ec1ebf;
+  }
+}
+
+/*
+3. Item placement
+'CSS Grid' allows you to control item placement in specific grid cells, spanning multiple rows or columns as needed. Let’s look at an exercise to practice placing grid items in specific positions.
+
+Exercise: Create a Dashboard Layout with 'CSS Grid'
+For this exercise, create a dashboard-style layout where grid items are placed in specific locations:
+Set up a 3x4 grid (3 rows, 4 columns).
+Place items in specific cells to form the following layout:
+Header: Spans all 4 columns in the first row.
+Sidebar: Spans the first column from the second row to the third row.
+Main Content: Spans columns 2 through 4 in the second row.
+Footer: Spans columns 2 through 4 in the third row.
+*/
+.dashboard-container {
+  display: grid;
+  grid-template: repeat(2, 1fr) / repeat(4, 1fr);
+
+  & > .item {
+    background-color: rgb(4, 143, 143);
+  }
+
+  & > .item:nth-child(1) {
+    grid-column: span 4;
+
+  }
+
+  & > .item:nth-child(2) {
+    grid-row: span 2;
+  }
+
+  & > .item:nth-child(3) {
+    grid-column: span 3;
+  }
+
+  & > .item:nth-child(4) {
+    grid-column: span 3;
+  }
+}
+
+/*
+4. Creation of additional tracks to hold content 
+'CSS Grid' can automatically create additional tracks when you place items outside the initially defined grid layout. This feature is helpful when you have content that doesn’t fit into the defined grid or want a dynamic grid that adjusts based on content placement. Let’s go through an exercise to demonstrate how this works.
+
+Exercise: Create a Responsive Layout with Implicit Tracks
+In this exercise, create a responsive layout that automatically adds new rows as items overflow the grid's initial configuration.
+Define a grid with 3 columns and 1 row.
+Place 6 items in the grid, allowing the grid to add new rows to accommodate them.
+Use 'grid-auto-rows' to set the height of these new rows.
+*/
+.additional-tracks-container {
+  display: grid;
+  grid-template: repeat(2, 1fr) / repeat(3, 1fr);
+  grid-auto-rows: 100px;
+
+  & > .item {
+    background-color: #82a407;
+  }
+}
+
+/*
+5. Alignment control
+In 'CSS Grid', you can control alignment both for the entire grid and for individual items. Alignment properties allow you to adjust the positioning of grid items within their grid areas, both horizontally and vertically.
+
+Exercise: Create a Centered Grid with Individual Item Alignment
+In this exercise, you’ll create a 2x3 grid where:
+The entire grid is centered both vertically and horizontally within the container.
+Each grid item is aligned differently within its grid area. 
+Instructions:
+Create a grid with 2 rows and 3 columns.
+Use 'justify-content' and 'align-content' to center the entire grid.
+Use 'justify-self' and 'align-self' to control the alignment of each item individually.
+*/
+.alignment-container {
+  display: grid;
+  grid-template: repeat(2, 100px) / repeat(3, 1fr);
+  justify-content: center;
+  align-content: center;
+  background-color: #aaa;
+
+  & > .item {
+    background-color: #124a9f;
+    border: 2px solid rgb(240, 90, 20);
+  }
+
+  & > .item:nth-child(1) {
+    justify-self: flex-start;
+  }
+
+  & > .item:nth-child(2) {
+    justify-self: center;
+  }
+
+  & > .item:nth-child(3) {
+    justify-self: flex-end;
+  }
+
+  & > .item:nth-child(4) {
+    align-self: flex-start;
+  }
+
+  & > .item:nth-child(5) {
+    align-self: center;
+  }
+
+  & > .item:nth-child(6) {
+    align-self: flex-end;
+  }
+}
+
+/*
+6. Control of overlapping content
+In 'CSS Grid', controlling overlapping content involves positioning items within the same grid area or in overlapping areas. By default, items will stack on top of each other based on their order in the HTML (later items on top). You can control which item appears in front using the 'z-index' property.
+
+Exercise: Create a Simple Overlapping Image and Text
+In this exercise, create a grid with an image and text that overlap each other.
+Instructions:
+Create a grid with one column and two rows.
+Place an image in the first row and a text box that overlaps it in the same grid area.
+Use 'z-index' to position the text box on top of the image. */
+.overlapping-container {
+  display: grid;
+  grid-template: 100px 100px / 1fr;
+  position: relative;
+  background-color: #aaa;
+
+  & img {
+    width: 100%;
+  }
+
+  & > .item:nth-child(1) {
+    grid-row: 1 / 3;
+    grid-column: 1 / 2;
+    z-index: 1;
+  }
+
+  & > .item:nth-child(2) {
+    grid-row: 1 / 3;
+    grid-column: 1 / 2;
+    z-index: 2;
+  }
+
+  & > .item:nth-child(2) > p:hover {
+    background-color: rgb(154, 5, 5);
+  }
+}
+
+/*
+7. The 'fr' unit
+The 'fr' (fractional) unit in 'CSS Grid' is a flexible unit that represents a fraction of the available space in the grid container. It's useful for creating flexible, responsive layouts without needing fixed pixel or percentage widths.
+
+Exercise: Responsive Layout with 'fr' Units
+In this exercise, create a responsive grid layout using 'fr' units:
+Instructions:
+Create a 3-column layout using 'fr' units.
+Set the first column to be twice as wide as the second and third columns.
+Make the grid automatically adjust its column sizes to fit the container width.
+*/
+.fr-container {
+  display: grid;
+  grid-template: 40px / repeat(1, 2fr 1fr 1fr);
+
+  & > .item {
+    background-color: #651e56;
+  }
+}
+
+/* 
+8. Unequal sizes
+In 'CSS Grid', you can create grids with unequal column or row sizes by mixing different units, like 'fr', 'px', '%', or 'auto'. This approach is useful for creating dynamic layouts with both fixed and flexible elements.
+
+Exercise: Create a Grid with Unequal Rows and Columns
+In this exercise, you will create a grid with both rows and columns of unequal sizes.
+Instructions:
+Set up a 2x3 grid (2 rows and 3 columns).
+Make the first row '150px' tall and the second row flexible using '1fr'.
+Make the first column '100px' wide, the second column '3fr', and the third column '1fr'. */
+.unequal-sizes-container {
+  display: grid;
+  grid-template: repeat(1, 150px 1fr) / repeat(1, 100px 3fr 1fr);
+
+  & > .item {
+    background-color: #05b80e;
+  }
+}
+
+/* 
+9. Track listings with 'repeat()' notation
+In CSS Grid, the repeat() notation is a shorthand for repeating a specific track size multiple times. It’s useful for creating grids with an equal distribution of tracks, or when you want a dynamic number of rows or columns without writing out each individual value.
+
+Exercise: Create a Grid with Multiple Rows and Columns Using 'repeat()'
+Now let’s create a 3x3 grid where each column is '1fr', and each row has a height of 'auto', depending on the content.
+Instructions:
+Create a grid with 3 rows and 3 columns.
+Use repeat() to define the columns, each taking 1 fraction of the available space.
+Set the row heights to 'auto' to adjust based on the content. 
+*/
+.track-listings-container {
+  display: grid;
+  grid-template: repeat(3, auto) / repeat(3, 1fr);
+
+  & > .item {
+    background: #df059d;
+  }
+}
+
+/* 
+10. Track sizing and minmax
+The 'minmax()' function in 'CSS Grid' allows you to set a track size that has both a 'minimum' and a 'maximum' value. This is useful when you want to create responsive layouts where track sizes can grow or shrink based on the available space but also don't get smaller than a specific value.
+
+Exercise: Create a Grid with Rows Using minmax()
+In this exercise, you will create a grid with flexible rows using minmax(). The rows should have a minimum height of '100px' and a maximum height of '200px'. This is useful when you want the grid rows to adjust their height based on the content but remain within a specific range.
+Instructions:
+Create a 2-column grid.
+The columns should be equally distributed.
+The rows should have a minimum height of '100px' and a maximum height of '200px'.
+Add some content in each grid item to see the behavior of the minmax() function in action. 
+*/
+.minmax-container {
+  display: grid;
+  grid-template: repeat(4, minmax(100px, 200px)) / repeat(2, 1fr);
+
+  & > .item {
+    background: #bdb108;
+  }
+}
+
+/* 
+11. Positioning items against lines
+In 'CSS Grid', you can position grid items against specific lines in the grid using 'line-based' positioning. This allows you to place items explicitly by specifying the starting and ending grid lines, offering great control over the layout.
+
+Exercise: Position Items Against Grid Lines in a 3x3 Grid
+Now, let's create a 3x3 grid and position multiple items against specific grid lines.
+Instructions:
+Create a 3x3 grid (3 rows and 3 columns).
+Place the first item to span the first row and first two columns.
+Place the second item to occupy the last column in the last row.
+Place the third item to span the second and third rows in the second column.
+Adjust the positioning of the grid items using grid lines. 
+*/
+.against-line-container {
+  display: grid;
+  grid-template: repeat(3, 1fr) / repeat(3, 1fr);
+
+  & > .item {
+    background: #ef7e06;
+  }
+
+  & > .item:nth-child(1) {
+    grid-column: 1 / 3;
+  }
+
+  & > .item:nth-child(2) {
+    grid-row: 3 / 4;
+    grid-column: 3 / 4;
+  }
+
+  & > .item:nth-child(3) {
+    grid-row: 2 / 4;
+    grid-column: 2 / 3;
+  }
+}
+
+/* 12. Line-positioning shorthands
+'CSS Grid' also provides shorthand notations for 'line-based' positioning. Instead of using 'grid-column' and 'grid-row' with separate start and end lines, you can use the shorthand form for easier and more concise positioning.
+
+Exercise: Create a Grid Using Line-Positioning Shorthands
+Now, let's create a grid and position multiple items using the shorthand syntax for line-based positioning.
+Instructions:
+Create a 4x4 grid (4 rows and 4 columns).
+Position:
+The first item should span from row 1 to 2, and from column 1 to 3.
+The second item should span from row 2 to 4, and from column 2 to 4.
+The third item should span from row 1 to 3, and from column 3 to 5.
+Use the shorthand grid property to position the items. 
+*/
+.positioning-shorthands-container {
+  display: grid;
+  grid-template: repeat(4, 1fr) / repeat(4, 1fr);
+
+  & > .item {
+    background: #670366;
+  }
+
+  & > .item:nth-child(1) {
+    grid-row: 1 / span 2;
+    grid-column: 1 / span 3;
+  }
+
+  & > .item:nth-child(2) {
+    grid-row: 2 / span 3;
+    grid-column: 2 / span 3;
+  }
+
+  & > .item:nth-child(3) {
+    grid-row: 1 / span 3;
+    grid-column: 3 / span 3;
+  }
+}
+
+/* 
+13. Nesting grids
+Nesting grids in CSS involves placing a grid container within a grid item of a parent grid. This can help create complex layouts where a grid item itself needs further division into sub-items.
+
+Exercise:
+Create the main parent grid with 4 items, laid out in a 2x2 grid.
+Nest a grid inside one of the parent grid items.
+Style the nested grid to have its own set of sub-items.
+Try changing the number of columns or rows in the nested grid to see how the layout adapts.
+Experiment with different grid-template-columns and grid-template-rows values in the nested grid.
+Add more nested levels or use other styling techniques, such as grid-area, for more complex layouts.
+*/
+.nesting-grid-container {
+  display:  grid;
+  grid-template: repeat(2, 1fr) / repeat(2, 1fr);
+
+  & > .item {
+    background: #f00;
+  }
+
+  & > .item:nth-child(2) {
+    display: grid;
+    grid-template: repeat(2, 1fr) / repeat(2, 1fr);
+
+    & > .item {
+      color: #fff;
+    }
+
+    & > .item:nth-child(3) {
+      display: grid;
+      grid-template: repeat(2, 1fr) / repeat(2, 1fr);
+      color: #00f;
+
+      & > .item:nth-child(3) {
+        color: #0f0;
+        grid-area: 1 / 1 / 3 / 3;
+      }
+    }
+  }
+}
+
+/*
+14. Nesting without 'subgrid'
+When using nested grids without the 'subgrid' feature, each grid container acts independently, so you'll need to define layouts for both parent and child grids separately. Here’s an exercise to practice nesting grids without the 'subgrid' feature:
+
+Exercise:
+Create a layout where a parent grid contains several items, and one of these items has a nested grid that follows its own independent layout.
+Set up the parent grid to have a few items.
+Nest a grid inside one of these items and design its layout separately.
+Style the parent and nested grids to make them visually distinct.
+Modify the number of columns or rows in the nested grid to create different layouts.
+Adjust 'the grid-template-columns' and 'grid-template-row's values in both grids.
+Add more nested grids or style the nested items differently to explore more complex nesting. 
+*/
+.nesting-without-subgrid-container {
+  display: grid;
+  grid-template: repeat(4, 150px) / repeat(2, 1fr);
+
+  & > .item {
+    background: #4dbe06;
+  }
+
+  & > .item:nth-child(even) {
+    background: #00f;
+  }
+
+  & > .item:nth-child(4) {
+    display: grid;
+    color: #fff;
+    background: #f00;
+    grid-template: repeat(3, 1fr) / repeat(2, 1fr);
+
+    & > .item:nth-child(2) {
+      display: grid;
+      grid-template: repeat(2, 1fr) / repeat(2, 1fr);
+      color: #000;
+      background: #0f0;
+    }
+  }
+}
+
+/*
+15. 'Subgrid' (inherit layout)
+The 'subgrid' feature in CSS Grid allows a nested grid to inherit the column and/or row structure from its parent grid. This is useful for maintaining consistent alignments across nested grids.
+
+Exercise:
+Create a layout where a parent grid has multiple items, and one of those items contains a 'subgrid' that aligns its rows and columns with the parent grid.
+Set up the parent grid with defined columns and rows.
+Create a 'subgrid' inside one of the parent grid items.
+Style both the parent grid and the 'subgrid' for visual clarity.
+Modify the parent grid's grid-template-columns or grid-template-rows to see how the 'subgrid' reacts.
+Add more content or nested 'subgrids' to explore how 'subgrids' behave when layered.
+Experiment with different 'grid-column' and 'grid-row' placements for the .'subgrid' item to see how it integrates with the overall layout.
+*/
+.subgrid-container {
+  display: grid;
+  grid-template: repeat(2, 240px) / repeat(4, 1fr);
+
+  & > .item {
+    background: #f00;
+  }
+
+  & > .item:nth-child(6) {
+    display: grid;
+    background: #0f0;
+    color: #fff;
+    grid-template: repeat(2, 1fr) / repeat(4, 1fr);
+  }
+}
+
+/* 
+16. Layering items with 'z-index'
+Using z-index in CSS Grid allows you to control the stacking order of grid items when they overlap. This is useful when you want to create layered designs where certain elements appear on top of others.
+
+Exercise:
+Create a grid layout where items overlap, and use z-index to control the layering of these items.
+Set up a basic grid layout.
+Position items to overlap.
+Apply z-index to control which items appear on top.
+Modify the z-index values to see how the layering changes.
+Experiment with different grid positions and z-index values to create more complex layering effects.
+Add more items with different z-index values to see how multiple layers can be managed. 
+*/
+.layering-items-with-zindex-container {
+  display: grid;
+  grid-template: repeat(2, 1fr) / repeat(4, 1fr);
+
+  & > .item {
+    background: #00f;
+  }
+
+   & > .item:nth-child(1), .item:nth-child(2) {
+   /*{ Make child 1 and 2 overlap at grid-row: 1 / 2; */
+    grid-row: 1 / 2;
+  }
+
+  & > .item:nth-child(1) {
+    grid-column: 1 / 3;
+    z-index: 2;
+  }
+
+  & > .item:nth-child(2) {
+    grid-column: 3 / -5;
+    z-index: 3;
+  }
+
+  & > .item:nth-child(3), .item:nth-child(4) {
+    grid-column: -3 / -1;
+  }
+
+  & > .item:nth-child(3) {
+    grid-row: -2 / -1;
+    z-index: 1;
+  }
+
+  & .item:nth-child(4) {
+    grid-row: -2 / -1;
+
+  }
+
+  & .item:nth-child(7), .item:nth-child(8) {
+    grid-column: -5 / -3;
+  }
+
+  & .item:nth-child(7) {
+    grid-row: -2 / -1;
+  }
+
+  & .item:nth-child(8) {
+    grid-row: -2 / -1;
+  }
+}
+
+/* 
+17. Controlling the 'order'
+Controlling the 'order' of grid items in 'CSS Grid' can be done using the 'order' property, even though it’s more commonly associated with Flexbox. While CSS Grid naturally places items based on their 'order' in the source code and their placement with grid-column and grid-row, you can use the 'order' property to change the visual stacking 'order' without changing the HTML structure.
+
+Exercise: Objective: Create a grid layout and reorder the items using the 'order' property.
+Experiment with negative 'order' values to place items even before items with the default 'order' of 0.
+Mix grid-column and grid-row properties with the 'order' property to see how placement and stacking 'order' interact.
+Use dynamic ordering: Add buttons or interactions using JavaScript to change the 'order' property of items dynamically.
+*/
+.order-container {
+  display: grid;
+
+  & > .item {
+    background: #f00;
+  }
+
+  /* Lower values appear before the ones of higher values. */
+  & > .item:nth-child(odd){
+    order: -1;
+  }
+
+  & > .item:nth-child(even) {
+    order: -2;
+  }
+}
