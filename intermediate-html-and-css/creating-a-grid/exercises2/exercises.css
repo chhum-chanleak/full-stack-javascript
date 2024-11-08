@@ -19,7 +19,7 @@ body {
 
 /*
 1. Setting up a grid
-To set up a ''CSS grid'', you need to:
+To set up a 'CSS grid', you need to:
 Define a container element as a grid with 'display: grid'.
 Use 'grid-template-columns' and 'grid-template-rows' to specify the number and size of rows and columns.
 
@@ -34,33 +34,29 @@ On small screens, it displays as a single column.
 */
 .setting-up-container {
   display: grid;
+  background: #f00;
+}
 
-  & > .item {
-    background-color: #dc7777;
+/* Grid layout for large screens */
+@media (min-width: 992px) {
+  .setting-up-container {
+    grid-template: repeat(2, 1fr) / repeat(4, 1fr);
   }
 }
 
-  /* Grid layout for large screens */
-  @media (min-width: 992px) {
-    .setting-up-container {
-      grid-template: repeat(2, 1fr) / repeat(4, 1fr);
-    }
+/* Grid layout for medium screens */
+@media (min-width: 768px) and (max-width: 991px) {
+  .setting-up-container {
+    grid-template: repeat(4, 1fr) / repeat(2, 1fr);
   }
+}
 
-  /* Grid layout for medium screens */
-  @media (min-width: 768px) and (max-width: 991px) {
-    .setting-up-container {
-      grid-template: repeat(4, 1fr)/ repeat(2, 1fr);
-    }
+/* Grid layout for small screens */
+@media (max-width: 767px) {
+  .setting-up-container {
+    grid-template-columns: repeat(1, 1fr);
   }
-
-  /* Grid layout for small screens */
-  @media (max-width: 767px) {
-    .setting-up-container {
-      grid-template: repeat(7, 1fr) / repeat(1, 1fr);
-      grid-auto-rows: 100px;
-    }
-  }
+}
 
 /*
 2. Fixed and flexible track sizes
@@ -76,10 +72,16 @@ The main content area takes up the remaining space (flexible).
 */
 .fixed-and-flexible-container {
   display: grid;
-  grid-template: repeat(1, 100px 1fr 1fr 100px) / repeat(1, 250px 1fr);
+  grid-template: repeat(1, 100px 1fr 100px) / repeat(1, 250px 1fr);
+  background: #0f0;
 
-  & > .item {
-    background-color: #ec1ebf;
+  & > .item:nth-child(2) {
+    grid-row: 1 / 4;
+  }
+
+  & > .item:nth-child(4) {
+    grid-row: 3 / 4;
+    grid-column: 2 / 3;
   }
 }
 
@@ -98,27 +100,23 @@ Footer: Spans columns 2 through 4 in the third row.
 */
 .dashboard-container {
   display: grid;
-  grid-template: repeat(2, 1fr) / repeat(4, 1fr);
-
-  & > .item {
-    background-color: rgb(4, 143, 143);
-  }
+  grid-template: repeat(3, 1fr) / repeat(4, 1fr);
+  background: #00f;
 
   & > .item:nth-child(1) {
-    grid-column: span 4;
-
+    grid-column: 1 / 5;
   }
 
   & > .item:nth-child(2) {
-    grid-row: span 2;
+    grid-row: 2 / 4;
   }
 
   & > .item:nth-child(3) {
-    grid-column: span 3;
+    grid-column: 2 / 5;
   }
 
   & > .item:nth-child(4) {
-    grid-column: span 3;
+    grid-column: -4 / -1;
   }
 }
 
@@ -126,7 +124,7 @@ Footer: Spans columns 2 through 4 in the third row.
 4. Creation of additional tracks to hold content 
 'CSS Grid' can automatically create additional tracks when you place items outside the initially defined grid layout. This feature is helpful when you have content that doesn’t fit into the defined grid or want a dynamic grid that adjusts based on content placement. Let’s go through an exercise to demonstrate how this works.
 
-Exercise: Create a Responsive Layout with Implicit Tracks
+Exercise: Create a Responsive Layout with 'Implicit Tracks'
 In this exercise, create a responsive layout that automatically adds new rows as items overflow the grid's initial configuration.
 Define a grid with 3 columns and 1 row.
 Place 6 items in the grid, allowing the grid to add new rows to accommodate them.
@@ -134,12 +132,9 @@ Use 'grid-auto-rows' to set the height of these new rows.
 */
 .additional-tracks-container {
   display: grid;
-  grid-template: repeat(2, 1fr) / repeat(3, 1fr);
-  grid-auto-rows: 100px;
-
-  & > .item {
-    background-color: #82a407;
-  }
+  background: #f00;
+  grid-template: repeat(1, 1fr) / repeat(3, 1fr);
+  grid-auto-rows: 50px;
 }
 
 /*
@@ -148,24 +143,15 @@ In 'CSS Grid', you can control alignment both for the entire grid and for indivi
 
 Exercise: Create a Centered Grid with Individual Item Alignment
 In this exercise, you’ll create a 2x3 grid where:
-The entire grid is centered both vertically and horizontally within the container.
 Each grid item is aligned differently within its grid area. 
 Instructions:
 Create a grid with 2 rows and 3 columns.
-Use 'justify-content' and 'align-content' to center the entire grid.
 Use 'justify-self' and 'align-self' to control the alignment of each item individually.
 */
 .alignment-container {
   display: grid;
+  background: #0f0;
   grid-template: repeat(2, 100px) / repeat(3, 1fr);
-  justify-content: center;
-  align-content: center;
-  background-color: #aaa;
-
-  & > .item {
-    background-color: #124a9f;
-    border: 2px solid rgb(240, 90, 20);
-  }
 
   & > .item:nth-child(1) {
     justify-self: flex-start;
@@ -204,28 +190,21 @@ Place an image in the first row and a text box that overlaps it in the same grid
 Use 'z-index' to position the text box on top of the image. */
 .overlapping-container {
   display: grid;
-  grid-template: 100px 100px / 1fr;
-  position: relative;
-  background-color: #aaa;
+  background: #00f;
+  grid-template: repeat(2, 1fr) / repeat(1, 1fr);
 
-  & img {
-    width: 100%;
+  & > .item:nth-child(-n + 2) { /* (-n + 2) means n is less than or equal to 2. */
+    grid-row: 1 / 2;
   }
 
   & > .item:nth-child(1) {
-    grid-row: 1 / 3;
     grid-column: 1 / 2;
     z-index: 1;
   }
 
   & > .item:nth-child(2) {
-    grid-row: 1 / 3;
     grid-column: 1 / 2;
     z-index: 2;
-  }
-
-  & > .item:nth-child(2) > p:hover {
-    background-color: rgb(154, 5, 5);
   }
 }
 
@@ -242,11 +221,8 @@ Make the grid automatically adjust its column sizes to fit the container width.
 */
 .fr-container {
   display: grid;
-  grid-template: 40px / repeat(1, 2fr 1fr 1fr);
-
-  & > .item {
-    background-color: #651e56;
-  }
+  background: #f00;
+  grid-template-columns: repeat(1, 2fr 1fr 1fr);
 }
 
 /* 
@@ -262,10 +238,7 @@ Make the first column '100px' wide, the second column '3fr', and the third colum
 .unequal-sizes-container {
   display: grid;
   grid-template: repeat(1, 150px 1fr) / repeat(1, 100px 3fr 1fr);
-
-  & > .item {
-    background-color: #05b80e;
-  }
+  background: #0f0;
 }
 
 /* 
@@ -282,10 +255,7 @@ Set the row heights to 'auto' to adjust based on the content.
 .track-listings-container {
   display: grid;
   grid-template: repeat(3, auto) / repeat(3, 1fr);
-
-  & > .item {
-    background: #df059d;
-  }
+  background: #00f;  
 }
 
 /* 
@@ -293,20 +263,18 @@ Set the row heights to 'auto' to adjust based on the content.
 The 'minmax()' function in 'CSS Grid' allows you to set a track size that has both a 'minimum' and a 'maximum' value. This is useful when you want to create responsive layouts where track sizes can grow or shrink based on the available space but also don't get smaller than a specific value.
 
 Exercise: Create a Grid with Rows Using minmax()
-In this exercise, you will create a grid with flexible rows using minmax(). The rows should have a minimum height of '100px' and a maximum height of '200px'. This is useful when you want the grid rows to adjust their height based on the content but remain within a specific range.
+In this exercise, you will create a grid with flexible rows using 'minmax'(). The rows should have a minimum height of '100px' and a maximum height of '200px'. This is useful when you want the grid rows to adjust their height based on the content but remain within a specific range.
 Instructions:
 Create a 2-column grid.
 The columns should be equally distributed.
-The rows should have a minimum height of '100px' and a maximum height of '200px'.
+The rows should have a minimum height of '100px' and a maximum height of 'auto'.
 Add some content in each grid item to see the behavior of the minmax() function in action. 
 */
 .minmax-container {
   display: grid;
-  grid-template: repeat(4, minmax(100px, 200px)) / repeat(2, 1fr);
-
-  & > .item {
-    background: #bdb108;
-  }
+  background: #f00;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(4, minmax(100px, auto));
 }
 
 /* 
@@ -325,18 +293,15 @@ Adjust the positioning of the grid items using grid lines.
 .against-line-container {
   display: grid;
   grid-template: repeat(3, 1fr) / repeat(3, 1fr);
-
-  & > .item {
-    background: #ef7e06;
-  }
+  background: #0f0;
 
   & > .item:nth-child(1) {
     grid-column: 1 / 3;
   }
 
   & > .item:nth-child(2) {
-    grid-row: 3 / 4;
-    grid-column: 3 / 4;
+    grid-row: -1 / -2;
+    grid-column: -2 / -1;
   }
 
   & > .item:nth-child(3) {
@@ -360,25 +325,22 @@ Use the shorthand grid property to position the items.
 */
 .positioning-shorthands-container {
   display: grid;
+  background: #00f;
   grid-template: repeat(4, 1fr) / repeat(4, 1fr);
 
-  & > .item {
-    background: #670366;
-  }
-
   & > .item:nth-child(1) {
-    grid-row: 1 / span 2;
-    grid-column: 1 / span 3;
+    grid-row: 1 / 3;
+    grid-column: 1 / 4;
   }
 
   & > .item:nth-child(2) {
-    grid-row: 2 / span 3;
-    grid-column: 2 / span 3;
+    grid-row: 2 / 5;
+    grid-column: 2 / 5;
   }
 
   & > .item:nth-child(3) {
-    grid-row: 1 / span 3;
-    grid-column: 3 / span 3;
+    grid-row: 1 / 4;
+    grid-column: 3 / 6;
   }
 }
 
@@ -391,34 +353,23 @@ Create the main parent grid with 4 items, laid out in a 2x2 grid.
 Nest a grid inside one of the parent grid items.
 Style the nested grid to have its own set of sub-items.
 Try changing the number of columns or rows in the nested grid to see how the layout adapts.
-Experiment with different grid-template-columns and grid-template-rows values in the nested grid.
+Experiment with different 'grid-template-columns' and 'grid-template-rows' values in the nested grid.
 Add more nested levels or use other styling techniques, such as grid-area, for more complex layouts.
 */
 .nesting-grid-container {
-  display:  grid;
+  display: grid;
+  background: #f00;
   grid-template: repeat(2, 1fr) / repeat(2, 1fr);
-
-  & > .item {
-    background: #f00;
-  }
 
   & > .item:nth-child(2) {
     display: grid;
-    grid-template: repeat(2, 1fr) / repeat(2, 1fr);
-
-    & > .item {
-      color: #fff;
-    }
+    background: #0f0;
+    grid-template: repeat(2, 1fr) / repeat(3, 1fr);
 
     & > .item:nth-child(3) {
       display: grid;
-      grid-template: repeat(2, 1fr) / repeat(2, 1fr);
-      color: #00f;
-
-      & > .item:nth-child(3) {
-        color: #0f0;
-        grid-area: 1 / 1 / 3 / 3;
-      }
+      background: #00f;
+      grid-template: 1fr / repeat(3, 1fr);
     }
   }
 }
@@ -438,34 +389,24 @@ Add more nested grids or style the nested items differently to explore more comp
 */
 .nesting-without-subgrid-container {
   display: grid;
-  grid-template: repeat(4, 150px) / repeat(2, 1fr);
-
-  & > .item {
-    background: #4dbe06;
-  }
-
-  & > .item:nth-child(even) {
-    background: #00f;
-  }
+  background: #f00;
+  grid-template: repeat(2, 1fr) / repeat(4, 1fr);
 
   & > .item:nth-child(4) {
     display: grid;
-    color: #fff;
-    background: #f00;
-    grid-template: repeat(3, 1fr) / repeat(2, 1fr);
+    background: #0f0;
+    grid-template: repeat(4, 1fr) / repeat(2, 1fr);
 
     & > .item:nth-child(2) {
       display: grid;
-      grid-template: repeat(2, 1fr) / repeat(2, 1fr);
-      color: #000;
-      background: #0f0;
+      background: #00f;
+      grid-template-columns: repeat(4, 1fr);   
     }
   }
 }
 
 /*
-15. 'Subgrid' (inherit layout)
-The 'subgrid' feature in CSS Grid allows a nested grid to inherit the column and/or row structure from its parent grid. This is useful for maintaining consistent alignments across nested grids.
+15. The 'subgrid' feature in CSS Grid allows a nested grid (child grid) to align its columns or rows with the grid tracks defined by its parent grid. This is useful for creating complex layouts where nested items need to be aligned with the overall grid structure of the parent.
 
 Exercise:
 Create a layout where a parent grid has multiple items, and one of those items contains a 'subgrid' that aligns its rows and columns with the parent grid.
@@ -478,80 +419,62 @@ Experiment with different 'grid-column' and 'grid-row' placements for the .'subg
 */
 .subgrid-container {
   display: grid;
-  grid-template: repeat(2, 240px) / repeat(4, 1fr);
-
-  & > .item {
-    background: #f00;
-  }
+  background: #f00;
+  grid-template: repeat(2, 1fr) / repeat(4, 1fr);
 
   & > .item:nth-child(6) {
     display: grid;
     background: #0f0;
-    color: #fff;
-    grid-template: repeat(2, 1fr) / repeat(4, 1fr);
+    grid-template-rows: subgrid;
   }
 }
 
 /* 
 16. Layering items with 'z-index'
-Using z-index in CSS Grid allows you to control the stacking order of grid items when they overlap. This is useful when you want to create layered designs where certain elements appear on top of others.
+Using 'z-index' in CSS Grid allows you to control the stacking order of grid items when they overlap. This is useful when you want to create layered designs where certain elements appear on top of others.
 
 Exercise:
-Create a grid layout where items overlap, and use z-index to control the layering of these items.
+Create a grid layout where items overlap, and use 'z-index' to control the layering of these items.
 Set up a basic grid layout.
 Position items to overlap.
-Apply z-index to control which items appear on top.
-Modify the z-index values to see how the layering changes.
-Experiment with different grid positions and z-index values to create more complex layering effects.
-Add more items with different z-index values to see how multiple layers can be managed. 
+Apply 'z-index' to control which items appear on top.
+Modify the 'z-index' values to see how the layering changes.
+Experiment with different grid positions and 'z-index' values to create more complex layering effects.
+Add more items with different 'z-index' values to see how multiple layers can be managed. 
 */
 .layering-items-with-zindex-container {
   display: grid;
+  background: #00f;
   grid-template: repeat(2, 1fr) / repeat(4, 1fr);
-
-  & > .item {
-    background: #00f;
-  }
-
-   & > .item:nth-child(1), .item:nth-child(2) {
-   /*{ Make child 1 and 2 overlap at grid-row: 1 / 2; */
-    grid-row: 1 / 2;
-  }
 
   & > .item:nth-child(1) {
     grid-column: 1 / 3;
-    z-index: 2;
-  }
-
-  & > .item:nth-child(2) {
-    grid-column: 3 / -5;
-    z-index: 3;
-  }
-
-  & > .item:nth-child(3), .item:nth-child(4) {
-    grid-column: -3 / -1;
-  }
-
-  & > .item:nth-child(3) {
-    grid-row: -2 / -1;
     z-index: 1;
   }
 
-  & .item:nth-child(4) {
-    grid-row: -2 / -1;
-
+  & > .item:nth-child(2) {
+    grid-column: -3 / -1;
   }
 
-  & .item:nth-child(7), .item:nth-child(8) {
-    grid-column: -5 / -3;
+  & > .item:nth-child(-n + 2) {
+    background: #f00;
+    grid-row: 1 / 2;
+    grid-column: 1 / 3;
   }
 
-  & .item:nth-child(7) {
-    grid-row: -2 / -1;
+  & > .item:nth-child(7) {
+    grid-column: span 2;
   }
 
-  & .item:nth-child(8) {
-    grid-row: -2 / -1;
+  & > .item:nth-child(8) {
+    grid-column: span 2;
+    z-index: 1;
+  }
+
+  & > .item:nth-child(n + 7) {
+    background: #0f0;
+    grid-row: 2 / 3;
+    grid-column: -3 / -1;
   }
 }
 
@@ -566,17 +489,10 @@ Use dynamic ordering: Add buttons or interactions using JavaScript to change the
 */
 .order-container {
   display: grid;
+  grid-template: repeat(2, 1fr) / repeat(4, 1fr);
+  background: #00f;
 
-  & > .item {
-    background: #f00;
-  }
-
-  /* Lower values appear before the ones of higher values. */
-  & > .item:nth-child(odd){
+   & > .item:nth-child(even) { /* All even numbers appear first in order */
     order: -1;
-  }
-
-  & > .item:nth-child(even) {
-    order: -2;
   }
 }
