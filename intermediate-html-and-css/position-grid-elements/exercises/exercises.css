@@ -1,17 +1,98 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+  line-height: 1.5;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  gap: 4rem;
+}
+
 .item {
-  border: 1px solid #fff;
+  border: 2px solid #eb880f;
 }
 
-.container {
+/* 
+1. Using 'grid-template-areas':
+'grid-template-areas' is a CSS property used in a grid container to define a visual layout by naming areas of the grid. This allows you to create complex layouts with intuitive, readable code by specifying how grid items are placed using named areas.
+
+Exercise:
+Create a simple 3x3 CSS Grid layout with the following structure:
+Header | Header | Header
+Sidebar | Main   | Main
+Footer  | Footer | Footer
+*/
+.template-area-container {
   display: grid;
-  grid-template: repeat(2, 1fr) / repeat(2, 1fr);
   background: #f00;
-  row-gap: 1rem;
+  grid-template: repeat(3, 1fr) / repeat(3, 1fr);
+  grid-template-areas: "one one one" 
+                       "two three three" 
+                       "four four four";
 
-  & > .item1 {
+  & .item {
+    text-align: center;
   }
 
-  & > .item3 {
-    grid-column: 1 / -1;
+  & .item1 {
+    grid-column: one;
+  }
+
+  & .item2 {
+    grid-column: two;
+  }
+
+  & .item3 {
+    grid-column: three;
+  }
+
+  & .item4 {
+    grid-column: four;
   }
 }
+
+/* 
+2. Using the 'span' keyword:
+The 'span' keyword in CSS Grid is used to make grid items 'span' multiple rows or columns. This allows for greater flexibility in how grid items are placed and sized within the grid.
+
+Exercise: Create a CSS Grid Layout with the 'span' Keyword
+Create a 4x4 grid where:
+One item spans 2 columns.
+Another item spans 3 rows.
+*/
+
+
+
+/* 
+3. The two axis of a grid layout:
+In CSS Grid, the layout has two main axes:
+Main Axis: This is the horizontal axis, running from left to right across the grid. It is defined by grid-template-columns and can be aligned using properties like justify-items and justify-content.
+Cross Axis: This is the vertical axis, running from top to bottom across the grid. It is defined by grid-template-rows and can be aligned using properties like align-items and align-content.
+
+Exercise: Create a Grid Layout to Practice Main and Cross Axis Alignment
+Task:
+Create a 3x3 grid layout where:
+The items are aligned to the center of each axis.
+Use justify-items and align-items to control the alignment of items on the main and cross axes.
+
+*/
+
+/* 
+4. Aligning items on the Block Axis:
+In CSS Grid, aligning items on the block axis refers to aligning items vertically, based on the writing mode of the document. In most Western languages (top-to-bottom writing mode), the block axis runs from top to bottom, so it aligns items vertically.
+
+Exercise: Align Grid Items on the Block Axis
+Create a 3x3 grid and align the items in different ways along the block axis using align-items and align-self.
+*/
+/* Justifying Items on the Inline Axis */
+/* 'place-items', 'place-self' And 'place-content' Properties */
+/* Center an item in the area */
+/* Aligning the grid tracks on the block axis */
+/* Justifying the grid tracks on the inline axis */
+/* Alignment and auto margins */
+/* Alignment and Writing Modes */
