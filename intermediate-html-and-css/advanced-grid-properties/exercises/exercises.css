@@ -1,0 +1,88 @@
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  display: flex;;
+  flex-flow: column nowrap;
+  gap: 4rem;
+}
+
+/*
+1. 'resize' and 'overflow' properties:
+The 'resize' property in CSS allows you to control whether an element is resizable by the user, and if so, in which directions (horizontal, vertical, or both). The 'resize' property in CSS works in conjunction with the 'overflow' property. For the 'resize' property to take effect, the element must have an 'overflow' condition that allows it to scroll or extend beyond its normal bounds. This can be particularly useful for textareas, divs, or other elements where users might want to change the size dynamically.
+
+Exercise:
+Let's go through an exercise where we'll create a resizable textarea and style it with CSS. We’ll then apply different 'resize' property values to see the effects.
+*/
+.resize-container {
+  width: 80%;
+  background: #f00;
+  padding: 1rem;
+  resize: horizontal;
+  overflow: auto;
+  
+  & textarea {
+    border-radius: 4px;
+    resize: vertical;
+  }
+}
+
+/* 
+2. 'min-content' property:
+The 'min-content' value in CSS is used to control the minimum size of an element based on its content. When applied to properties like 'width', 'height', 'min-width', and 'min-height', it sets the minimum size of the element to be just large enough to fit its content without overflowing.
+
+Exercise: Using 'min-content' to Control Element Size
+Let’s create an exercise where we apply 'min-content' to a box and observe how it behaves.
+*/
+.min-content-container {
+  background: #0f0;
+  width: min-content;
+  resize: both;
+  overflow: auto;
+}
+
+/* 
+3. Minimum and maximum track sizes: min() and max():
+The min() and max() functions in CSS are useful when you want to set the minimum and maximum values for properties like width, height, padding, margins, or track sizes in a CSS grid or flexbox. These functions allow you to specify multiple values and choose the smallest or largest based on the conditions provided.
+
+Exercise: Using min() and max() for a Flexible Grid Layout
+Let's create a responsive grid layout where the column and row sizes are flexible, and we'll use min() and max() to control their minimum and maximum sizes.
+*/
+.min-max-container {
+  background: #00f;
+  display: grid;
+  grid-template: repeat(3, 1fr) / repeat(3, 1fr);
+  overflow: auto;
+  resize: both;
+
+  & > div {
+    border: 1px solid #ea7d08;
+    text-align: center;
+    width: min(50%, 100px); /* width cannot grow exceed 100px */
+  }
+
+  & .item2 {
+    width: max(50%, 300px);
+  }
+}
+
+/* 
+4. Sizing grid columns with 'min-content':
+In CSS Grid, the 'min-content' value can be used to size columns (or rows) based on the minimum size required by the content within them. This is particularly useful when you want the grid tracks (columns or rows) to shrink to the smallest size that can fit their content without causing overflow or wrapping.
+
+Exercise: Using 'min-content' to Size Grid Columns
+In this exercise, we'll create a CSS grid layout where one of the columns has a 'min-content' size. This will make that column size to the minimum width required to fit the content inside the grid items without overflowing.
+*/
+.min-content-for-grid-container {
+  display: grid;
+  grid-template: repeat(3, 1fr) / repeat(1, min-content 1fr 1fr);
+
+  & > div {
+    border: 1px solid #e9760a;
+  }
+}
