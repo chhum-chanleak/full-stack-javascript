@@ -81,8 +81,94 @@ In this exercise, we'll create a CSS grid layout where one of the columns has a 
 .min-content-for-grid-container {
   display: grid;
   grid-template: repeat(3, 1fr) / repeat(1, min-content 1fr 1fr);
+  background: #f00;
 
   & > div {
     border: 1px solid #e9760a;
+  }
+}
+
+/* 
+5. 'minmax()' function:
+The minmax() function in CSS Grid defines a grid track (row or column) with a minimum and maximum size. It’s particularly useful for creating responsive grids where tracks can expand or contract within certain constraints.
+
+Exercise: Create Your Own Responsive Grid
+Create a responsive grid that:
+Has 3 to 6 columns.
+Each column is at least 100px wide but can grow to fill the space.
+The grid items should have a background color, centered text, and some padding.
+*/
+
+.minmax-container {
+  background: #0f0;
+  display: grid;
+  grid-template: repeat(3, 1fr) / repeat(3, minmax(100px, 1fr));
+
+  & > div {
+    border: 1px solid #ff0;
+    text-align: center;
+    padding: 1rem;
+  }
+}
+
+/* 6. 'clamp()' function
+The clamp() function in CSS allows you to set a value that adjusts dynamically within a defined range of a minimum, preferred value, and maximum. It is incredibly useful for responsive design and ensures that a property stays within logical constraints.
+
+Exercise: Create a Responsive Card Layout
+Create a card component with:
+A font size that adjusts between 14px, 2vw, and 24px.
+Padding that adjusts between 10px, 1vw, and 30px.
+A width that adjusts between 300px, 50vw, and 600px.
+*/
+.clamp-container {
+  background: #00f;
+  display: grid;
+  grid-template: repeat(3, 1fr) / repeat(3, 1fr);
+  font-size: clamp(14px, 2vw, 24px);
+
+  & > div {
+    border: 1px solid #ff0;
+    width: clamp(300px, 50vw, 600px);
+  }
+}
+
+/* 7. 'auto-fit' property
+The 'auto-fit' keyword in CSS Grid is used with the repeat() function to create a flexible grid that adjusts the number of columns (or rows) based on the container's size. It’s perfect for responsive designs where the layout adapts gracefully to the viewport width.
+
+Exercise: Build a Responsive Gallery
+Create a responsive image gallery using CSS Grid with:
+Each image occupying a column that is at least 100px wide and grows to share the available space.
+Rows that adjust automatically based on the number of images.
+A gap of 10px between items.
+Use 'auto-fit' to ensure images adjust to the available space, and the layout collapses gracefully on smaller screens.
+*/
+.auto-fit-container {
+  background: #f00;
+  display: grid;
+  grid-template: repeat(3, 1fr) / repeat(auto-fit, minmax(100px, 1fr));
+
+  & > div {
+    border: 1px solid #ff0;
+  }
+}
+
+/* 
+8. 'auto-fill' property
+The 'auto-fill' property in CSS Grid is used with the repeat() function to create a grid that adapts the number of rows or columns based on the container size. Unlike 'auto-fit', 'auto-fill' leaves empty tracks in the grid when there is extra space, which can be useful in specific design scenarios.
+
+Exercise: Flexible Pricing Table
+Create a pricing table where:
+Each plan occupies at least 80px but can expand to fill the available space.
+Use auto-fill to create extra tracks for unfilled space.
+Include a gap of 15px between columns.
+Add three pricing cards with titles, prices, and descriptions.
+*/
+.auto-fill-container {
+  background: #0f0;
+  display: grid;
+  grid-template: repeat(3, 1fr) / repeat(auto-fill, minmax(80px, 1fr));
+
+  & > div {
+    border: 1px solid #ff0;
   }
 }

@@ -1,0 +1,16 @@
+.container {
+  resize: both; /* .container is horizontally and vertically resizable. */
+  display: grid;
+  grid-template: repeat(2, 100px) / repeat(5, minmax(100px, 300px));
+  gap: 4px;
+  border: 1px solid #f0f;
+  height: 300px;
+  overflow: auto;
+  padding: 1rem;
+  
+
+  & > div {
+    border: 1px solid #ff0;
+    text-align: center;
+  }
+}
