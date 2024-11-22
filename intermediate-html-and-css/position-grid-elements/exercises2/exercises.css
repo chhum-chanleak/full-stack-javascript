@@ -1,0 +1,232 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+  line-height: 1.5;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  gap: 4rem;
+}
+
+.item {
+  border: 2px solid #eb880f;
+}
+
+/* 
+1. Using 'grid-template-areas':
+'grid-template-areas' is a CSS property used in a grid container to define a visual layout by naming areas of the grid. This allows you to create complex layouts with intuitive, readable code by specifying how grid items are placed using named areas.
+
+Exercise:
+Create a simple 3x3 CSS Grid layout with the following structure:
+Header | Header | Header
+Sidebar | Main   | Main
+Footer  | Footer | Footer
+*/
+.template-area-container {
+  background: #f00;
+  display: grid;
+  grid-template: repeat(3, 1fr) / repeat(3, 1fr);
+  grid-template-areas: 
+    "Header Header Header"
+    "Sidebar Main Main"
+    "Footer Footer Footer";
+
+  & .item1 {
+    grid-area: Header;
+  }
+
+  & .item2 {
+    grid-area: Sidebar;
+  }
+
+  & .item3 {
+    grid-area: Main;
+  }
+
+  & .item4 {
+    grid-area: Footer;
+  }
+}
+
+/* 
+2. Using the 'span' keyword:
+The 'span' keyword in CSS Grid is used to make grid items 'span' multiple rows or columns. This allows for greater flexibility in how grid items are placed and sized within the grid.
+
+Exercise: Create a CSS Grid Layout with the 'span' Keyword
+Create a 4x4 grid where:
+One item spans 2 columns.
+Another item spans 3 rows.
+*/
+.span-container {
+  background: #0f0;
+  display: grid;
+  grid-template: repeat(4, 1fr) / repeat(4, 1fr);
+
+  & .item1 {
+    grid-column: span 2;
+  }
+
+  & .item3 {
+    grid-column: span 3;
+  }
+}
+
+/* 
+3. The two axis of a grid layout:
+In CSS Grid, the layout has two main axes:
+Main Axis: This is the horizontal axis, running from left to right across the grid. It is defined by 'grid-template-columns' and can be aligned using properties like 'justify-items' and 'justify-content'.
+Cross Axis: This is the vertical axis, running from top to bottom across the grid. It is defined by 'grid-template-rows' and can be aligned using properties like 'align-items' 'and align-content'.
+
+Exercise: Create a Grid Layout to Practice Main and Cross Axis Alignment
+Task:
+Create a 3x3 grid layout where:
+The items are aligned to the center of each axis.
+Use 'justify-items' and 'align-items' to control the alignment of items on the main and cross axes.
+*/
+.two-axis-container {
+  background: #00f;
+  display: grid;
+  grid-template: repeat(3, 100px) / repeat(3, 1fr);
+  justify-items: center;
+  align-items: center;
+}
+
+/* 
+4. Aligning items on the Block Axis:
+In CSS Grid, aligning items on the block axis refers to aligning items vertically, based on the writing mode of the document. In most Western languages (top-to-bottom writing mode), the block axis runs from top to bottom, so it aligns items vertically.
+
+Exercise: Align Grid Items on the Block Axis
+Create a 3x3 grid and align the items in different ways along the block axis using 'align-items' and 'align-self'.
+*/
+.block-axis-container {
+  background: #f00;
+  display: grid;
+  grid-template: repeat(3, 100px) / repeat(3, 1fr);
+
+  & > div:nth-child(-n + 3) {
+    align-self: center;
+  }
+
+  & > div:nth-child(n + 4):nth-child(-n + 6) {
+    align-self: flex-end;
+  }
+
+  & > div:nth-child(n + 7):nth-child(-n + 9) {
+    align-self: center;
+  }
+}
+
+/* 
+5. Justifying Items on the Inline Axis:
+In CSS Grid, justifying items on the inline axis refers to controlling how items are aligned within each row or column along the inline direction (usually left to right in languages like English).
+The 'justify-items' property is used to align grid items along the inline axis. It is particularly useful when you have multiple items in a grid and want to control how they are distributed or spaced within their respective grid cells.
+
+Exercise: Justifying Items in a CSS Grid
+You’ll create a simple 3x3 grid and use 'justify-items' to align the grid items in various ways along the inline axis.
+*/
+.inline-axis-container {
+  background: #0f0;
+  display: grid;
+  grid-template: repeat(3, 1fr) / repeat(3, 1fr);
+  justify-items: flex-end;
+}
+
+/* 
+6.'place-items', 'place-self' And 'place-content' Properties:
+In CSS Grid, the properties 'place-items', 'place-self', and 'place-content' are shorthand properties that help you quickly align and position grid items and content. These properties combine alignment properties for both the block (vertical) and inline (horizontal) axes.
+
+Exercise: Practice with 'place-items', 'place-self', and 'place-content'
+Create a grid layout where you’ll experiment with aligning items and grid content using the 'place-items', 'place-self', and 'place-content' properties.
+Use 'place-self' to align individual items differently from the rest (e.g., align the last item at the end of its cell).
+Experiment with 'place-items' using values like start, end, stretch, and center to see how they affect grid item positioning.
+*/
+.place-container {
+  background: #f00;
+  display: grid;
+  grid-template: repeat(3, 100px) / repeat(3, 1fr);
+  place-items: flex-end;
+
+  & > div:nth-child(-n + 3) {
+    place-self: flex-start;
+  }
+
+  & > div:nth-child(n + 4):nth-child(-n + 6) {
+    place-self: center;
+  }
+
+  & > div:nth-child(n + 7):nth-child(-n + 9) {
+    place-self: flex-start;
+  }
+}
+
+/* 
+7. Center an item in the area:
+In CSS Grid, you can easily center an item within a grid area by using alignment properties such as 'justify-self' and 'align-self' to control the positioning of grid items within their respective grid cells.
+
+Exercise:
+Create a 3x3 grid and center a specific grid item inside its assigned area. You will use the 'justify-self' and 'align-self' properties to position the item within its grid cell.
+Try creating a grid where the item spans multiple rows or columns (e.g., using grid-column and grid-row). Adjust the centering to make sure it stays centered within the larger area.
+Instead of using 'justify-self' and 'align-self' separately, you can use the shorthand 'place-items' on the grid container to center all items.
+Modify the grid to be responsive. For example, change the number of columns or adjust the size of the grid items based on screen size.
+*/
+.center-an-item-container {
+  background: #0f0;
+  display: grid;
+  grid-template: repeat(3, 1fr) / repeat(auto-fit, minmax(200px, 300px));
+
+  & > .item1 {
+    place-self: center;
+    grid-row: 1 / 3;
+    grid-column: 1 / -1;
+  }
+}
+
+/* 
+8. Aligning the grid tracks on the block axis:
+In CSS Grid, aligning the grid tracks (rows) on the block axis (vertical axis) can be done using properties like 'align-content' and 'justify-content'. These properties control how the entire grid is aligned within its container, and specifically, 'align-content' is used for vertical alignment of grid tracks.
+
+Exercise:
+Create a grid layout and experiment with aligning the grid tracks on the vertical axis. You will use the 'align-content' and 'align-items' properties to control how the entire grid (or individual items) are positioned in relation to the container.
+The 'align-content' property affects how the entire grid is aligned along the block axis (vertical direction). You can experiment with different values:
+*/
+.track-block-container {
+  background: #00f;
+  display: grid;
+  grid-template: repeat(3, 100px) / repeat(3, 1fr);
+  height: 500px;
+  align-content: center;
+  align-items: center;
+}
+
+/* 
+9. Justifying the grid tracks on the inline axis:
+In CSS Grid, justifying the grid tracks on the inline axis (horizontal axis) refers to how the entire grid is aligned horizontally within the container. You can achieve this using the 'justify-content' property. This property controls the space distribution between the grid tracks (columns) when the total width of the grid is less than the container’s width.
+
+Exercise:
+In this exercise, you'll experiment with the 'justify-content' property to control how grid tracks are aligned on the inline axis (horizontally). You'll also learn how the available space is distributed when the grid content is smaller than the grid container.
+*/
+.track-inline-container {
+  background: #f00;
+  display: grid;
+  grid-template: repeat(3, 100px) / repeat(3, 100px);
+  height: 500px;
+  justify-content: flex-end;
+}
+
+/* 
+10. Alignment and auto margins:
+In CSS Grid, you can align grid items within their grid cells using properties l'ike align-items', 'justify-items', 'align-self', and 'justify-self'. These properties are responsible for positioning items within the grid cells both vertically and horizontally. Additionally, auto margins (margin: auto) can be used to center grid items or push them to a specific position within their cells.
+
+Exercise: Building a Responsive Card Layout with CSS Grid
+In this exercise, you will create a responsive grid layout where the number of columns adjusts based on the screen size. Additionally, you'll use grid alignment and auto margins to control how the cards are aligned within their grid cells.
+*/
+.margin-auto-container {
+  background: #0f0;
+  display: grid;
+  grid-template: repeat(3, 1fr) / repeat(auto-fit, minmax(200px, 300px));
+}
