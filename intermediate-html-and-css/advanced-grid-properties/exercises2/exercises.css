@@ -17,17 +17,12 @@ body {
 The 'resize' property in CSS allows you to control whether an element is resizable by the user, and if so, in which directions (horizontal, vertical, or both). The 'resize' property in CSS works in conjunction with the 'overflow' property. For the 'resize' property to take effect, the element must have an 'overflow' condition that allows it to scroll or extend beyond its normal bounds. This can be particularly useful for textareas, divs, or other elements where users might want to change the size dynamically.
 
 Exercise:
-Let's go through an exercise where we'll create a resizable textarea and style it with CSS. We’ll then apply different 'resize' property values to see the effects.
+Let's go through an exercise where we'll create a resizable 'textarea' and style it with CSS. We’ll then apply different 'resize' property values to see the effects.
 */
 .resize-container {
-  width: 80%;
   background: #f00;
-  padding: 1rem;
-  resize: horizontal;
-  overflow: auto;
-  
+
   & textarea {
-    border-radius: 4px;
     resize: vertical;
   }
 }
@@ -42,8 +37,6 @@ Let’s create an exercise where we apply 'min-content' to a box and observe how
 .min-content-container {
   background: #0f0;
   width: min-content;
-  resize: both;
-  overflow: auto;
 }
 
 /* 
@@ -56,18 +49,12 @@ Let's create a responsive grid layout where the column and row sizes are flexibl
 .min-max-container {
   background: #00f;
   display: grid;
-  grid-template: repeat(3, 1fr) / repeat(3, 1fr);
-  overflow: auto;
+  grid-template: repeat(3, max(30%, 50px)) / repeat(3, min(20%, 200px));
   resize: both;
+  overflow: auto;
 
   & > div {
-    border: 1px solid #ea7d08;
-    text-align: center;
-    width: min(50%, 100px); /* width cannot grow exceed 100px */
-  }
-
-  & .item2 {
-    width: max(50%, 300px);
+    border: 1px solid #ff0;
   }
 }
 
@@ -79,12 +66,12 @@ Exercise: Using 'min-content' to Size Grid Columns
 In this exercise, we'll create a CSS grid layout where one of the columns has a 'min-content' size. This will make that column size to the minimum width required to fit the content inside the grid items without overflowing.
 */
 .min-content-for-grid-container {
-  display: grid;
-  grid-template: repeat(3, 1fr) / repeat(1, min-content 1fr 1fr);
   background: #f00;
+  display: grid;
+  grid-template: repeat(3, 1fr) / repeat(1, 1fr 1fr min-content);
 
   & > div {
-    border: 1px solid #e9760a;
+    border: 1px solid #ff0;
   }
 }
 
@@ -98,24 +85,23 @@ Has 3 to 6 columns.
 Each column is at least 100px wide but can grow to fill the space.
 The grid items should have a background color, centered text, and some padding.
 */
-
 .minmax-container {
   background: #0f0;
   display: grid;
   grid-template: repeat(3, 1fr) / repeat(3, minmax(100px, 1fr));
+  padding: 1rem;
 
   & > div {
     border: 1px solid #ff0;
-    text-align: center;
-    padding: 1rem;
+    text-align-last: center;
   }
 }
 
 /* 6. 'clamp()' function
 The clamp() function in CSS allows you to set a value that adjusts dynamically within a defined range of a minimum, preferred value, and maximum. It is incredibly useful for responsive design and ensures that a property stays within logical constraints.
 
-Exercise: Create a Responsive Card Layout
-Create a card component with:
+Exercise: Create a Responsive Grid Layout
+Create a 3x3 grid with:
 A font size that adjusts between 14px, 2vw, and 24px.
 Padding that adjusts between 10px, 1vw, and 30px.
 A width that adjusts between 300px, 50vw, and 600px.
@@ -125,10 +111,11 @@ A width that adjusts between 300px, 50vw, and 600px.
   display: grid;
   grid-template: repeat(3, 1fr) / repeat(3, 1fr);
   font-size: clamp(14px, 2vw, 24px);
+  padding: clamp(10px, 1vw, 30px);
+  width: clamp(300px, 50vw, 600px);
 
   & > div {
     border: 1px solid #ff0;
-    width: clamp(300px, 50vw, 600px);
   }
 }
 
@@ -167,8 +154,9 @@ Add three pricing cards with titles, prices, and descriptions.
   background: #0f0;
   display: grid;
   grid-template: repeat(3, 1fr) / repeat(auto-fill, minmax(80px, 1fr));
+  column-gap: 15px;
 
-  & > div {
+  & div {
     border: 1px solid #ff0;
   }
 }
