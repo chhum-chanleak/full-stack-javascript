@@ -1,0 +1,174 @@
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  display: flex;;
+  flex-flow: column nowrap;
+  gap: 4rem;
+}
+
+/*
+1. 'resize' and 'overflow' properties:
+The 'resize' property in CSS allows you to control whether an element is resizable by the user, and if so, in which directions (horizontal, vertical, or both). The 'resize' property in CSS works in conjunction with the 'overflow' property. For the 'resize' property to take effect, the element must have an 'overflow' condition that allows it to scroll or extend beyond its normal bounds. This can be particularly useful for textareas, divs, or other elements where users might want to change the size dynamically.
+
+Exercise:
+Let's go through an exercise where we'll create a resizable textarea and style it with CSS. We’ll then apply different 'resize' property values to see the effects.
+*/
+.resize-container {
+  width: 80%;
+  background: #f00;
+  padding: 1rem;
+  resize: horizontal;
+  overflow: auto;
+  
+  & textarea {
+    border-radius: 4px;
+    resize: vertical;
+  }
+}
+
+/* 
+2. 'min-content' property:
+The 'min-content' value in CSS is used to control the minimum size of an element based on its content. When applied to properties like 'width', 'height', 'min-width', and 'min-height', it sets the minimum size of the element to be just large enough to fit its content without overflowing.
+
+Exercise: Using 'min-content' to Control Element Size
+Let’s create an exercise where we apply 'min-content' to a box and observe how it behaves.
+*/
+.min-content-container {
+  background: #0f0;
+  width: min-content;
+  resize: both;
+  overflow: auto;
+}
+
+/* 
+3. Minimum and maximum track sizes: min() and max():
+The min() and max() functions in CSS are useful when you want to set the minimum and maximum values for properties like width, height, padding, margins, or track sizes in a CSS grid or flexbox. These functions allow you to specify multiple values and choose the smallest or largest based on the conditions provided.
+
+Exercise: Using min() and max() for a Flexible Grid Layout
+Let's create a responsive grid layout where the column and row sizes are flexible, and we'll use min() and max() to control their minimum and maximum sizes.
+*/
+.min-max-container {
+  background: #00f;
+  display: grid;
+  grid-template: repeat(3, 1fr) / repeat(3, 1fr);
+  overflow: auto;
+  resize: both;
+
+  & > div {
+    border: 1px solid #ea7d08;
+    text-align: center;
+    width: min(50%, 100px); /* width cannot grow exceed 100px */
+  }
+
+  & .item2 {
+    width: max(50%, 300px);
+  }
+}
+
+/* 
+4. Sizing grid columns with 'min-content':
+In CSS Grid, the 'min-content' value can be used to size columns (or rows) based on the minimum size required by the content within them. This is particularly useful when you want the grid tracks (columns or rows) to shrink to the smallest size that can fit their content without causing overflow or wrapping.
+
+Exercise: Using 'min-content' to Size Grid Columns
+In this exercise, we'll create a CSS grid layout where one of the columns has a 'min-content' size. This will make that column size to the minimum width required to fit the content inside the grid items without overflowing.
+*/
+.min-content-for-grid-container {
+  display: grid;
+  grid-template: repeat(3, 1fr) / repeat(1, min-content 1fr 1fr);
+  background: #f00;
+
+  & > div {
+    border: 1px solid #e9760a;
+  }
+}
+
+/* 
+5. 'minmax()' function:
+The minmax() function in CSS Grid defines a grid track (row or column) with a minimum and maximum size. It’s particularly useful for creating responsive grids where tracks can expand or contract within certain constraints.
+
+Exercise: Create Your Own Responsive Grid
+Create a responsive grid that:
+Has 3 to 6 columns.
+Each column is at least 100px wide but can grow to fill the space.
+The grid items should have a background color, centered text, and some padding.
+*/
+
+.minmax-container {
+  background: #0f0;
+  display: grid;
+  grid-template: repeat(3, 1fr) / repeat(3, minmax(100px, 1fr));
+
+  & > div {
+    border: 1px solid #ff0;
+    text-align: center;
+    padding: 1rem;
+  }
+}
+
+/* 6. 'clamp()' function
+The clamp() function in CSS allows you to set a value that adjusts dynamically within a defined range of a minimum, preferred value, and maximum. It is incredibly useful for responsive design and ensures that a property stays within logical constraints.
+
+Exercise: Create a Responsive Card Layout
+Create a card component with:
+A font size that adjusts between 14px, 2vw, and 24px.
+Padding that adjusts between 10px, 1vw, and 30px.
+A width that adjusts between 300px, 50vw, and 600px.
+*/
+.clamp-container {
+  background: #00f;
+  display: grid;
+  grid-template: repeat(3, 1fr) / repeat(3, 1fr);
+  font-size: clamp(14px, 2vw, 24px);
+
+  & > div {
+    border: 1px solid #ff0;
+    width: clamp(300px, 50vw, 600px);
+  }
+}
+
+/* 7. 'auto-fit' property
+The 'auto-fit' keyword in CSS Grid is used with the repeat() function to create a flexible grid that adjusts the number of columns (or rows) based on the container's size. It’s perfect for responsive designs where the layout adapts gracefully to the viewport width.
+
+Exercise: Build a Responsive Gallery
+Create a responsive image gallery using CSS Grid with:
+Each image occupying a column that is at least 100px wide and grows to share the available space.
+Rows that adjust automatically based on the number of images.
+A gap of 10px between items.
+Use 'auto-fit' to ensure images adjust to the available space, and the layout collapses gracefully on smaller screens.
+*/
+.auto-fit-container {
+  background: #f00;
+  display: grid;
+  grid-template: repeat(3, 1fr) / repeat(auto-fit, minmax(100px, 1fr));
+
+  & > div {
+    border: 1px solid #ff0;
+  }
+}
+
+/* 
+8. 'auto-fill' property
+The 'auto-fill' property in CSS Grid is used with the repeat() function to create a grid that adapts the number of rows or columns based on the container size. Unlike 'auto-fit', 'auto-fill' leaves empty tracks in the grid when there is extra space, which can be useful in specific design scenarios.
+
+Exercise: Flexible Pricing Table
+Create a pricing table where:
+Each plan occupies at least 80px but can expand to fill the available space.
+Use auto-fill to create extra tracks for unfilled space.
+Include a gap of 15px between columns.
+Add three pricing cards with titles, prices, and descriptions.
+*/
+.auto-fill-container {
+  background: #0f0;
+  display: grid;
+  grid-template: repeat(3, 1fr) / repeat(auto-fill, minmax(80px, 1fr));
+
+  & > div {
+    border: 1px solid #ff0;
+  }
+}
