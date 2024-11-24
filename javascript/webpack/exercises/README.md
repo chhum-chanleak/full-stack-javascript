@@ -30,7 +30,11 @@ console.log(greeting);
 -->
 
 <!-- Back in your project root (so outside of src), create a webpack.config.js file that contains the following: 
+-->
 
+touch webpack.config.js
+
+<!--
 // webpack.config.js
 const path = require("path");
 
