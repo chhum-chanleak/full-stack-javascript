@@ -9,7 +9,7 @@ A flexible number of tracks
 Grid and absolutely positioned elements
 A grid container as containing block
 A grid container as parent
-With a grid area as the parent
+A grid area as the parent
 Grid and display: contents
 Grid layout with nested child elements
 Using display: contents
