@@ -26,6 +26,15 @@ Exercise: Create a Highlight Box
 Design a grid layout where an absolutely positioned element (e.g., a "highlight" box) overlaps one of the grid items.
 */
 .absolutely-positioned-container {
+  background: #f00;
+  display: grid;
+  grid-template: repeat(3, 1fr) / repeat(3, 1fr);
+  position: relative;
+
+  & > div:nth-child(9) {
+    background: #ff0;
+    position: absolute;
+  }
 }
 
 /* 
@@ -42,12 +51,23 @@ On smaller screens (less than 600px), it should display 1 column.
 Add a "Highlight Box" using position: absolute, overlapping the second grid item.
 */
 .containing-block-container {
+  background: #0f0;
+  display: grid;
+  grid-template: repeat(3, 1fr) / repeat(1, 1fr);
+  position: relative;
 
+  & > div:nth-child(8) {
+    position: absolute;
+    background: #ff0;
+    left: 220px;
+  }
 }
 
+/* Large screen */
 @media (min-width: 600px) {
 
   .containing-block-container {
+    grid-template: repeat(3, 1fr) / repeat(3, 1fr);
   }
 }
 
@@ -55,21 +75,26 @@ Add a "Highlight Box" using position: absolute, overlapping the second grid item
 3. A grid container as parent:
 A grid container defines a layout context for its direct children (grid items). This means all immediate children of a grid container participate in the grid layout, following rules like 'grid-template-rows', 'grid-template-columns', and 'gap'. The parent grid container controls their placement and alignment.
 
-Exercise: Create a Product Card Layout
-In this exercise, you'll use a grid container as the parent to structure a product card. The goal is to design a visually appealing card using CSS Grid where the grid container defines the layout for the content inside the card.
-Use a grid container as the parent to structure the card's layout.
-Arrange the following elements within the card:
-Add to Cart Button
-Modify the grid layout so the product image spans across two columns when the card is displayed in a wider layout.
+Exercise:
 On smaller screens, keep a single-column layout.
-On larger screens (e.g., min-width: 600px), switch to a two-column layout where the image is on the left and the details are on the right.
+On larger screens (e.g., min-width: 600px), switch to a two-column layout.
 */
 .parent-container {
+  background: #00f;
+  display: grid;
+  grid-template: repeat(3, 1fr) / repeat(1, 1fr);
+  gap: 1rem;
+
+  & > div:nth-child(2) {
+    display: contents;
+  }
 }
 
-@media (max-width: 768px) {
+/* Large screen */
+@media (min-width: 768px) {
   
   .parent-container {
+    grid-template: repeat(3, 1fr) / repeat(2, 1fr);
   }  
 
 }
@@ -84,49 +109,47 @@ You will create a grid layout with nested elements and use 'display: contents' t
 Create a 3-column layout for large screens and a single column for smaller screens.
 Use 'display: contents' on the wrapper elements. This will flatten their structure and allow the grid-item children to directly participate in the grid layout.
 Experiment with adjusting the gap, padding, or font size to improve the visual appeal of the grid.
-On large screens (greater than 768px), the grid should display three columns.
-On small screens (less than 768px), the grid should display a single column.
-The nested .wrapper elements should not take up space in the grid but allow their child .grid-item elements to participate in the grid.
 
 */
 .display-content-container {
+  background: #f00;
+  display: grid;
+  grid-template: repeat(3, 1fr) / repeat(1, 1fr);
 }
 
 /* For large screen */
 @media (min-width: 768px) {
     
   .display-content-container {
+    grid-template: repeat(3, 1fr) / repeat(3, 1fr);
 
     & > div, > div:nth-child(1) > div {
-    }
-
-    & .item1 {
-
+      display: contents;
     }
   }
-
 }
 
 /* 
 5. Grid layout with nested child elements:
 
 Exercise:
-Objective:
 This exercise will help you practice creating a grid layout where some grid items contain nested elements, and you will control the layout of both the parent grid and the nested grid using CSS Grid properties.
 Create a 3-column grid on larger screens and a single-column layout on smaller screens.
 Use nested grids inside the .card elements to organize content into two columns (header and content).
-Customize the design by adding more items to the grid or changing the grid template columns for different screen sizes.
 Add grid spans: Try using grid-column: span 2; to make some grid items span across two columns in the main grid.
 Experiment with the gap: Adjust the gap in both the main grid and the nested grid to see how the spacing between items changes.
 Grid Alignment: Experiment with 'align-items', 'justify-items', or 'align-self' to control the positioning of the items within their grid cells.
 
 */
 .nested-child-container {
+  background: #0f0;
+  display: grid;
+  grid-template: repeat(3, 1fr) / repeat(1, 1fr);
+  gap: 4px;
 
   & .item2 {
-  }
-
-  & .item4 {
+    display: grid;
+    justify-items: flex-end;
   }
 }
 
@@ -135,16 +158,14 @@ Grid Alignment: Experiment with 'align-items', 'justify-items', or 'align-self' 
 @media (min-width: 768px) {
   
   .nested-child-container {
-
-    & .item2 {
-    }
+    grid-template: repeat(3, 1fr) / repeat(3, 1fr);
   }
 
 }
 
 /* 
 6. Using display: contents:
-Objective:
+Exercise:
 This exercise will help you understand how display: contents works within a grid layout. The goal is to practice how elements can behave as if they don't exist in the visual hierarchy of the grid while still being part of the document structure.
 Create a 3-column grid on larger screens and a single-column layout on smaller screens.
 Use display: contents on some wrapper elements to make the nested .grid-item elements behave as direct children of the grid container.
@@ -152,26 +173,32 @@ Apply 'grid-column' and 'grid-row': Apply the 'grid-column': span or 'grid-row':
 Check accessibility: Test if using display: contents affects screen readers or other assistive technologies. Sometimes display: contents can cause unexpected behavior for accessibility tools.
 */
 .display-contents-2-container {
+  background: #00f;
+  display: grid;
+  grid-template: repeat(3, 1fr) / repeat(1, 1fr);
 
   & > div {
+    align-self: flex-end;
   }
 
   & > div:nth-child(1) {
+    justify-self: flex-start;
     
   }
 
   & > div:nth-child(9) {
-    
+    display: contents;
 
     & > div:nth-child(4) {
-
+      background: #ff0;
     }
   }
 }
 
 /* For screen(large) with a min-width of 768px */
 @media (min-width: 768px) {
-  
+
   .display-contents-2-container {
+    grid-template: repeat(3, 1fr) / repeat(3, 1fr);
   }
 }
