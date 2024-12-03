@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JSON</title>
+</head>
+<body>
+  Please go to the console =>
+
+  <script>
+
+    const str = '{"name":"John", "age":30, "city":"New York"}';
+    const text = '["Ford", "BMW", "Audi", "Fiat"]';
+    const p = document.createElement("p");
+
+    const obj = JSON.parse(str);
+    const arr = JSON.parse(text);
+
+    document.body.textContent = JSON.stringify(obj);
+    p.textContent = JSON.stringify(arr);
+    document.body.appendChild(p);
+
+
+  </script>
+</body>
+</html>
