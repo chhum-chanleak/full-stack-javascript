@@ -10,6 +10,7 @@
 
   <script>
 
+    // JSON.parse()
     const str = '{"name":"John", "age":30, "city":"New York"}';
     const text = '["Ford", "BMW", "Audi", "Fiat"]';
     const p = document.createElement("p");
@@ -21,6 +22,20 @@
     p.textContent = JSON.stringify(arr);
     document.body.appendChild(p);
 
+    // JSON.stringify()
+    const obj2 = { name: "John", age: 30, city: "New York" };
+    const myJSON = JSON.stringify(obj2);
+
+    // JSON.stringify(array)
+    const arr2 = ["John", "Peter", "Sally", "Jane"];
+    const myJSONArray = JSON.stringify(arr2);
+
+    // Storing data
+    localStorage.setItem("testJSON", myJSON);
+
+    // Retrieving data
+    const myJSONText = localStorage.getItem("testJSON");
+    const myJSONObj = JSON.parse(myJSONText);
 
   </script>
 </body>
