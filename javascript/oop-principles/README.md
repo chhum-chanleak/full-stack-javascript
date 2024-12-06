@@ -45,4 +45,4 @@ Programmers should adhere to :
         End-to-end
         Unit
         Integration
-  6. Time (set reasonable and reachable goal)
+  6. Time (It takes time to get used to these SOLID principles. Set reasonable and reachable goal)
