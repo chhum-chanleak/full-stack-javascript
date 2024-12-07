@@ -447,8 +447,9 @@ class Eagle implements FlyingBird {
   eat(): void {
       console.log("Eagle swallows snakes.");
   }
+  
   fly(): void {
-      console.log("Eagle flies hight.");
+      console.log("Eagle flies high.");
   }
 }
 
@@ -461,6 +462,14 @@ class Penguin implements SwimmingBird {
       console.log("Penguin swim swiftly.");
   }
 }
+
+const baldEagle = new Eagle();
+const kingPenguin = new Penguin();
+
+// baldEagle.eat();
+// baldEagle.fly();
+// kingPenguin.eat();
+// kingPenguin.swim();
 
 // 4. Interface segregation
 // The Interface Segregation Principle (ISP) states that a class should not be forced to implement interfaces it does not use. Instead, you should break down interfaces into smaller, more specific ones to ensure classes only implement what they actually need.

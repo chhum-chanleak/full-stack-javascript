@@ -316,7 +316,7 @@ class Eagle {
         console.log("Eagle swallows snakes.");
     }
     fly() {
-        console.log("Eagle flies hight.");
+        console.log("Eagle flies high.");
     }
 }
 class Penguin {
@@ -327,6 +327,8 @@ class Penguin {
         console.log("Penguin swim swiftly.");
     }
 }
+const baldEagle = new Eagle();
+const kingPenguin = new Penguin();
 class EagleNo {
     fly() {
         console.log("The eagle is flying!");
