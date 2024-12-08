@@ -249,7 +249,6 @@ class InvoiceProcessorYes {
 
 // Usage
 const processorYes = new InvoiceProcessorYes();
-
 const creditInvoiceYes = new CreditInvoice();
 const debitInvoiceYes = new DebitInvoice();
 const refundInvoiceYes = new RefundInvoice();
@@ -435,10 +434,12 @@ interface Bird {
   eat(): void;
 }
 
+// FlyingBird can 'eat()' and 'fly()'
 interface FlyingBird extends Bird {
   fly(): void;
 }
 
+// SwimmingBird can 'eat()' and 'swim()'
 interface SwimmingBird extends Bird {
   swim(): void;
 }
@@ -549,5 +550,58 @@ class PenguinYes implements SwimmableYes {
 
 // Requirements:
 // Avoid forcing any class to implement methods irrelevant to its functionality.
+
+// 'Intersection' interface
+interface Machine {
+  start(): void;
+  stop(): void;
+}
+
+interface FuelPoweredMachine extends Machine {
+  refuel(): void;
+}
+
+interface ElectricPoweredMachine extends Machine {
+  chargeBattery(): void;
+}
+
+class Car implements FuelPoweredMachine {
+  start(): void {
+    console.log("Car starts engine.");
+  }
+
+  stop(): void {
+    console.log("Car stops engine.");
+  }
+
+  refuel(): void {
+    console.log("Car refuels at gas-station.");
+  }
+}
+
+class ElectricScooter implements ElectricPoweredMachine {
+  start(): void {
+    console.log("Scooter starts engine.");
+  }
+
+  stop(): void {
+    console.log("Scooter stops engine.");
+  }
+
+  chargeBattery(): void {
+    console.log("Scooter recharges electricity.");
+  }
+}
+
+const e_scooter = new ElectricScooter();
+const car = new Car();
+
+// e_scooter.start();
+// e_scooter.stop();
+// e_scooter.chargeBattery();
+// console.log("");
+// car.start();
+// car.stop();
+// car.refuel();
 
 // 5. Dependency inversion

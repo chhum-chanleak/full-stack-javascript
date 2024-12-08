@@ -355,19 +355,35 @@ class PenguinYes {
         console.log("The penguin is swimming!");
     }
 }
-// Benefits:
-// Eagle only implements the Flyable interface and is not forced to implement Swimmable.
-// Penguin only implements the Swimmable interface and is not forced to implement Flyable.
-// Exercise: Apply ISP in TypeScript
-// Scenario:
-// You are building a system for various types of machines.
-// Define a base interface Machine with methods for start, stop, refuel, and chargeBattery.
-// However, some machines are fuel-powered, while others are electric-powered.
-// Task:
-// Refactor the Machine interface to adhere to the Interface Segregation Principle.
-// Create the following classes:
-// Car (fuel-powered).
-// ElectricScooter (battery-powered).
-// Requirements:
-// Avoid forcing any class to implement methods irrelevant to its functionality.
+class Car {
+    start() {
+        console.log("Car starts engine.");
+    }
+    stop() {
+        console.log("Car stops engine.");
+    }
+    refuel() {
+        console.log("Car refuels at gas-station.");
+    }
+}
+class ElectricScooter {
+    start() {
+        console.log("Scooter starts engine.");
+    }
+    stop() {
+        console.log("Scooter stops engine.");
+    }
+    chargeBattery() {
+        console.log("Scooter recharges electricity.");
+    }
+}
+const e_scooter = new ElectricScooter();
+const car = new Car();
+// e_scooter.start();
+// e_scooter.stop();
+// e_scooter.chargeBattery();
+// console.log("");
+// car.start();
+// car.stop();
+// car.refuel();
 // 5. Dependency inversion
