@@ -605,3 +605,173 @@ const car = new Car();
 // car.refuel();
 
 // 5. Dependency inversion
+// The Dependency Inversion Principle (DIP) is the "D" in the SOLID principles. It emphasizes designing systems where high-level modules (policies) are not directly dependent on low-level modules (details). Instead, both should depend on abstractions.
+
+// Definition of DIP
+// High-level modules should not depend on low-level modules. Both should depend on abstractions.
+// Abstractions should not depend on details. Details should depend on abstractions.
+// This promotes flexibility and scalability by decoupling high-level logic from low-level implementations.
+
+// DIP in TypeScript: Example
+// Without DIP (Tightly Coupled Code)
+// Here, the DatabaseServiceNo is tightly coupled to the App class.
+class DatabaseServiceNo {
+  save(data: string): void {
+    console.log(`Data saved to the database: ${data}`);
+  }
+}
+
+class AppNo {
+  private dbService: DatabaseServiceNo;
+
+  constructor() {
+    this.dbService = new DatabaseServiceNo(); // Direct dependency
+  }
+
+  saveData(data: string): void {
+    this.dbService.save(data);
+  }
+}
+
+const appNo = new AppNo();
+// appNo.saveData("User data");
+
+// Issues:
+// The App class is tightly coupled to the DatabaseService class.
+// If we want to switch to another storage mechanism (e.g., a file), we must modify the App class.
+
+// With DIP (Loosely Coupled Code)
+// Introduce an abstraction to decouple the high-level module (App) from the low-level module (DatabaseService).
+
+// Abstraction
+interface StorageServiceYes {
+  save(data: string): void;
+}
+
+// Low-level implementation 1
+class DatabaseService implements StorageServiceYes {
+  save(data: string): void {
+    console.log(`Data saved to the database: ${data}`);
+  }
+}
+
+// Low-level implementation 2
+class FileServiceYes implements StorageServiceYes {
+  save(data: string): void {
+    console.log(`Data saved to a file: ${data}`);
+  }
+}
+
+// High-level module
+class AppYes {
+  private storageServiceYes: StorageServiceYes;
+
+  constructor(storageServiceYes: StorageServiceYes) {
+    this.storageServiceYes = storageServiceYes;
+  }
+
+  saveData(data: string): void {
+    this.storageServiceYes.save(data);
+  }
+}
+
+// Use with DatabaseService
+const app1 = new AppYes(new DatabaseService());
+// app1.saveData("Database User Data");
+
+// Use with FileServiceYes
+const app2 = new AppYes(new FileServiceYes());
+// app2.saveData("File User Data");
+
+// Benefits:
+
+// Decoupling: The App class depends on the abstraction (StorageService), not the concrete implementations (DatabaseService, FileService).
+// Flexibility: New storage implementations can be added without modifying the App class.
+// Testability: Mock services can be injected for testing.
+
+// Exercise
+// You are tasked with building a system to notify users. The system should:
+
+// Send notifications via email.
+// Be flexible to support SMS notifications in the future.
+// Create a Notifier abstraction.
+// Implement EmailNotifier as a low-level module.
+// Design a high-level module NotificationService that depends on the Notifier abstraction.
+// Add an additional implementation for SmsNotifier.
+
+// Add a PushNotificationNotifier class to the above system to send push notifications.
+// Test it by injecting it into the NotificationService class.
+
+// Expected Solution:
+// Abstraction
+// interface Notifier {
+//   sendNotification(message: string): void;
+// }
+
+// Low-level implementations
+// // Email Notifier Implementation
+// class EmailNotifier implements Notifier {
+//   sendNotification(message: string): void {
+//     console.log(`Email sent: ${message}`);
+//   }
+// }
+
+// // SMS Notifier Implementation
+// class SmsNotifier implements Notifier {
+//   sendNotification(message: string): void {
+//     console.log(`SMS sent: ${message}`);
+//   }
+// }
+
+// // High-level Module
+// class NotificationService {
+//   private notifier: Notifier;
+
+//   constructor(notifier: Notifier) {
+//     this.notifier = notifier;
+//   }
+
+//   notify(message: string): void {
+//     this.notifier.sendNotification(message);
+//   }
+// }
+
+// // Example Usage
+// const emailService = new NotificationService(new EmailNotifier());
+// emailService.notify("Welcome via Email!");
+
+// const smsService = new NotificationService(new SmsNotifier());
+// smsService.notify("Welcome via SMS!");
+
+// Abstraction
+interface Notifier2 {
+  send(message: string): void;
+}
+
+// Low-level module implementation
+class EmailNotifier implements Notifier2 {
+  send(message: string): void {
+    console.log(`Email notifier: ${message}`);
+  }
+}
+
+class MSNNotifier implements Notifier2 {
+  send(message: string): void {
+    console.log(`MSN notifier: ${message}`)
+  }
+}
+
+// High-level module (policies)
+class NotifierManager {
+  constructor(private notifier: Notifier2) {}
+
+  notify(message: string): void {
+    this.notifier.send(message);
+  }
+}
+
+const emailNotifier = new NotifierManager(new EmailNotifier());
+const msnNotifier = new NotifierManager(new MSNNotifier());
+
+emailNotifier.notify("Dear example");
+msnNotifier.notify("Hi there");

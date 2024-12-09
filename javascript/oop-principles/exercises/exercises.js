@@ -387,3 +387,78 @@ const car = new Car();
 // car.stop();
 // car.refuel();
 // 5. Dependency inversion
+// The Dependency Inversion Principle (DIP) is the "D" in the SOLID principles. It emphasizes designing systems where high-level modules (policies) are not directly dependent on low-level modules (details). Instead, both should depend on abstractions.
+// Definition of DIP
+// High-level modules should not depend on low-level modules. Both should depend on abstractions.
+// Abstractions should not depend on details. Details should depend on abstractions.
+// This promotes flexibility and scalability by decoupling high-level logic from low-level implementations.
+// DIP in TypeScript: Example
+// Without DIP (Tightly Coupled Code)
+// Here, the DatabaseServiceNo is tightly coupled to the App class.
+class DatabaseServiceNo {
+    save(data) {
+        console.log(`Data saved to the database: ${data}`);
+    }
+}
+class AppNo {
+    dbService;
+    constructor() {
+        this.dbService = new DatabaseServiceNo(); // Direct dependency
+    }
+    saveData(data) {
+        this.dbService.save(data);
+    }
+}
+const appNo = new AppNo();
+// Low-level implementation 1
+class DatabaseService {
+    save(data) {
+        console.log(`Data saved to the database: ${data}`);
+    }
+}
+// Low-level implementation 2
+class FileServiceYes {
+    save(data) {
+        console.log(`Data saved to a file: ${data}`);
+    }
+}
+// High-level module
+class AppYes {
+    storageServiceYes;
+    constructor(storageServiceYes) {
+        this.storageServiceYes = storageServiceYes;
+    }
+    saveData(data) {
+        this.storageServiceYes.save(data);
+    }
+}
+// Use with DatabaseService
+const app1 = new AppYes(new DatabaseService());
+// app1.saveData("Database User Data");
+// Use with FileServiceYes
+const app2 = new AppYes(new FileServiceYes());
+// Low-level module implementation
+class EmailNotifier {
+    send(message) {
+        console.log(`Email notifier: ${message}`);
+    }
+}
+class MSNNotifier {
+    send(message) {
+        console.log(`MSN notifier: ${message}`);
+    }
+}
+// High-level module (policies)
+class NotifierManager {
+    notifier;
+    constructor(notifier) {
+        this.notifier = notifier;
+    }
+    notify(message) {
+        this.notifier.send(message);
+    }
+}
+const emailNotifier = new NotifierManager(new EmailNotifier());
+const msnNotifier = new NotifierManager(new MSNNotifier());
+emailNotifier.notify("Dear example");
+msnNotifier.notify("Hi there");
