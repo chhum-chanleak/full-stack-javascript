@@ -1,6 +1,6 @@
 // SOLID exercise
 
-// 1. Single responsiblity principle (SRP)
+// 1. Single responsibility principle (SRP)
 // Exercise 1: Refactor a Non-SRP Class
 // Problem:
 // You are given the following UserManager class that violates SRP:
@@ -221,8 +221,150 @@ const cartManager = new CartManager(
 
 // 2. Open/Closed principle (OCP)
 
+// Exercise 1: Shape Area Calculation
+// Problem:
+// You have a function that calculates the area of a rectangle. Extend it to calculate the area of different shapes (e.g., circle, triangle) without modifying the existing function.
 
+// Task:
 
+// Add new shapes, such as a Triangle, Trapezoid, and Rhombus, without modifying the existing Shape implementations.
 
+// Example (OCP):
+// Use abstraction to make the code open for extension but closed for modification.
 
+// Base interface
+interface Shape {
+  getArea(): number;
+}
 
+// Rectangle implementation
+class Rectangle implements Shape {
+  constructor(private width: number, private height: number) {}
+
+  getArea(): number {
+    return this.width * this.height;
+  }
+}
+
+// Circle implementation
+class Circle implements Shape {
+  constructor(private radius: number) {}
+
+  getArea(): number {
+    return Math.PI * this.radius * this.radius;
+  }
+}
+
+// Usage
+const shapes: Shape[] = [
+  new Rectangle(10, 5),
+  new Circle(7),
+];
+
+// shapes.forEach(shape => {
+//   console.log(`Area: ${shape.getArea()}`);
+// });
+
+// Solution: OCP
+
+// Base interface
+interface Shape2 {
+  getArea(): number;
+}
+
+// Triangle implementation
+class Triangle implements Shape2 {
+  constructor(private base: number, private height: number) {}
+
+  getArea(): number {
+    return (1 / 2) * this.base * this.height;
+  }
+}
+
+// Trapezoid implementation
+class Trapezoid implements Shape2 {
+  constructor(private base1: number, private base2: number, private height: number) {}
+
+  getArea(): number {
+    return (1 / 2) * (this.base1 + this.base2) * this.height
+  }
+}
+
+// Rhombus implementation
+class Rhombus implements Shape2 {
+  constructor(private diagonal1: number, private diagonal2: number) {}
+
+  getArea(): number {
+    // Get area of a rhombus with given diagonals
+    return (1 / 2) * this.diagonal1 * this.diagonal2;
+  }
+}
+
+// const triangle = new Triangle(2, 4);
+// const trapezoid = new Trapezoid(4, 6, 8);
+// const rhombus = new Rhombus(4, 6);
+
+// console.log(`Triangle area: ${triangle.getArea()}`);
+// console.log(`Trapezoid: ${trapezoid.getArea()}`);
+// console.log(`Rhombus area: ${rhombus.getArea()}`);
+
+// Exercise 2: Payment Processing System
+// Problem:
+// You have a function to process payments via a credit card. Extend it to support other payment methods, like PayPal or Stripe, without altering the original implementation.
+// Task:
+
+// Add other payment processors, such as Google Pay, Apple Pay and ABA Pay, without modifying existing payment processors.
+
+// Solution (OCP):
+// Use abstraction to allow easy extension.
+
+// Base interface
+interface PaymentProcessor {
+  processPayment(amount: number): void;
+}
+
+// Credit Card implementation
+class CreditCardPayment implements PaymentProcessor {
+  processPayment(amount: number): void {
+    console.log(`Processing credit card payment of $${amount}`);
+  }
+}
+
+// PayPal implementation
+class PayPalPayment implements PaymentProcessor {
+  processPayment(amount: number): void {
+    console.log(`Processing PayPal payment of $${amount}`);
+  }
+}
+
+// Stripe implementation
+class StripePayment implements PaymentProcessor {
+  processPayment(amount: number): void {
+    console.log(`Processing Stripe payment of $${amount}`);
+  }
+}
+
+// Usage
+const payments: PaymentProcessor[] = [
+  new CreditCardPayment(),
+  new PayPalPayment(),
+  new StripePayment(),
+];
+
+// payments.forEach(payment => {
+//   payment.processPayment(100);
+// });
+
+// Solution: OCP
+interface PaymentProcessor2 {
+  processPayment(amount: number): void;
+}
+
+class ApplePayment implements PaymentProcessor2 {
+  processPayment(amount: number): void {
+    console.log(`Processing Apple payment of $${amount}`);
+  }
+}
+
+const applePayment = new ApplePayment();
+applePayment.processPayment(200);

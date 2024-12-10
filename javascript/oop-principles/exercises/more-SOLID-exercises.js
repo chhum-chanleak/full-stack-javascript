@@ -1,6 +1,6 @@
 "use strict";
 // SOLID exercise
-// 1. Single responsiblity principle (SRP)
+// 1. Single responsibility principle (SRP)
 // Exercise 1: Refactor a Non-SRP Class
 // Problem:
 // You are given the following UserManager class that violates SRP:
@@ -140,9 +140,100 @@ const pineapple2 = { id: 3, name: "pineapple", price: 1.5 };
 const shoppingCart = new ShoppingCart();
 // Create a manager instance with injected services
 const cartManager = new CartManager(new ShowItemsService(), new AddItemsService(), new CalculateTotalPriceService(), new RemoveItemsService());
-// cartManager.addItems(shoppingCart, apple, pineapple);
-// cartManager.showItems(shoppingCart);
-// cartManager.calculateTotalPrice(shoppingCart);
-// cartManager.removeItems(shoppingCart, apple);
-// cartManager.showItems(shoppingCart);
-// 2. Open/Closed principle (OCP)
+// Rectangle implementation
+class Rectangle {
+    width;
+    height;
+    constructor(width, height) {
+        this.width = width;
+        this.height = height;
+    }
+    getArea() {
+        return this.width * this.height;
+    }
+}
+// Circle implementation
+class Circle {
+    radius;
+    constructor(radius) {
+        this.radius = radius;
+    }
+    getArea() {
+        return Math.PI * this.radius * this.radius;
+    }
+}
+// Usage
+const shapes = [
+    new Rectangle(10, 5),
+    new Circle(7),
+];
+// Triangle implementation
+class Triangle {
+    base;
+    height;
+    constructor(base, height) {
+        this.base = base;
+        this.height = height;
+    }
+    getArea() {
+        return (1 / 2) * this.base * this.height;
+    }
+}
+// Trapezoid implementation
+class Trapezoid {
+    base1;
+    base2;
+    height;
+    constructor(base1, base2, height) {
+        this.base1 = base1;
+        this.base2 = base2;
+        this.height = height;
+    }
+    getArea() {
+        return (1 / 2) * (this.base1 + this.base2) * this.height;
+    }
+}
+// Rhombus implementation
+class Rhombus {
+    diagonal1;
+    diagonal2;
+    constructor(diagonal1, diagonal2) {
+        this.diagonal1 = diagonal1;
+        this.diagonal2 = diagonal2;
+    }
+    getArea() {
+        // Get area of a rhombus with given diagonals
+        return (1 / 2) * this.diagonal1 * this.diagonal2;
+    }
+}
+// Credit Card implementation
+class CreditCardPayment {
+    processPayment(amount) {
+        console.log(`Processing credit card payment of $${amount}`);
+    }
+}
+// PayPal implementation
+class PayPalPayment {
+    processPayment(amount) {
+        console.log(`Processing PayPal payment of $${amount}`);
+    }
+}
+// Stripe implementation
+class StripePayment {
+    processPayment(amount) {
+        console.log(`Processing Stripe payment of $${amount}`);
+    }
+}
+// Usage
+const payments = [
+    new CreditCardPayment(),
+    new PayPalPayment(),
+    new StripePayment(),
+];
+class ApplePayment {
+    processPayment(amount) {
+        console.log(`Processing Apple payment of $${amount}`);
+    }
+}
+const applePayment = new ApplePayment();
+applePayment.processPayment(200);
