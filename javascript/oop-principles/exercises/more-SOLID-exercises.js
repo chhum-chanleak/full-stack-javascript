@@ -20,47 +20,76 @@ class UserManager {
         // Logic to save to database
     }
 }
-class UserCreation {
+// Concrete implementations
+// User creation service implementation
+class UserCreationService {
     createUser(user) {
-        console.log(`Creating user: ${user.name}, e-mail: ${user.email}`);
+        console.log(`Creating user: ${user.name}, email: ${user.email}`);
     }
 }
+// Email service implementation
 class WelcomeEmailService {
-    sendWelcomeEmail(email) {
-        console.log(`Sending welcome email to: ${email}`);
+    sendWelcomeEmail(user) {
+        console.log(`Sending welcome email to: ${user.email}`);
     }
 }
+// Database service implementation
 class UserDatabase {
     saveUser(user) {
         console.log(`Saving ${user.name} to database`);
     }
 }
-// Coordinator class (integration)
-class UserManager2 {
-    userCreation;
-    emailService;
-    database;
-    constructor(userCreation, emailService, database) {
-        this.userCreation = userCreation;
-        this.emailService = emailService;
-        this.database = database;
+// The ServiceRegistry class is solely responsible for managing the lifecycle of services:
+// Adding services.
+// Removing services.
+// Fetching services.
+// Displaying registered services.
+// Register services
+class ServiceRegistry {
+    // Objects of Map type
+    services = new Map();
+    addService(name, service) {
+        this.services.set(name, service);
     }
-    handleNewUser(user) {
-        try {
-            this.userCreation.createUser(user);
-            this.emailService.sendWelcomeEmail(user.email);
-            this.database.saveUser(user);
+    removeService(name) {
+        if (!this.services.has(name)) {
+            throw new Error(`Service ${name} does not exist.`);
         }
-        catch (error) {
-            console.error(`Error handling new user: ${error}`);
+        if (this.services.has(name)) {
+            this.services.delete(name);
+            console.log(`${name} Service has been removed.`);
+        }
+    }
+    getService(name) {
+        return this.services.get(name);
+    }
+    showServices() {
+        console.log(this.services);
+    }
+}
+// Coordinator class (integration)
+class UserService {
+    registry;
+    constructor(registry) {
+        this.registry = registry;
+    }
+    handleService(name, user) {
+        const service = this.registry.getService(name);
+        if (service instanceof UserCreationService) {
+            service.createUser(user);
+        }
+        else if (service instanceof WelcomeEmailService) {
+            service.sendWelcomeEmail(user);
+        }
+        else if (service instanceof UserDatabase) {
+            service.saveUser(user);
+        }
+        else {
+            throw new Error(`${name} service does not exist.`);
         }
     }
 }
-const user = {
-    name: "Example exam",
-    email: "example@exam",
-};
-const userManager = new UserManager2(new UserCreation(), new WelcomeEmailService(), new UserDatabase());
+// Concrete implementations
 class ShoppingCart {
     items;
     constructor(items = []) {
@@ -83,6 +112,7 @@ class CalculateTotalPriceService {
         for (let i = 0; i < cart.items.length; i += 1) {
             total += cart.items[i].price;
         }
+        console.log(`Total price: $${total}`);
         return total;
     }
 }
@@ -99,36 +129,58 @@ class RemoveItemsService {
         }
     }
 }
+// The ServiceRegistry class is solely responsible for managing the lifecycle of services:
+// Adding services.
+// Removing services.
+// Fetching services.
+// Displaying registered services.
+// Register services
+class ServiceRegistry2 {
+    services = new Map();
+    addService(name, service) {
+        this.services.set(name, service);
+    }
+    removeService(name) {
+        if (!this.services.has(name)) {
+            throw new Error(`${name} service does not exist.`);
+        }
+        if (this.services.has(name)) {
+            this.services.delete(name);
+            console.log(`${name} service has been remove.`);
+        }
+    }
+    getService(name) {
+        return this.services.get(name);
+    }
+    showServices() {
+        console.log(this.services);
+    }
+}
 // Manager class using Dependency Injection
-class CartManager {
-    showItemsService;
-    addItemsService;
-    calculateTotalPriceService;
-    removeItemsService;
-    constructor(showItemsService, addItemsService, calculateTotalPriceService, removeItemsService) {
-        this.showItemsService = showItemsService;
-        this.addItemsService = addItemsService;
-        this.calculateTotalPriceService = calculateTotalPriceService;
-        this.removeItemsService = removeItemsService;
+class ShoppingCartManager {
+    registry;
+    constructor(registry) {
+        this.registry = registry;
     }
-    showItems(cart) {
-        this.showItemsService.showItems(cart);
-    }
-    addItems(cart, ...items) {
-        this.addItemsService.addToCart(cart, ...items);
-    }
-    calculateTotalPrice(cart) {
-        const total = this.calculateTotalPriceService.calculateTotalPrice(cart);
-        console.log(`Total price: $${total}`);
-        return total;
-    }
-    removeItems(cart, ...items) {
-        this.removeItemsService.removeItems(cart, ...items);
-        if (items.length > 1) {
-            console.log(`${JSON.stringify(items, null, 2)} have been removed from cart.`);
+    handleService(name, cart, ...items) {
+        const service = this.registry.getService(name);
+        if (!service) {
+            throw new Error(`${name} service does not exist.`);
+        }
+        if (service instanceof ShowItemsService) {
+            service.showItems(cart);
+        }
+        else if (service instanceof AddItemsService) {
+            service.addToCart(cart, ...items);
+        }
+        else if (service instanceof CalculateTotalPriceService) {
+            service.calculateTotalPrice(cart);
+        }
+        else if (service instanceof RemoveItemsService) {
+            service.removeItems(cart, ...items);
         }
         else {
-            console.log(`${JSON.stringify(items, null, 2)} has been removed from cart.`);
+            throw new Error(`${name} is an invalid service.`);
         }
     }
 }
@@ -136,10 +188,7 @@ const apple = { id: 1, name: "apple", price: 2.5 };
 const pineapple = { id: 4, name: "pineapple", price: 5.5 };
 const apple2 = { id: 2, name: "apple2", price: 2.5 };
 const pineapple2 = { id: 3, name: "pineapple", price: 1.5 };
-// Shopping cart
-const shoppingCart = new ShoppingCart();
-// Create a manager instance with injected services
-const cartManager = new CartManager(new ShowItemsService(), new AddItemsService(), new CalculateTotalPriceService(), new RemoveItemsService());
+// Concrete implementations
 // Rectangle implementation
 class Rectangle {
     width;
@@ -167,6 +216,7 @@ const shapes = [
     new Rectangle(10, 5),
     new Circle(7),
 ];
+// Concrete implementations
 // Triangle implementation
 class Triangle {
     base;
@@ -206,6 +256,56 @@ class Rhombus {
         return (1 / 2) * this.diagonal1 * this.diagonal2;
     }
 }
+// Create shaper registry class for managing shape lifecycle
+class ShapesRegistry {
+    shapes = new Map();
+    registerShape(name, shape) {
+        this.shapes.set(name, shape);
+    }
+    unregisterShape(name) {
+        const shape = this.shapes.get(name);
+        if (!shape) {
+            throw new Error(`${name} does not exist.`);
+        }
+        if (this.shapes.has(name)) {
+            this.shapes.delete(name);
+        }
+    }
+    getShape(name) {
+        return this.shapes.get(name);
+    }
+    showRegisteredShapes() {
+        console.log(this.shapes);
+    }
+}
+// Create manager class using Dependency Injection
+class ShapeManger {
+    registry;
+    constructor(registry) {
+        this.registry = registry;
+    }
+    showArea(name) {
+        const shape = this.registry.getShape(name);
+        if (!shape) {
+            throw new Error(`You must provide a shape`);
+        }
+        console.log(`Area of this ${name} is: ${shape.getArea()}`);
+    }
+}
+// Create shape registry
+const shapesRegistry = new ShapesRegistry();
+// Register shapes
+shapesRegistry.registerShape("triangle", new Triangle(4, 8));
+shapesRegistry.registerShape("trapezoid", new Trapezoid(4, 8, 10));
+shapesRegistry.registerShape("rhombus", new Rhombus(8, 12));
+// Create shape managers
+const shapeManager = new ShapeManger(shapesRegistry);
+// Usage
+shapeManager.showArea("triangle");
+shapeManager.showArea("trapezoid");
+shapeManager.showArea("rhombus");
+shapesRegistry.showRegisteredShapes();
+// Concrete implementation
 // Credit Card implementation
 class CreditCardPayment {
     processPayment(amount) {
@@ -262,13 +362,13 @@ class PaymentManager {
         processor.processPayment(amount);
     }
 }
-// Create a payment manager with injected services
-const paymentManager = new PaymentManager();
-// Register payment
-paymentManager.registerPayment("GooglePayment", new GooglePayment());
-paymentManager.registerPayment("ApplePayment", new ApplePayment());
-paymentManager.registerPayment("ABAPayment", new ABAPayment());
-// Usage
-paymentManager.processPayment("GooglePayment", 100);
-paymentManager.processPayment("ApplePayment", 300);
-paymentManager.processPayment("ABAPayment", 200);
+// // Create a payment manager with injected services
+// const paymentManager = new PaymentManager();
+// // Register payment
+// paymentManager.registerPayment("GooglePayment", new GooglePayment());
+// paymentManager.registerPayment("ApplePayment", new ApplePayment());
+// paymentManager.registerPayment("ABAPayment", new ABAPayment());
+// // Usage
+// paymentManager.processPayment("GooglePayment", 100);
+// paymentManager.processPayment("ApplePayment", 300);
+// paymentManager.processPayment("ABAPayment", 200);
