@@ -221,14 +221,6 @@ const cartManager = new CartManager(
 
 // 2. Open/Closed principle (OCP)
 
-// Exercise 1: Shape Area Calculation
-// Problem:
-// You have a function that calculates the area of a rectangle. Extend it to calculate the area of different shapes (e.g., circle, triangle) without modifying the existing function.
-
-// Task:
-
-// Add new shapes, such as a Triangle, Trapezoid, and Rhombus, without modifying the existing Shape implementations.
-
 // Example (OCP):
 // Use abstraction to make the code open for extension but closed for modification.
 
@@ -264,6 +256,14 @@ const shapes: Shape[] = [
 // shapes.forEach(shape => {
 //   console.log(`Area: ${shape.getArea()}`);
 // });
+
+// Exercise 1: Shape Area Calculation
+// Problem:
+// You have a function that calculates the area of a rectangle. Extend it to calculate the area of different shapes (e.g., circle, triangle) without modifying the existing function.
+
+// Task:
+
+// Add new shapes, such as a Triangle, Trapezoid, and Rhombus, without modifying the existing Shape implementations.
 
 // Solution: OCP
 
@@ -308,14 +308,7 @@ class Rhombus implements Shape2 {
 // console.log(`Trapezoid: ${trapezoid.getArea()}`);
 // console.log(`Rhombus area: ${rhombus.getArea()}`);
 
-// Exercise 2: Payment Processing System
-// Problem:
-// You have a function to process payments via a credit card. Extend it to support other payment methods, like PayPal or Stripe, without altering the original implementation.
-// Task:
-
-// Add other payment processors, such as Google Pay, Apple Pay and ABA Pay, without modifying existing payment processors.
-
-// Solution (OCP):
+// Example (OCP):
 // Use abstraction to allow easy extension.
 
 // Base interface
@@ -355,16 +348,70 @@ const payments: PaymentProcessor[] = [
 //   payment.processPayment(100);
 // });
 
+// Exercise 2: Payment Processing System
+
+// Problem:
+// You have a function to process payments via a credit card. Extend it to support other payment methods, like PayPal or Stripe, without altering the original implementation.
+
+// Task:
+// Add other payment processors, such as Google Pay, Apple Pay and ABA Pay, without modifying existing payment processors
+
 // Solution: OCP
+
+// Base interface
 interface PaymentProcessor2 {
   processPayment(amount: number): void;
 }
 
+// Google Pay implementation
+class GooglePayment implements PaymentProcessor2 {
+  processPayment(amount: number): void {
+    console.log(`Processing Google payment of $${amount}`);
+  }
+}
+
+// ApplePayment implementation
 class ApplePayment implements PaymentProcessor2 {
   processPayment(amount: number): void {
     console.log(`Processing Apple payment of $${amount}`);
   }
 }
 
-const applePayment = new ApplePayment();
-applePayment.processPayment(200);
+// ABA Pay implementation
+class ABAPayment implements PaymentProcessor2 {
+  processPayment(amount: number): void {
+    console.log(`Processing ABA payment of $${amount}`);
+  }
+}
+
+// Manager class using Dependency Injection
+class PaymentManager {
+  private processors: Map<string, PaymentProcessor2> = new Map();
+
+  registerPayment(name: string, processor: PaymentProcessor2) {
+    this.processors.set(name, processor);
+  }
+
+  processPayment(name: string, amount: number): void {
+    const processor = this.processors.get(name);
+
+    if (!processor) {
+      throw new Error(`${processor} payment is unknown. Please register the payment.`);
+    }
+
+    processor.processPayment(amount);
+  }
+}
+
+
+// Create a payment manager with injected services
+const paymentManager = new PaymentManager();
+
+// Register payment
+paymentManager.registerPayment("GooglePayment", new GooglePayment());
+paymentManager.registerPayment("ApplePayment", new ApplePayment());
+paymentManager.registerPayment("ABAPayment", new ABAPayment());
+// Usage
+paymentManager.processPayment("GooglePayment", 100);
+paymentManager.processPayment("ApplePayment", 300);
+paymentManager.processPayment("ABAPayment", 200);

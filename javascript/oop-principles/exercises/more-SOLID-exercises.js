@@ -230,10 +230,45 @@ const payments = [
     new PayPalPayment(),
     new StripePayment(),
 ];
+// Google Pay implementation
+class GooglePayment {
+    processPayment(amount) {
+        console.log(`Processing Google payment of $${amount}`);
+    }
+}
+// ApplePayment implementation
 class ApplePayment {
     processPayment(amount) {
         console.log(`Processing Apple payment of $${amount}`);
     }
 }
-const applePayment = new ApplePayment();
-applePayment.processPayment(200);
+// ABA Pay implementation
+class ABAPayment {
+    processPayment(amount) {
+        console.log(`Processing ABA payment of $${amount}`);
+    }
+}
+// Manager class using Dependency Injection
+class PaymentManager {
+    processors = new Map();
+    registerPayment(name, processor) {
+        this.processors.set(name, processor);
+    }
+    processPayment(name, amount) {
+        const processor = this.processors.get(name);
+        if (!processor) {
+            throw new Error(`${processor} payment is unknown. Please register the payment.`);
+        }
+        processor.processPayment(amount);
+    }
+}
+// Create a payment manager with injected services
+const paymentManager = new PaymentManager();
+// Register payment
+paymentManager.registerPayment("GooglePayment", new GooglePayment());
+paymentManager.registerPayment("ApplePayment", new ApplePayment());
+paymentManager.registerPayment("ABAPayment", new ABAPayment());
+// Usage
+paymentManager.processPayment("GooglePayment", 100);
+paymentManager.processPayment("ApplePayment", 300);
+paymentManager.processPayment("ABAPayment", 200);
