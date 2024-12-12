@@ -23,19 +23,19 @@ class UserManager {
 // Concrete implementations
 // User creation service implementation
 class UserCreationService {
-    createUser(user) {
+    executeService(user) {
         console.log(`Creating user: ${user.name}, email: ${user.email}`);
     }
 }
 // Email service implementation
 class WelcomeEmailService {
-    sendWelcomeEmail(user) {
+    executeService(user) {
         console.log(`Sending welcome email to: ${user.email}`);
     }
 }
 // Database service implementation
 class UserDatabase {
-    saveUser(user) {
+    executeService(user) {
         console.log(`Saving ${user.name} to database`);
     }
 }
@@ -75,18 +75,7 @@ class UserService {
     }
     handleService(name, user) {
         const service = this.registry.getService(name);
-        if (service instanceof UserCreationService) {
-            service.createUser(user);
-        }
-        else if (service instanceof WelcomeEmailService) {
-            service.sendWelcomeEmail(user);
-        }
-        else if (service instanceof UserDatabase) {
-            service.saveUser(user);
-        }
-        else {
-            throw new Error(`${name} service does not exist.`);
-        }
+        service.executeService(user);
     }
 }
 // Concrete implementations
@@ -97,17 +86,17 @@ class ShoppingCart {
     }
 }
 class ShowItemsService {
-    showItems(cart) {
+    executeService(cart) {
         console.log(JSON.stringify(cart.items, null, 2));
     }
 }
 class AddItemsService {
-    addToCart(cart, ...items) {
+    executeService(cart, ...items) {
         cart.items.push(...items);
     }
 }
 class CalculateTotalPriceService {
-    calculateTotalPrice(cart) {
+    executeService(cart) {
         let total = 0;
         for (let i = 0; i < cart.items.length; i += 1) {
             total += cart.items[i].price;
@@ -117,7 +106,7 @@ class CalculateTotalPriceService {
     }
 }
 class RemoveItemsService {
-    removeItems(cart, ...items) {
+    executeService(cart, ...items) {
         for (let i = 0; i < cart.items.length; i += 1) { // Outer loop
             for (let j = 0; j < items.length; j += 1) { // Inner loop
                 if (cart.items[i].id === items[j].id) {
@@ -165,29 +154,11 @@ class ShoppingCartManager {
     handleService(name, cart, ...items) {
         const service = this.registry.getService(name);
         if (!service) {
-            throw new Error(`${name} service does not exist.`);
+            console.error(`${name} service does not exist.`);
         }
-        if (service instanceof ShowItemsService) {
-            service.showItems(cart);
-        }
-        else if (service instanceof AddItemsService) {
-            service.addToCart(cart, ...items);
-        }
-        else if (service instanceof CalculateTotalPriceService) {
-            service.calculateTotalPrice(cart);
-        }
-        else if (service instanceof RemoveItemsService) {
-            service.removeItems(cart, ...items);
-        }
-        else {
-            throw new Error(`${name} is an invalid service.`);
-        }
+        service.executeService(cart, ...items);
     }
 }
-const apple = { id: 1, name: "apple", price: 2.5 };
-const pineapple = { id: 4, name: "pineapple", price: 5.5 };
-const apple2 = { id: 2, name: "apple2", price: 2.5 };
-const pineapple2 = { id: 3, name: "pineapple", price: 1.5 };
 // Concrete implementations
 // Rectangle implementation
 class Rectangle {
@@ -292,19 +263,6 @@ class ShapeManger {
         console.log(`Area of this ${name} is: ${shape.getArea()}`);
     }
 }
-// Create shape registry
-const shapesRegistry = new ShapesRegistry();
-// Register shapes
-shapesRegistry.registerShape("triangle", new Triangle(4, 8));
-shapesRegistry.registerShape("trapezoid", new Trapezoid(4, 8, 10));
-shapesRegistry.registerShape("rhombus", new Rhombus(8, 12));
-// Create shape managers
-const shapeManager = new ShapeManger(shapesRegistry);
-// Usage
-shapeManager.showArea("triangle");
-shapeManager.showArea("trapezoid");
-shapeManager.showArea("rhombus");
-shapesRegistry.showRegisteredShapes();
 // Concrete implementation
 // Credit Card implementation
 class CreditCardPayment {
@@ -348,27 +306,56 @@ class ABAPayment {
         console.log(`Processing ABA payment of $${amount}`);
     }
 }
-// Manager class using Dependency Injection
-class PaymentManager {
+// Create a payment registry class for managing payments lifecycle
+class PaymentRegistry {
     processors = new Map();
     registerPayment(name, processor) {
         this.processors.set(name, processor);
     }
-    processPayment(name, amount) {
+    unregisterPayment(name) {
         const processor = this.processors.get(name);
         if (!processor) {
-            throw new Error(`${processor} payment is unknown. Please register the payment.`);
+            console.error(`${name} payment does not exist.`);
+        }
+        if (this.processors.get(name)) {
+            this.processors.delete(name);
+            console.log(`${name} has been removed.`);
+        }
+    }
+    getProcessor(name) {
+        return this.processors.get(name);
+    }
+    showPayments() {
+        console.log(this.processors);
+    }
+}
+// Manager class using Dependency Injection
+class PaymentManager {
+    registry;
+    constructor(registry) {
+        this.registry = registry;
+    }
+    processPayment(name, amount) {
+        const processor = this.registry.getProcessor(name);
+        if (!processor) {
+            throw new Error(`${name} payment is unknown. Please register the payment.`);
         }
         processor.processPayment(amount);
     }
 }
-// // Create a payment manager with injected services
-// const paymentManager = new PaymentManager();
-// // Register payment
-// paymentManager.registerPayment("GooglePayment", new GooglePayment());
-// paymentManager.registerPayment("ApplePayment", new ApplePayment());
-// paymentManager.registerPayment("ABAPayment", new ABAPayment());
-// // Usage
-// paymentManager.processPayment("GooglePayment", 100);
-// paymentManager.processPayment("ApplePayment", 300);
-// paymentManager.processPayment("ABAPayment", 200);
+// Create payment registry
+const paymentRegistry = new PaymentRegistry();
+// Register payment method
+// paymentRegistry.registerPayment("google pay", new GooglePayment());
+// paymentRegistry.registerPayment("apple pay", new ApplePayment());
+// paymentRegistry.registerPayment("aba pay", new ABAPayment());
+// Create a payment manager with injected services
+const paymentManager = new PaymentManager(paymentRegistry);
+// Usage
+// paymentManager.processPayment("google pay", 100);
+// paymentManager.processPayment("apple pay", 300);
+// paymentManager.processPayment("aba pay", 200);
+// paymentRegistry.showPayments();
+// paymentRegistry.unregisterPayment("apple pay");
+// paymentRegistry.showPayments();
+// paymentRegistry.unregisterPayment("apple pay");

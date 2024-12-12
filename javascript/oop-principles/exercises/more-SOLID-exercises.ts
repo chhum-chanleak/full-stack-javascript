@@ -34,39 +34,41 @@ interface IUser {
   email: string;
 }
 
-interface Service {}
+interface Service {
+  executeService(user: IUser): void;
+}
 
 interface IUserCreationService extends Service {
-  createUser(user: IUser): void;
+  executeService(user: IUser): void;
 }
 
-interface IEmailService extends Service {
-  sendWelcomeEmail(user: IUser): void;
+interface ISendingEmailService extends Service {
+  executeService(user: IUser): void;
 }
 
-interface IDatabase extends Service {
-  saveUser(user: IUser): void;
+interface IDatabaseService extends Service {
+  executeService(user: IUser): void;
 }
 
 // Concrete implementations
 
 // User creation service implementation
 class UserCreationService implements IUserCreationService {
-  createUser(user: IUser): void {
+  executeService(user: IUser): void {
     console.log(`Creating user: ${user.name}, email: ${user.email}`);
   }
 }
 
 // Email service implementation
-class WelcomeEmailService implements IEmailService {
-  sendWelcomeEmail(user: IUser): void {
+class WelcomeEmailService implements ISendingEmailService {
+  executeService(user: IUser): void {
     console.log(`Sending welcome email to: ${user.email}`);
   }
 }
 
 // Database service implementation
-class UserDatabase implements IDatabase {
-  saveUser(user: IUser): void {
+class UserDatabase implements IDatabaseService {
+  executeService(user: IUser): void {
     console.log(`Saving ${user.name} to database`);
   }
 }
@@ -112,15 +114,7 @@ class UserService {
   handleService(name: string, user: IUser): void {
     const service = this.registry.getService(name);
 
-    if (service instanceof UserCreationService) {
-      service.createUser(user);
-    } else if (service instanceof WelcomeEmailService) {
-      service.sendWelcomeEmail(user);
-    } else if (service instanceof UserDatabase) {
-      service.saveUser(user);
-    } else {
-      throw new Error(`${name} service does not exist.`);
-    }
+    service.executeService(user);
   }
 }
 
@@ -176,22 +170,24 @@ interface Cart {
   items: Item[];
 }
 
-interface Service {}
-
-interface IShowItemsService extends Service {
-  showItems(cart: ShoppingCart): void;
+interface Service2 {
+  executeService(cart: ShoppingCart, ...items: Item[]): void
 }
 
-interface IAddItemsService extends Service {
-  addToCart(cart: ShoppingCart, ...items: Item[]): void;
+interface IShowItemsService extends Service2 {
+  executeService(cart: ShoppingCart): void;
 }
 
-interface ICalculateTotalPriceService extends Service {
-  calculateTotalPrice(cart: ShoppingCart): number;
+interface IAddItemsService extends Service2 {
+  executeService(cart: ShoppingCart, ...items: Item[]): void;
 }
 
-interface IRemoveItemsService extends Service {
-  removeItems(cart: ShoppingCart, ...items: Item[]): void;
+interface ICalculateTotalPriceService extends Service2 {
+  executeService(cart: ShoppingCart): number;
+}
+
+interface IRemoveItemsService extends Service2 {
+  executeService(cart: ShoppingCart, ...items: Item[]): void;
 }
 
 // Concrete implementations
@@ -200,19 +196,19 @@ class ShoppingCart implements Cart{
 }
 
 class ShowItemsService implements IShowItemsService {
-  showItems(cart: ShoppingCart): void {
+  executeService(cart: ShoppingCart): void {
    console.log(JSON.stringify(cart.items, null, 2));
   }
 }
 
 class AddItemsService implements IAddItemsService {
-  addToCart(cart: ShoppingCart, ...items: Item[]): void {
+  executeService(cart: ShoppingCart, ...items: Item[]): void {
     cart.items.push(...items);
   }
 }
 
 class CalculateTotalPriceService implements ICalculateTotalPriceService {
-  calculateTotalPrice(cart: ShoppingCart): number {
+  executeService(cart: ShoppingCart): number {
     let total = 0;
 
     for (let i = 0; i < cart.items.length; i += 1) {
@@ -226,7 +222,7 @@ class CalculateTotalPriceService implements ICalculateTotalPriceService {
 }
 
 class RemoveItemsService implements IRemoveItemsService {
-  removeItems(cart: ShoppingCart, ...items: Item[]): void {
+  executeService(cart: ShoppingCart, ...items: Item[]): void {
     for (let i = 0; i < cart.items.length; i += 1) { // Outer loop
       for (let j = 0; j < items.length; j += 1) { // Inner loop
         if (cart.items[i].id === items[j].id) {
@@ -246,9 +242,9 @@ class RemoveItemsService implements IRemoveItemsService {
 // Displaying registered services.
 // Register services
 class ServiceRegistry2{
-  private services: Map<string, Service> = new Map();
+  private services: Map<string, Service2> = new Map();
 
-  addService(name: string, service: Service): void {
+  addService(name: string, service: Service2): void {
     this.services.set(name, service);
   }
 
@@ -263,8 +259,8 @@ class ServiceRegistry2{
     }
   }
 
-  getService(name: string): Service {
-    return this.services.get(name) as Service;
+  getService(name: string): Service2 {
+    return this.services.get(name) as Service2;
   }
 
   showServices(): void {
@@ -280,27 +276,17 @@ class ShoppingCartManager {
     const service = this.registry.getService(name);
 
     if (!service) {
-      throw new Error(`${name} service does not exist.`);
+      console.error(`${name} service does not exist.`);
     }
 
-    if (service instanceof ShowItemsService) {
-      service.showItems(cart);
-    } else if (service instanceof AddItemsService) {
-      service.addToCart(cart, ...items);
-    } else if (service instanceof CalculateTotalPriceService) {
-      service.calculateTotalPrice(cart);
-    } else if (service instanceof RemoveItemsService) {
-      service.removeItems(cart, ...items)
-    } else {
-      throw new Error(`${name} is an invalid service.`);
-    }
+    service.executeService(cart, ...items);
   }
 }
 
-const apple: Item = { id: 1, name: "apple", price: 2.5};
-const pineapple: Item = { id: 4, name: "pineapple", price: 5.5};
-const apple2: Item = { id: 2, name: "apple2", price: 2.5};
-const pineapple2: Item = { id: 3, name: "pineapple", price: 1.5};
+// const apple: Item = { id: 1, name: "apple", price: 2.5};
+// const pineapple: Item = { id: 4, name: "pineapple", price: 5.5};
+// const apple2: Item = { id: 2, name: "apple2", price: 2.5};
+// const pineapple2: Item = { id: 3, name: "pineapple", price: 1.5};
 
 // Shopping carts
 // const shoppingCart = new ShoppingCart();
@@ -458,22 +444,22 @@ class ShapeManger {
 }
 
 // Create shape registry
-const shapesRegistry = new ShapesRegistry();
+// const shapesRegistry = new ShapesRegistry();
 
 // Register shapes
-shapesRegistry.registerShape("triangle", new Triangle(4, 8));
-shapesRegistry.registerShape("trapezoid", new Trapezoid(4, 8, 10));
-shapesRegistry.registerShape("rhombus", new Rhombus(8, 12));
+// shapesRegistry.registerShape("triangle", new Triangle(4, 8));
+// shapesRegistry.registerShape("trapezoid", new Trapezoid(4, 8, 10));
+// shapesRegistry.registerShape("rhombus", new Rhombus(8, 12));
 
 // Create shape managers
-const shapeManager = new ShapeManger(shapesRegistry);
+// const shapeManager = new ShapeManger(shapesRegistry);
 
 // Usage
-shapeManager.showArea("triangle");
-shapeManager.showArea("trapezoid");
-shapeManager.showArea("rhombus");
+// shapeManager.showArea("triangle");
+// shapeManager.showArea("trapezoid");
+// shapeManager.showArea("rhombus");
 
-shapesRegistry.showRegisteredShapes();
+// shapesRegistry.showRegisteredShapes();
 
 // const triangle = new Triangle(2, 4);
 // const trapezoid = new Trapezoid(4, 6, 8);
@@ -561,33 +547,68 @@ class ABAPayment implements PaymentProcessor2 {
   }
 }
 
-// Manager class using Dependency Injection
-class PaymentManager {
+// Create a payment registry class for managing payments lifecycle
+class PaymentRegistry {
   private processors: Map<string, PaymentProcessor2> = new Map();
 
-  registerPayment(name: string, processor: PaymentProcessor2) {
+  registerPayment(name: string, processor: PaymentProcessor2): void {
     this.processors.set(name, processor);
   }
 
-  processPayment(name: string, amount: number): void {
+  unregisterPayment(name: string): void {
     const processor = this.processors.get(name);
 
     if (!processor) {
-      throw new Error(`${processor} payment is unknown. Please register the payment.`);
+      console.error(`${name} payment does not exist.`);
+    }
+
+    if (this.processors.get(name)) {
+      this.processors.delete(name);
+      console.log(`${name} has been removed.`);
+    }
+  }
+
+  getProcessor(name: string): PaymentProcessor2 {
+    return this.processors.get(name) as PaymentProcessor2;
+  }
+
+  showPayments(): void {
+    console.log(this.processors);
+  }
+}
+
+// Manager class using Dependency Injection
+class PaymentManager {
+  constructor(private registry: PaymentRegistry) {}
+
+  processPayment(name: string, amount: number): void {
+    const processor = this.registry.getProcessor(name);
+
+    if (!processor) {
+      throw new Error(`${name} payment is unknown. Please register the payment.`);
     }
 
     processor.processPayment(amount);
   }
 }
 
-// // Create a payment manager with injected services
-// const paymentManager = new PaymentManager();
+// Create payment registry
+const paymentRegistry = new PaymentRegistry();
 
-// // Register payment
-// paymentManager.registerPayment("GooglePayment", new GooglePayment());
-// paymentManager.registerPayment("ApplePayment", new ApplePayment());
-// paymentManager.registerPayment("ABAPayment", new ABAPayment());
-// // Usage
-// paymentManager.processPayment("GooglePayment", 100);
-// paymentManager.processPayment("ApplePayment", 300);
-// paymentManager.processPayment("ABAPayment", 200);
+// Register payment method
+// paymentRegistry.registerPayment("google pay", new GooglePayment());
+// paymentRegistry.registerPayment("apple pay", new ApplePayment());
+// paymentRegistry.registerPayment("aba pay", new ABAPayment());
+
+// Create a payment manager with injected services
+const paymentManager = new PaymentManager(paymentRegistry);
+
+// Usage
+// paymentManager.processPayment("google pay", 100);
+// paymentManager.processPayment("apple pay", 300);
+// paymentManager.processPayment("aba pay", 200);
+
+// paymentRegistry.showPayments();
+// paymentRegistry.unregisterPayment("apple pay");
+// paymentRegistry.showPayments();
+// paymentRegistry.unregisterPayment("apple pay");
