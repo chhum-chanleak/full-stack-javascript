@@ -600,7 +600,7 @@ class PaymentManager {
 }
 
 // Create payment registry (database of PaymentProcessors2)
-const paymentRegistry = new PaymentRegistry();
+// const paymentRegistry = new PaymentRegistry();
 
 // Register payment method
 // paymentRegistry.registerPayment("google pay", new GooglePayment());
@@ -608,7 +608,7 @@ const paymentRegistry = new PaymentRegistry();
 // paymentRegistry.registerPayment("aba pay", new ABAPayment());
 
 // Create a payment manager with injected services
-const paymentManager = new PaymentManager(paymentRegistry);
+// const paymentManager = new PaymentManager(paymentRegistry);
 
 // Usage
 // paymentManager.processPayment("google pay", 100);
@@ -742,14 +742,12 @@ class Truck extends Vehicle {
 }
 
 // Vehicle registry for life-cycle management
-class VehicleRegistry {
-  private vehicles: Map<number, Vehicle> = new Map();
+class VehicleRegistry extends AbstractVehicleRegistry {
+  protected vehicles: Map<number, Vehicle> = new Map();
 
   registerVehicle(id: number, vehicle: Vehicle): void {
     // Check for repeated IDs
-    if (this.vehicles.get(id)) {
-      console.error(`This vehicle's id is already exist.`);
-    } else if (id !== vehicle.id) {
+   if (id !== vehicle.id) {
       console.error(`Provided id (${id}) must be equal to vehicle's id (${vehicle.id})`);
     }
 
@@ -779,7 +777,7 @@ class VehicleRegistry {
 
 // Client (high-level)
 class VehicleManager {
-  constructor(private registry: VehicleRegistry) {}
+  constructor(private registry: AbstractVehicleRegistry) {}
 
   showInfo(id: number): void {
     const vehicle = this.registry.getVehicle(id);
@@ -792,18 +790,18 @@ class VehicleManager {
   }
 }
 
-// Create vehicle registry manager (database of Vehicle)
-const vehicleRegistry = new VehicleRegistry();
+// // Create vehicle registry manager (database of Vehicle)
+// const vehicleRegistry = new VehicleRegistry();
 
-// Register vehicles
-vehicleRegistry.registerVehicle(12, new Car(120, "red", 12, "Honda"));
-vehicleRegistry.registerVehicle(99, new Motorcycle(90, "black", 99, "Yamaha"));
-vehicleRegistry.registerVehicle(10, new Truck(140, "blue", 10, "Tesla"));
+// // Register vehicles
+// vehicleRegistry.registerVehicle(12, new Car(120, "red", 12, "Honda"));
+// vehicleRegistry.registerVehicle(99, new Motorcycle(90, "black", 99, "Yamaha"));
+// vehicleRegistry.registerVehicle(10, new Truck(140, "blue", 10, "Tesla"));
 
-// Create vehicle managers
-const vehicleManager = new VehicleManager(vehicleRegistry);
+// // Create vehicle managers
+// const vehicleManager = new VehicleManager(vehicleRegistry);
 
-// Usage
+// // Usage
 // vehicleRegistry.showVehicles();
 
 // vehicleManager.showInfo(12);
@@ -816,3 +814,110 @@ const vehicleManager = new VehicleManager(vehicleRegistry);
 // Create a base class Shape with a method getArea().
 // Create subclasses Circle, Triangle, and Rectangle.
 // Ensure that all subclasses can be substituted for Shape without breaking the code.
+
+// Solution 2
+
+// Abstractions
+abstract class ShapeLSP {
+  abstract getArea(): number;
+}
+
+abstract class AbstractShapeRegistryService {
+  abstract execute(name?: string, shape?: ShapeLSP): void;
+}
+
+abstract class AbstractShapeRegistryDatabase {
+  protected shapes: Map<string, ShapeLSP> = new Map();
+
+  abstract getShapes(): Map<string, ShapeLSP>;
+}
+
+// Concrete implementations (low-level)
+class CircleLSP extends ShapeLSP {
+  constructor(private radius: number) {
+    super();
+  }
+
+  getArea(): number {
+    // Area = pi * r^2
+    return 3.14 * (this.radius * this.radius);
+  }
+}
+
+class TriangleLSP extends ShapeLSP {
+  constructor(private base: number, private height: number) {
+    super();
+  }
+
+  getArea(): number {
+    // Area = (base * height) / 2
+    return (1 / 2) * this.base * this.height;
+  }
+}
+
+class RectangleLSP extends ShapeLSP {
+  constructor(private height: number, private width: number) {
+    super();
+  }
+
+  getArea(): number {
+    // Area = height * width
+    return this.height * this.width;
+  }
+}
+
+// Concrete implementation of Shape registry database
+class ShapeRegistryDatabase extends AbstractShapeRegistryDatabase {
+  protected shapes: Map<string, ShapeLSP> = new Map();
+
+  getShapes(): Map<string, ShapeLSP> {
+    return this.shapes;
+  }
+}
+
+// Concrete implementations of shape registry services (low-level)
+class ShapeRegistryCreation extends AbstractShapeRegistryService {
+  constructor(private shapeDatabase: AbstractShapeRegistryDatabase) {
+    super();
+  }
+
+  execute(name: string, shape: ShapeLSP): void {
+    if (!name || !shape) {
+      console.error(`name and shape parameters are required for ShapeRegistryCreation`);
+    }
+
+    this.shapeDatabase.getShapes().set(name, shape);    
+  }
+}
+
+class ShapeRegistryRead extends AbstractShapeRegistryService {
+  constructor(private shapeDatabase: AbstractShapeRegistryDatabase) {
+    super();
+  }
+
+  execute(): void {
+    console.log(...this.shapeDatabase.getShapes());
+  }
+}
+
+// // Shape registry client
+// class ShapeRegistryManager {
+//   constructor(private service: AbstractShapeRegistryService) {}
+  
+//   executeService(): void {
+//     this.service.execute();
+//   }
+// }
+
+// Create shape registry database
+const shapeRegistryDatabase = new ShapeRegistryDatabase();
+
+// Create shape registry service
+const shapeRegistryCreation = new ShapeRegistryCreation(shapeRegistryDatabase);
+const shapeRegistryRead = new ShapeRegistryRead(shapeRegistryDatabase);
+
+// // Usage
+shapeRegistryCreation.execute("circle", new CircleLSP(12));
+shapeRegistryCreation.execute("triangle", new TriangleLSP(4, 8));
+shapeRegistryCreation.execute("rectangle", new RectangleLSP(12, 8));
+shapeRegistryRead.execute();
