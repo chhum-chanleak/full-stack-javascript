@@ -67,6 +67,7 @@ class ServiceRegistry {
         console.log(this.services);
     }
 }
+// Client
 // Coordinator class (integration)
 class UserService {
     registry;
@@ -145,6 +146,7 @@ class ServiceRegistry2 {
         console.log(this.services);
     }
 }
+// Client
 // Manager class using Dependency Injection
 class ShoppingCartManager {
     registry;
@@ -249,6 +251,7 @@ class ShapesRegistry {
         console.log(this.shapes);
     }
 }
+// Client
 // Create manager class using Dependency Injection
 class ShapeManger {
     registry;
@@ -343,7 +346,7 @@ class PaymentManager {
         processor.processPayment(amount);
     }
 }
-// Create payment registry
+// Create payment registry (database of PaymentProcessors2)
 const paymentRegistry = new PaymentRegistry();
 // Register payment method
 // paymentRegistry.registerPayment("google pay", new GooglePayment());
@@ -359,3 +362,179 @@ const paymentManager = new PaymentManager(paymentRegistry);
 // paymentRegistry.unregisterPayment("apple pay");
 // paymentRegistry.showPayments();
 // paymentRegistry.unregisterPayment("apple pay");
+// 3. Liskov Substitution Principle (LSP)
+// LSP states that objects of a superclass should be replaceable with objects of its subclasses without affecting the correctness of the program. In simpler terms, subtypes must be substitutable for their base types.
+// LSP violation
+class RectangleNo {
+    width;
+    height;
+    constructor(width, height) {
+        this.width = width;
+        this.height = height;
+    }
+    getArea() {
+        return this.width * this.height;
+    }
+}
+class Square extends Rectangle {
+    constructor(side) {
+        super(side, side); // This violates LSP
+    }
+}
+class RectangleYes {
+    width;
+    height;
+    constructor(width, height) {
+        this.width = width;
+        this.height = height;
+    }
+    getArea() {
+        return this.width * this.height;
+    }
+}
+class SquareYes {
+    side;
+    constructor(side) {
+        this.side = side;
+    }
+    getArea() {
+        return this.side * this.side;
+    }
+}
+// Here, Rectangle and Square both implement the Shape interface, ensuring that they can be substituted for each other without breaking the code. Both classes have a common getArea() method, and their implementations are consistent with their respective shapes.
+// Key Points:
+// Subclasses should not weaken the preconditions or strengthen the post-conditions of the base class.
+// Subclasses should not throw exceptions that the base class does not.
+// Subclasses should preserve the invariant of the base class.
+// Exercises1:
+// Vehicle Hierarchy:
+// Create a base class Vehicle with properties speed and color.
+// Create subclasses Car, Motorcycle, and Truck.
+// Ensure that all subclasses can be substituted for Vehicle without breaking the code.
+// Base class (Abstraction)
+class Vehicle {
+    speed;
+    color;
+    id;
+    constructor(speed, color, id) {
+        this.speed = speed;
+        this.color = color;
+        this.id = id;
+    }
+    showInfo() {
+        console.log(`Speed: ${this.speed}kph, Color: ${this.color}, Id: ${this.id}`);
+    }
+}
+class AbstractVehicleRegistry {
+    vehicles = new Map();
+}
+// Concrete implementation (low-level)
+class Car extends Vehicle {
+    speed;
+    color;
+    id;
+    brand;
+    constructor(speed, color, id, brand) {
+        super(speed, color, id);
+        this.speed = speed;
+        this.color = color;
+        this.id = id;
+        this.brand = brand;
+    }
+    showInfo() {
+        console.log(`Car information: ${JSON.stringify(this, null, 2)}`);
+    }
+}
+class Motorcycle extends Vehicle {
+    speed;
+    color;
+    id;
+    brand;
+    constructor(speed, color, id, brand) {
+        super(speed, color, id);
+        this.speed = speed;
+        this.color = color;
+        this.id = id;
+        this.brand = brand;
+    }
+    showInfo() {
+        console.log(`Motorcycle information: ${JSON.stringify(this, null, 2)}`);
+    }
+}
+class Truck extends Vehicle {
+    speed;
+    color;
+    id;
+    brand;
+    constructor(speed, color, id, brand) {
+        super(speed, color, id);
+        this.speed = speed;
+        this.color = color;
+        this.id = id;
+        this.brand = brand;
+    }
+    showInfo() {
+        console.log(`Truck information: ${JSON.stringify(this, null, 2)}`);
+    }
+}
+// Vehicle registry for life-cycle management
+class VehicleRegistry {
+    vehicles = new Map();
+    registerVehicle(id, vehicle) {
+        // Check for repeated IDs
+        if (this.vehicles.get(id)) {
+            console.error(`This vehicle's id is already exist.`);
+        }
+        else if (id !== vehicle.id) {
+            console.error(`Provided id (${id}) must be equal to vehicle's id (${vehicle.id})`);
+        }
+        this.vehicles.set(id, vehicle);
+    }
+    unregisterVehicle(id) {
+        const vehicle = this.vehicles.get(id);
+        if (!vehicle) {
+            console.error(`${id} does not belong to any vehicle`);
+        }
+        if (this.vehicles.has(id)) {
+            this.vehicles.delete(id);
+        }
+    }
+    getVehicle(id) {
+        return this.vehicles.get(id);
+    }
+    showVehicles() {
+        console.log(this.vehicles);
+    }
+}
+// Client (high-level)
+class VehicleManager {
+    registry;
+    constructor(registry) {
+        this.registry = registry;
+    }
+    showInfo(id) {
+        const vehicle = this.registry.getVehicle(id);
+        if (!vehicle) {
+            throw new Error(`${id} is not an id of any vehicles`);
+        }
+        vehicle.showInfo();
+    }
+}
+// Create vehicle registry manager (database of Vehicle)
+const vehicleRegistry = new VehicleRegistry();
+// Register vehicles
+vehicleRegistry.registerVehicle(12, new Car(120, "red", 12, "Honda"));
+vehicleRegistry.registerVehicle(99, new Motorcycle(90, "black", 99, "Yamaha"));
+vehicleRegistry.registerVehicle(10, new Truck(140, "blue", 10, "Tesla"));
+// Create vehicle managers
+const vehicleManager = new VehicleManager(vehicleRegistry);
+// Usage
+// vehicleRegistry.showVehicles();
+// vehicleManager.showInfo(12);
+// vehicleManager.showInfo(99);
+// vehicleManager.showInfo(10);
+// Exercise 2:
+// Shape Hierarchy:
+// Create a base class Shape with a method getArea().
+// Create subclasses Circle, Triangle, and Rectangle.
+// Ensure that all subclasses can be substituted for Shape without breaking the code.
