@@ -11,6 +11,10 @@ Separating core logic and DOM logic
 Coupling
 Patterns to Reduce Coupling
 Publish/Subscribe pattern
+Service registry pattern
+Repository pattern
+DAOs pattern
+new Map()
 
 Programmers should adhere to :
   1. Standard
