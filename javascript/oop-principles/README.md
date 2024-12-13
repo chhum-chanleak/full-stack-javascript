@@ -16,6 +16,26 @@ Repository pattern
 DAOs pattern
 new Map()
 
+Using Constants for Error Messages
+Throwing an error instead of logging a plain message:
+  Throwing an error gives you more control over how the application responds to failure. It is safe for Business Logic and Integrity
+Separating Validation logics from core logic
+Using Optional Chaining for Safety
+Consistency in Error Handling
+Improve the Logging Strategy
+console.error() does not stop the program
+Throwing new Error() stops the program
+Using Constants for Error Messages
+  Example: // errors.ts
+    export const ErrorMessages = {
+      MISSING_NAME_SHAPE_PARAMETERS: "name and shape parameters are required",
+      SHAPE_NOT_FOUND: "Shape not found in the registry",
+      SHAPE_ALREADY_EXISTS: "Shape already exists in the registry",
+      INVALID_SHAPE_TYPE: "Invalid shape type provided",
+      // Add more as needed
+    };
+Refactoring Repeated Logic
+
 Programmers should adhere to :
   1. Standard
   2. Principles(SOLID)
