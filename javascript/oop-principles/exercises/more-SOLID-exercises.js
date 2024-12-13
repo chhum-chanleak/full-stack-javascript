@@ -1,4 +1,5 @@
-"use strict";
+import { errorMessages } from "./errors.js";
+import { validateShapeData } from "./validations.js";
 // SOLID exercise
 // 1. Single responsibility principle (SRP)
 // Exercise 1: Refactor a Non-SRP Class
@@ -537,12 +538,16 @@ class VehicleManager {
 // Ensure that all subclasses can be substituted for Shape without breaking the code.
 // Solution 2
 // Abstractions
-class ShapeLSP {
+export class ShapeLSP {
 }
-class AbstractShapeRegistryService {
+class AbstractShapeRegistry {
+    shapeRegistryDatabase = new Map();
 }
-class AbstractShapeRegistryDatabase {
-    shapes = new Map();
+class AbstractShapeManager2 {
+    shapeRegistryDatabase;
+    constructor(shapeRegistryDatabase) {
+        this.shapeRegistryDatabase = shapeRegistryDatabase;
+    }
 }
 // Concrete implementations (low-level)
 class CircleLSP extends ShapeLSP {
@@ -582,51 +587,76 @@ class RectangleLSP extends ShapeLSP {
         return this.height * this.width;
     }
 }
-// Concrete implementation of Shape registry database
-class ShapeRegistryDatabase extends AbstractShapeRegistryDatabase {
-    shapes = new Map();
-    getShapes() {
-        return this.shapes;
-    }
-}
 // Concrete implementations of shape registry services (low-level)
-class ShapeRegistryCreation extends AbstractShapeRegistryService {
-    shapeDatabase;
-    constructor(shapeDatabase) {
-        super();
-        this.shapeDatabase = shapeDatabase;
-    }
-    execute(name, shape) {
-        if (!name || !shape) {
-            console.error(`name and shape parameters are required for ShapeRegistryCreation`);
+// Implement a shape services
+class ShapeRegistry2 extends AbstractShapeRegistry {
+    shapeRegistryDatabase = new Map();
+    create(name, shape) {
+        if (validateShapeData(name, shape)) {
+            this.shapeRegistryDatabase.set(name, shape);
+            console.log(`${name} has been created`);
         }
-        this.shapeDatabase.getShapes().set(name, shape);
+    }
+    read() {
+        if (this.shapeRegistryDatabase.size === 0) {
+            throw new Error(`shapes ${errorMessages.EMPTINESS}`);
+        }
+        else {
+            console.log(...this.shapeRegistryDatabase);
+        }
+    }
+    update(name, shape) {
+        // Check for the presence of both of parameters
+        if (!name || !shape) {
+            throw new Error(`${errorMessages.MISSING_NAME_SHAPE_PARAMETERS}`);
+        }
+        else {
+            // Delete the old one if it exists
+            this.shapeRegistryDatabase.has(name)
+                && this.shapeRegistryDatabase.delete(name);
+            // Create the new one with old name, but new value
+            this.shapeRegistryDatabase.set(name, shape);
+            console.log(`${name} has been updated`);
+        }
+    }
+    delete(name) {
+        if (!this.shapeRegistryDatabase.has(name)) {
+            throw new Error(`${name} ${errorMessages.NO_EXISTENCE}`);
+        }
+        else {
+            this.shapeRegistryDatabase.delete(name);
+            console.log(`${name} has been deleted`);
+        }
+    }
+    getShape(name) {
+        return this.shapeRegistryDatabase.get(name);
     }
 }
-class ShapeRegistryRead extends AbstractShapeRegistryService {
-    shapeDatabase;
-    constructor(shapeDatabase) {
-        super();
-        this.shapeDatabase = shapeDatabase;
+class ShapeManger2 extends AbstractShapeManager2 {
+    shapeRegistryDatabase;
+    constructor(shapeRegistryDatabase) {
+        super(shapeRegistryDatabase);
+        this.shapeRegistryDatabase = shapeRegistryDatabase;
     }
-    execute() {
-        console.log(...this.shapeDatabase.getShapes());
+    showArea(name) {
+        if (!this.shapeRegistryDatabase.getShape(name)) {
+            throw new Error(`${name} ${errorMessages.NO_EXISTENCE}`);
+        }
+        console.log(this.shapeRegistryDatabase.getShape(name).getArea().toFixed(2));
     }
 }
-// // Shape registry client
-// class ShapeRegistryManager {
-//   constructor(private service: AbstractShapeRegistryService) {}
-//   executeService(): void {
-//     this.service.execute();
-//   }
-// }
-// Create shape registry database
-const shapeRegistryDatabase = new ShapeRegistryDatabase();
-// Create shape registry service
-const shapeRegistryCreation = new ShapeRegistryCreation(shapeRegistryDatabase);
-const shapeRegistryRead = new ShapeRegistryRead(shapeRegistryDatabase);
-// // Usage
-shapeRegistryCreation.execute("circle", new CircleLSP(12));
-shapeRegistryCreation.execute("triangle", new TriangleLSP(4, 8));
-shapeRegistryCreation.execute("rectangle", new RectangleLSP(12, 8));
-shapeRegistryRead.execute();
+// Create shape registry
+const shapeRegistry = new ShapeRegistry2();
+const shapeManager = new ShapeManger2(shapeRegistry);
+// Usage
+shapeRegistry.create("circle", new Circle(8));
+shapeRegistry.create("circle2", new Circle(12));
+shapeRegistry.create("circle3", new Circle(3));
+shapeRegistry.create("circle4", new Circle(2));
+shapeRegistry.read();
+shapeRegistry.update("circle2", new Circle(10));
+shapeRegistry.read();
+shapeRegistry.delete("circle3");
+shapeRegistry.read();
+console.log("");
+shapeManager.showArea("circle4");

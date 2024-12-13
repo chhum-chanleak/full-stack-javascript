@@ -1,3 +1,6 @@
+import { errorMessages } from "./errors.js";
+import { validateShapeData } from "./validations.js";
+
 // SOLID exercise
 
 // 1. Single responsibility principle (SRP)
@@ -818,18 +821,24 @@ class VehicleManager {
 // Solution 2
 
 // Abstractions
-abstract class ShapeLSP {
+export abstract class ShapeLSP {
   abstract getArea(): number;
 }
 
-abstract class AbstractShapeRegistryService {
-  abstract execute(name?: string, shape?: ShapeLSP): void;
+abstract class AbstractShapeRegistry {
+  protected shapeRegistryDatabase: Map<string, ShapeLSP> = new Map();
+
+  abstract create(name: string, shape: ShapeLSP): void;
+  abstract read(name: string, shape: ShapeLSP): void;
+  abstract update(name: string, shape: ShapeLSP): void;
+  abstract delete(name: string): void;
+  abstract getShape(name: string): ShapeLSP;
 }
 
-abstract class AbstractShapeRegistryDatabase {
-  protected shapes: Map<string, ShapeLSP> = new Map();
+abstract class AbstractShapeManager2 {
+  constructor(protected shapeRegistryDatabase: ShapeRegistry2) {}
 
-  abstract getShapes(): Map<string, ShapeLSP>;
+  abstract showArea(name: string): void;
 }
 
 // Concrete implementations (low-level)
@@ -866,58 +875,86 @@ class RectangleLSP extends ShapeLSP {
   }
 }
 
-// Concrete implementation of Shape registry database
-class ShapeRegistryDatabase extends AbstractShapeRegistryDatabase {
-  protected shapes: Map<string, ShapeLSP> = new Map();
+// Concrete implementations of shape registry services (low-level)
 
-  getShapes(): Map<string, ShapeLSP> {
-    return this.shapes;
+// Implement a shape services
+class ShapeRegistry2 extends AbstractShapeRegistry {
+  protected shapeRegistryDatabase: Map<string, ShapeLSP> = new Map();
+
+  create(name: string, shape: ShapeLSP): void {
+    if (validateShapeData(name, shape)) {
+      this.shapeRegistryDatabase.set(name, shape);
+      console.log(`${name} has been created`);
+    }
+  }
+
+  read(): void {
+    if (this.shapeRegistryDatabase.size === 0) {
+      throw new Error(`shapes ${errorMessages.EMPTINESS}`);
+    } else {
+      console.log(...this.shapeRegistryDatabase);
+    }    
+  }
+
+  update(name: string, shape: ShapeLSP): void {
+    // Check for the presence of both of parameters
+    if (!name || !shape) {
+      throw new Error(`${errorMessages.MISSING_NAME_SHAPE_PARAMETERS}`);
+    } 
+    else {
+      // Delete the old one if it exists
+      this.shapeRegistryDatabase.has(name) 
+      && this.shapeRegistryDatabase.delete(name);
+      // Create the new one with old name, but new value
+      this.shapeRegistryDatabase.set(name, shape);
+      console.log(`${name} has been updated`);
+    } 
+  }
+
+  delete(name: string): void {
+    if (!this.shapeRegistryDatabase.has(name)) {
+      throw new Error(`${name} ${errorMessages.NO_EXISTENCE}`);
+    } 
+    else {
+      this.shapeRegistryDatabase.delete(name);
+      console.log(`${name} has been deleted`);  
+    }
+  }
+
+  getShape(name: string): ShapeLSP {
+    return this.shapeRegistryDatabase.get(name) as ShapeLSP;
   }
 }
 
-// Concrete implementations of shape registry services (low-level)
-class ShapeRegistryCreation extends AbstractShapeRegistryService {
-  constructor(private shapeDatabase: AbstractShapeRegistryDatabase) {
-    super();
+class ShapeManger2 extends AbstractShapeManager2 {
+  constructor(protected shapeRegistryDatabase: ShapeRegistry2) {
+    super(shapeRegistryDatabase);
   }
 
-  execute(name: string, shape: ShapeLSP): void {
-    if (!name || !shape) {
-      console.error(`name and shape parameters are required for ShapeRegistryCreation`);
+  showArea(name: string): void {
+    if (!this.shapeRegistryDatabase.getShape(name)) {
+      throw new Error(`${name} ${errorMessages.NO_EXISTENCE}`);
     }
 
-    this.shapeDatabase.getShapes().set(name, shape);    
+    console.log(this.shapeRegistryDatabase.getShape(name).getArea().toFixed(2));
   }
 }
 
-class ShapeRegistryRead extends AbstractShapeRegistryService {
-  constructor(private shapeDatabase: AbstractShapeRegistryDatabase) {
-    super();
-  }
+// Create shape registry
+const shapeRegistry = new ShapeRegistry2();
+const shapeManager = new ShapeManger2(shapeRegistry);
 
-  execute(): void {
-    console.log(...this.shapeDatabase.getShapes());
-  }
-}
 
-// // Shape registry client
-// class ShapeRegistryManager {
-//   constructor(private service: AbstractShapeRegistryService) {}
-  
-//   executeService(): void {
-//     this.service.execute();
-//   }
-// }
+// Usage
+shapeRegistry.create("circle", new Circle(8));
+shapeRegistry.create("circle2", new Circle(12));
+shapeRegistry.create("circle3", new Circle(3));
+shapeRegistry.create("circle4", new Circle(2));
+shapeRegistry.read();
+shapeRegistry.update("circle2", new Circle(10));
+shapeRegistry.read();
+shapeRegistry.delete("circle3");
+shapeRegistry.read();
+console.log("");
 
-// Create shape registry database
-const shapeRegistryDatabase = new ShapeRegistryDatabase();
-
-// Create shape registry service
-const shapeRegistryCreation = new ShapeRegistryCreation(shapeRegistryDatabase);
-const shapeRegistryRead = new ShapeRegistryRead(shapeRegistryDatabase);
-
-// // Usage
-shapeRegistryCreation.execute("circle", new CircleLSP(12));
-shapeRegistryCreation.execute("triangle", new TriangleLSP(4, 8));
-shapeRegistryCreation.execute("rectangle", new RectangleLSP(12, 8));
-shapeRegistryRead.execute();
+shapeManager.showArea("circle4");
