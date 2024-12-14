@@ -1155,12 +1155,13 @@ class MachineServiceConsumer extends AbstractMachineServiceConsumer {
     if (!service) {
       throw new Error(`${name} not found`);
     }
-
+    service.start();
     this.action.execute(service, document);
+    service.stop();
   }
 }
 
-const main = (): void =>  {
+const ispMain1 = (): void =>  {
 // Create machines (food)
 const printer = new Printer();
 const scanner = new Scanner();
@@ -1190,7 +1191,7 @@ scannerServiceConsumer.useService("scanner", "Hello, again!");
 faxServiceConsumer.useService("fax", "Hello, world!")
 };
 
-main();
+// ispMain1();
 
 // Exercise 2: Animal Behavior System
 // Scenario: You are designing a system for animals in a zoo. The system tracks various animal behaviors such as flying, swimming, and walking. A single Animal interface currently looks like this:
@@ -1210,5 +1211,107 @@ main();
 // Task:
 // Refactor the Animal interface to follow ISP.
 // Implement classes for Bird, Fish, and Mammal, ensuring each class only implements the methods relevant to its abilities.
+
+// Abstractions
+interface Animal {
+  eat(): void;
+}
+
+interface WalkingAnimal extends Animal {
+  walk(): void;
+}
+
+
+interface FlyingAnimal extends Animal {
+  fly(): void;
+}
+
+interface SwimmingAnimal extends Animal {
+  swim(): void;
+}
+
+abstract class AbstractAnimalServiceRegistry {
+  protected registry: Map<string, Animal> = new Map();
+
+  abstract register(name: string, animal: Animal): void;
+  abstract deregister(name: string, animal: Animal): void;
+  abstract getService(name: string): Animal | undefined;
+}
+
+interface IAction {
+
+}
+
+// Concrete implementations (low-level)
+class Tiger implements WalkingAnimal, SwimmingAnimal {
+  eat(): void {
+    console.log("Tiger eating.");
+  }
+
+  walk(): void {
+    console.log("Tiger walking");
+  }
+
+  swim(): void {
+    console.log("Tiger swimming");
+  }
+}
+
+class Eagle implements WalkingAnimal, FlyingAnimal {
+  eat(): void {
+    console.log("Eagle eating");
+  }
+
+  walk(): void {
+    console.log("Eagle walking");
+  }
+
+  fly(): void {
+    console.log("Eagle flying");
+  }
+}
+
+// Animal service registry
+class AnimalServiceRegistry extends AbstractAnimalServiceRegistry {
+  protected registry: Map<string, Animal> = new Map();
+
+  register(name: string, animal: Animal): void {
+    if (this.registry.has(name)) {
+      throw new Error(`${name} ${errorMessages.ALREADY_EXIST}`);
+    } else {
+      this.registry.set(name, animal);
+    }
+  }
+
+  deregister(name: string, animal: Animal): void {
+    if (!this.registry.has(name)) {
+      throw new Error(`${name} ${errorMessages.NO_EXISTENCE}`)
+    } else {
+      this.registry.delete(name);
+    }
+  }
+
+  getService(name: string): Animal | undefined {
+    const service = this.registry.get(name);
+
+    if (!service) {
+      console.log(`${name} ${errorMessages.NO_EXISTENCE}`);
+    } else {
+      return service;
+    }
+  }
+}
+
+// Create animal service registry
+const animalServiceRegistry = new AnimalServiceRegistry();
+
+// low-level instantiations
+const bengalTiger = new Tiger();
+
+// Register services
+animalServiceRegistry.register("bengal tiger", bengalTiger);
+
+
+
 
 

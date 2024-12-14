@@ -4,4 +4,5 @@ export const errorMessages = {
     NO_EXISTENCE: "does not exist",
     EMPTINESS: "is empty",
     PLEASE_REGISTER_THE_SERVICE: "Please register the service",
+    ALREADY_EXIST: "already exists",
 };

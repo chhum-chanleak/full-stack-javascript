@@ -736,10 +736,12 @@ class MachineServiceConsumer extends AbstractMachineServiceConsumer {
         if (!service) {
             throw new Error(`${name} not found`);
         }
+        service.start();
         this.action.execute(service, document);
+        service.stop();
     }
 }
-const main = () => {
+const ispMain1 = () => {
     // Create machines (food)
     const printer = new Printer();
     const scanner = new Scanner();
@@ -763,19 +765,64 @@ const main = () => {
     scannerServiceConsumer.useService("scanner", "Hello, again!");
     faxServiceConsumer.useService("fax", "Hello, world!");
 };
-main();
-// Exercise 2: Animal Behavior System
-// Scenario: You are designing a system for animals in a zoo. The system tracks various animal behaviors such as flying, swimming, and walking. A single Animal interface currently looks like this:
-// interface Animal {
-//   fly(): void;
-//   swim(): void;
-//   walk(): void;
-// }
-// Problem:
-// Birds can fly and walk but don’t swim.
-// Fish can swim but don’t fly or walk.
-// Mammals can walk and sometimes swim but don’t fly.
-// This design forces all animals to implement behaviors they don’t need, violating ISP.
-// Task:
-// Refactor the Animal interface to follow ISP.
-// Implement classes for Bird, Fish, and Mammal, ensuring each class only implements the methods relevant to its abilities.
+class AbstractAnimalServiceRegistry {
+    registry = new Map();
+}
+// Concrete implementations (low-level)
+class Tiger {
+    eat() {
+        console.log("Tiger eating.");
+    }
+    walk() {
+        console.log("Tiger walking");
+    }
+    swim() {
+        console.log("Tiger swimming");
+    }
+}
+class Eagle {
+    eat() {
+        console.log("Eagle eating");
+    }
+    walk() {
+        console.log("Eagle walking");
+    }
+    fly() {
+        console.log("Eagle flying");
+    }
+}
+// Animal service registry
+class AnimalServiceRegistry extends AbstractAnimalServiceRegistry {
+    registry = new Map();
+    register(name, animal) {
+        if (this.registry.has(name)) {
+            throw new Error(`${name} ${errorMessages.ALREADY_EXIST}`);
+        }
+        else {
+            this.registry.set(name, animal);
+        }
+    }
+    deregister(name, animal) {
+        if (!this.registry.has(name)) {
+            throw new Error(`${name} ${errorMessages.NO_EXISTENCE}`);
+        }
+        else {
+            this.registry.delete(name);
+        }
+    }
+    getService(name) {
+        const service = this.registry.get(name);
+        if (!service) {
+            console.log(`${name} ${errorMessages.NO_EXISTENCE}`);
+        }
+        else {
+            return service;
+        }
+    }
+}
+// Create animal service registry
+const animalServiceRegistry = new AnimalServiceRegistry();
+// low-level instantiations
+const bengalTiger = new Tiger();
+// Register services
+animalServiceRegistry.register("bengal tiger", bengalTiger);
