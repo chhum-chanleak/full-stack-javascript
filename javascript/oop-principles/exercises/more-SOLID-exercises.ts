@@ -326,35 +326,35 @@ class ShoppingCartManager {
 // Abstractions
 
 // Base interface
-interface Shape {
-  getArea(): number;
-}
+// interface Shape {
+//   getArea(): number;
+// }
 
-// Concrete implementations
+// // Concrete implementations
 
-// Rectangle implementation
-class Rectangle implements Shape {
-  constructor(private width: number, private height: number) {}
+// // Rectangle implementation
+// class Rectangle implements Shape {
+//   constructor(private width: number, private height: number) {}
 
-  getArea(): number {
-    return this.width * this.height;
-  }
-}
+//   getArea(): number {
+//     return this.width * this.height;
+//   }
+// }
 
-// Circle implementation
-class Circle implements Shape {
-  constructor(private radius: number) {}
+// // Circle implementation
+// class Circle implements Shape {
+//   constructor(private radius: number) {}
 
-  getArea(): number {
-    return Math.PI * this.radius * this.radius;
-  }
-}
+//   getArea(): number {
+//     return Math.PI * this.radius * this.radius;
+//   }
+// }
 
-// Usage
-const shapes: Shape[] = [
-  new Rectangle(10, 5),
-  new Circle(7),
-];
+// // Usage
+// const shapes: Shape[] = [
+//   new Rectangle(10, 5),
+//   new Circle(7),
+// ];
 
 // shapes.forEach(shape => {
 //   console.log(`Area: ${shape.getArea()}`);
@@ -483,39 +483,39 @@ class ShapeManger {
 
 // Use abstraction to allow easy extension.
 // Base interface
-interface PaymentProcessor {
-  processPayment(amount: number): void;
-}
+// interface PaymentProcessor {
+//   processPayment(amount: number): void;
+// }
 
-// Concrete implementation
+// // Concrete implementation
 
-// Credit Card implementation
-class CreditCardPayment implements PaymentProcessor {
-  processPayment(amount: number): void {
-    console.log(`Processing credit card payment of $${amount}`);
-  }
-}
+// // Credit Card implementation
+// class CreditCardPayment implements PaymentProcessor {
+//   processPayment(amount: number): void {
+//     console.log(`Processing credit card payment of $${amount}`);
+//   }
+// }
 
-// PayPal implementation
-class PayPalPayment implements PaymentProcessor {
-  processPayment(amount: number): void {
-    console.log(`Processing PayPal payment of $${amount}`);
-  }
-}
+// // PayPal implementation
+// class PayPalPayment implements PaymentProcessor {
+//   processPayment(amount: number): void {
+//     console.log(`Processing PayPal payment of $${amount}`);
+//   }
+// }
 
-// Stripe implementation
-class StripePayment implements PaymentProcessor {
-  processPayment(amount: number): void {
-    console.log(`Processing Stripe payment of $${amount}`);
-  }
-}
+// // Stripe implementation
+// class StripePayment implements PaymentProcessor {
+//   processPayment(amount: number): void {
+//     console.log(`Processing Stripe payment of $${amount}`);
+//   }
+// }
 
-// Usage
-const payments: PaymentProcessor[] = [
-  new CreditCardPayment(),
-  new PayPalPayment(),
-  new StripePayment(),
-];
+// // Usage
+// const payments: PaymentProcessor[] = [
+//   new CreditCardPayment(),
+//   new PayPalPayment(),
+//   new StripePayment(),
+// ];
 
 // payments.forEach(payment => {
 //   payment.processPayment(100);
@@ -627,58 +627,58 @@ class PaymentManager {
 // LSP states that objects of a superclass should be replaceable with objects of its subclasses without affecting the correctness of the program. In simpler terms, subtypes must be substitutable for their base types.
 
 // LSP violation
-class RectangleNo {
-  width: number;
-  height: number;
+// class RectangleNo {
+//   width: number;
+//   height: number;
 
-  constructor(width: number, height: number) {
-    this.width = width;
-    this.height = height;
-  }
+//   constructor(width: number, height: number) {
+//     this.width = width;
+//     this.height = height;
+//   }
 
-  getArea(): number {
-    return this.width * this.height;
-  }
-}
+//   getArea(): number {
+//     return this.width * this.height;
+//   }
+// }
 
-class Square extends Rectangle {
-  constructor(side: number) {
-    super(side, side); // This violates LSP
-  }
-}
+// class Square extends RectangleNo {
+//   constructor(side: number) {
+//     super(side, side); // This violates LSP
+//   }
+// }
 
 // In this example, Square inherits from Rectangle, but it violates LSP because a square's width and height are always equal. If we replace a Rectangle with a Square in a function that expects a Rectangle, the behavior might change unexpectedly, as the Square's area calculation might not be what's expected.
 
 // LSP correct implementation
-interface ShapeYes {
-  getArea(): number;
-}
+// interface ShapeYes {
+//   getArea(): number;
+// }
 
-class RectangleYes implements ShapeYes {
-  width: number;
-  height: number;
+// class RectangleYes implements ShapeYes {
+//   width: number;
+//   height: number;
 
-  constructor(width: number, height: number) {
-    this.width = width;
-    this.height = height;
-  }
+//   constructor(width: number, height: number) {
+//     this.width = width;
+//     this.height = height;
+//   }
 
-  getArea(): number {
-    return this.width * this.height;
-  }
-}
+//   getArea(): number {
+//     return this.width * this.height;
+//   }
+// }
 
-class SquareYes implements ShapeYes {
-  side: number;
+// class SquareYes implements ShapeYes {
+//   side: number;
 
-  constructor(side: number) {
-    this.side = side;
-  }
+//   constructor(side: number) {
+//     this.side = side;
+//   }
 
-  getArea(): number {
-    return this.side * this.side;
-  }
-}
+//   getArea(): number {
+//     return this.side * this.side;
+//   }
+// }
 
 // Here, Rectangle and Square both implement the Shape interface, ensuring that they can be substituted for each other without breaking the code. Both classes have a common getArea() method, and their implementations are consistent with their respective shapes.
 
@@ -689,7 +689,6 @@ class SquareYes implements ShapeYes {
 // Subclasses should preserve the invariant of the base class.
 
 // Exercises1:
-
 // Vehicle Hierarchy:
 // Create a base class Vehicle with properties speed and color.
 // Create subclasses Car, Motorcycle, and Truck.
@@ -812,7 +811,6 @@ class VehicleManager {
 // vehicleManager.showInfo(10);
 
 // Exercise 2:
-
 // Shape Hierarchy:
 // Create a base class Shape with a method getArea().
 // Create subclasses Circle, Triangle, and Rectangle.
@@ -829,16 +827,24 @@ abstract class AbstractShapeRegistry {
   protected shapeRegistryDatabase: Map<string, ShapeLSP> = new Map();
 
   abstract create(name: string, shape: ShapeLSP): void;
-  abstract read(name: string, shape: ShapeLSP): void;
+  abstract read(): void;
   abstract update(name: string, shape: ShapeLSP): void;
   abstract delete(name: string): void;
   abstract getShape(name: string): ShapeLSP;
 }
 
 abstract class AbstractShapeManager2 {
-  constructor(protected shapeRegistryDatabase: ShapeRegistry2) {}
+  constructor(protected shapeRegistryDatabase: AbstractShapeRegistry) {}
 
   abstract showArea(name: string): void;
+}
+
+abstract class AbstractShapeApplication {
+  constructor(
+    protected shapeRegistry: AbstractShapeRegistry = new ShapeRegistry2(), 
+    protected shapeManager: AbstractShapeManager2 = new ShapeManager2(this.shapeRegistry)) {}
+
+  abstract run(): void;
 }
 
 // Concrete implementations (low-level)
@@ -899,7 +905,7 @@ class ShapeRegistry2 extends AbstractShapeRegistry {
   update(name: string, shape: ShapeLSP): void {
     // Check for the presence of both of parameters
     if (!name || !shape) {
-      throw new Error(`${errorMessages.MISSING_NAME_SHAPE_PARAMETERS}`);
+      throw new Error(`${errorMessages.MISSING_NAME_SERVICE_PARAMETERS}`);
     } 
     else {
       // Delete the old one if it exists
@@ -926,8 +932,8 @@ class ShapeRegistry2 extends AbstractShapeRegistry {
   }
 }
 
-class ShapeManger2 extends AbstractShapeManager2 {
-  constructor(protected shapeRegistryDatabase: ShapeRegistry2) {
+class ShapeManager2 extends AbstractShapeManager2 {
+  constructor(protected shapeRegistryDatabase: AbstractShapeRegistry) {
     super(shapeRegistryDatabase);
   }
 
@@ -940,21 +946,269 @@ class ShapeManger2 extends AbstractShapeManager2 {
   }
 }
 
-// Create shape registry
-const shapeRegistry = new ShapeRegistry2();
-const shapeManager = new ShapeManger2(shapeRegistry);
+// Implement application of shapes
+class ShapeApplication extends AbstractShapeApplication {
+  constructor(
+    protected shapeRegistry: AbstractShapeRegistry = new ShapeRegistry2(), 
+    protected shapeManager: AbstractShapeManager2 = new ShapeManager2(shapeRegistry)) {
+    super(shapeRegistry, shapeManager);
+  }
 
+  run(): void {
+      // Usage
+  this.shapeRegistry.create("circle", new CircleLSP(8));
+  this.shapeRegistry.create("circle2", new CircleLSP(12));
+  this.shapeRegistry.create("circle3", new CircleLSP(3));
+  this.shapeRegistry.create("circle4", new CircleLSP(2));
+  this.shapeRegistry.read();
+  this.shapeRegistry.update("circle2", new CircleLSP(10));
+  this.shapeRegistry.read();
+  this.shapeRegistry.delete("circle3");
+  this.shapeRegistry.read();
+  console.log("");
+
+  this.shapeManager.showArea("circle4");
+  }
+}
+
+// const app = new ShapeApplication();
+
+// app.run();
+
+// 4. Interfaces Segregation Principle(ISP)
+
+// Exercise 1: Device Control System
+// Scenario: You are building a system to control different types of devices: printers, scanners, and fax machines. A single Machine interface currently has methods for all three devices:
+
+// interface Machine {
+//   print(document: string): void;
+//   scan(document: string): void;
+//   fax(document: string): void;
+// }
+
+// However:
+// Printers only need the print method.
+// Scanners only need the scan method.
+// Fax machines only need the fax method.
+// Problem: The current design forces all devices to implement methods they don’t use, violating ISP.
+
+// Task:
+// Split the Machine interface into smaller, more focused interfaces.
+// Implement classes for each type of device, adhering to the appropriate interface(s).
+
+// Abstractions
+
+export interface Machine {
+  start(): void;
+  stop(): void;
+}
+
+interface IPrinter extends Machine {
+  start(): void;
+  stop(): void;
+  print(document: string): void;
+}
+
+interface IScanner extends Machine {
+  start(): void;
+  stop(): void;
+  scan(document: string): void;
+}
+
+interface IFax extends Machine {
+  start(): void;
+  stop(): void;
+  fax(document: string): void;
+}
+
+interface IAction {
+  execute(service: Machine, document: string): void;
+}
+
+abstract class AbstractMachineServiceRegistry {
+  protected registry: Map<string, Machine> = new Map();
+
+  abstract registerService(name: string, machine: Machine): void;
+  abstract deregisterService(name: string, machine: Machine): void;
+  abstract getService(name: string): Machine | undefined;
+}
+
+abstract class AbstractMachineServiceConsumer {
+  constructor(
+    protected registry: AbstractMachineServiceRegistry,
+    protected action: IAction
+  ) {}
+
+  abstract useService(name: string, document: string): void;
+}
+
+// Concrete implementations low-level
+
+class PrintAction implements IAction {
+  execute(service: Machine, document: string): void {
+    if ("print" in service) {
+      (service as IPrinter).print(document);
+    } else {
+      console.log("Service does not support printing");
+    }
+  }
+}
+
+class ScanAction implements IAction {
+  execute(service: Machine, document: string): void {
+    if ("scan" in service) {
+      (service as IScanner).scan(document);
+    } else {
+      console.log("Service does not support scanning");
+    }
+  }
+}
+
+class FaxAction implements IAction {
+  execute(service: Machine, document: string): void {
+    if ("fax" in service) {
+      (service as IFax).fax(document);
+    } else {
+      console.log("Service does not support faxing");
+    }
+  }
+}
+
+class Printer implements IPrinter {
+  start(): void {
+    console.log("Printer is on");
+  }
+
+  stop(): void {
+    console.log("Printer is off");
+  }
+
+  print(document: string): void {
+    console.log(`Printing document: ${document}`);
+  }
+}
+
+class Scanner implements IScanner {
+  start(): void {
+    console.log("Scanner is on");
+  }
+
+  stop(): void {
+    console.log("Scanner is off");
+  }
+
+  scan(document: string): void {
+    console.log(`Scanning document: ${document}`);
+  }
+}
+
+class Fax implements IFax {
+  start(): void {
+    console.log("Fax machine is on");
+  }
+
+  stop(): void {
+    console.log("Fax machine is off");
+  }
+
+  fax(document: string): void {
+    console.log(`Faxing document: ${document}`);
+  }
+}
+
+// Machine service registry implementation
+class MachineServiceRegistry extends AbstractMachineServiceRegistry {
+  protected registry: Map<string, Machine> = new Map();
+
+  registerService(name: string, machine: Machine): void {
+    this.registry.set(name, machine);
+    console.log(`${name} registered`);
+  }
+
+  deregisterService(name: string, machine: Machine): void {
+    if (!validateShapeData<string, Machine>(name, machine)) {
+      return;
+    }
+
+    this.registry.delete(name);
+    console.log(`${name} deregistered`);
+  }
+
+  getService(name: string): Machine | undefined {
+
+    return this.registry.get(name);
+  }
+}
+
+// Service Consumer with Decoupled Actions
+class MachineServiceConsumer extends AbstractMachineServiceConsumer {
+  constructor(
+    protected registry: AbstractMachineServiceRegistry,
+    protected action: IAction
+  ) {
+    super(registry, action);
+  }
+
+  useService(name: string, document: string): void {
+    const service = this.registry.getService(name);
+
+    if (!service) {
+      throw new Error(`${name} not found`);
+    }
+
+    this.action.execute(service, document);
+  }
+}
+
+const main = (): void =>  {
+// Create machines (food)
+const printer = new Printer();
+const scanner = new Scanner();
+const fax = new Fax();
+
+// create actions (food purpose)
+const printAction = new PrintAction();
+const scanAction = new ScanAction();
+const faxAction = new FaxAction();
+
+// Create service registry (fridge)
+const machineServiceRegistry = new MachineServiceRegistry();
+
+// Register machines (label and put food into the fridge)
+machineServiceRegistry.registerService("printer", printer);
+machineServiceRegistry.registerService("scanner", scanner);
+machineServiceRegistry.registerService("fax", fax);
+
+// create machines and actions consumer (take food from the fridge and use(consume) it for different purposes)
+const printerServiceConsumer = new MachineServiceConsumer(machineServiceRegistry, printAction);
+const scannerServiceConsumer = new MachineServiceConsumer(machineServiceRegistry, scanAction);
+const faxServiceConsumer = new MachineServiceConsumer(machineServiceRegistry, faxAction);
 
 // Usage
-shapeRegistry.create("circle", new Circle(8));
-shapeRegistry.create("circle2", new Circle(12));
-shapeRegistry.create("circle3", new Circle(3));
-shapeRegistry.create("circle4", new Circle(2));
-shapeRegistry.read();
-shapeRegistry.update("circle2", new Circle(10));
-shapeRegistry.read();
-shapeRegistry.delete("circle3");
-shapeRegistry.read();
-console.log("");
+printerServiceConsumer.useService("printer", "Hello, world!");
+scannerServiceConsumer.useService("scanner", "Hello, again!");
+faxServiceConsumer.useService("fax", "Hello, world!")
+};
 
-shapeManager.showArea("circle4");
+main();
+
+// Exercise 2: Animal Behavior System
+// Scenario: You are designing a system for animals in a zoo. The system tracks various animal behaviors such as flying, swimming, and walking. A single Animal interface currently looks like this:
+
+// interface Animal {
+//   fly(): void;
+//   swim(): void;
+//   walk(): void;
+// }
+
+// Problem:
+// Birds can fly and walk but don’t swim.
+// Fish can swim but don’t fly or walk.
+// Mammals can walk and sometimes swim but don’t fly.
+// This design forces all animals to implement behaviors they don’t need, violating ISP.
+
+// Task:
+// Refactor the Animal interface to follow ISP.
+// Implement classes for Bird, Fish, and Mammal, ensuring each class only implements the methods relevant to its abilities.
+
+

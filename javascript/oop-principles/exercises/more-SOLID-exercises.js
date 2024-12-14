@@ -163,34 +163,6 @@ class ShoppingCartManager {
     }
 }
 // Concrete implementations
-// Rectangle implementation
-class Rectangle {
-    width;
-    height;
-    constructor(width, height) {
-        this.width = width;
-        this.height = height;
-    }
-    getArea() {
-        return this.width * this.height;
-    }
-}
-// Circle implementation
-class Circle {
-    radius;
-    constructor(radius) {
-        this.radius = radius;
-    }
-    getArea() {
-        return Math.PI * this.radius * this.radius;
-    }
-}
-// Usage
-const shapes = [
-    new Rectangle(10, 5),
-    new Circle(7),
-];
-// Concrete implementations
 // Triangle implementation
 class Triangle {
     base;
@@ -267,31 +239,6 @@ class ShapeManger {
         console.log(`Area of this ${name} is: ${shape.getArea()}`);
     }
 }
-// Concrete implementation
-// Credit Card implementation
-class CreditCardPayment {
-    processPayment(amount) {
-        console.log(`Processing credit card payment of $${amount}`);
-    }
-}
-// PayPal implementation
-class PayPalPayment {
-    processPayment(amount) {
-        console.log(`Processing PayPal payment of $${amount}`);
-    }
-}
-// Stripe implementation
-class StripePayment {
-    processPayment(amount) {
-        console.log(`Processing Stripe payment of $${amount}`);
-    }
-}
-// Usage
-const payments = [
-    new CreditCardPayment(),
-    new PayPalPayment(),
-    new StripePayment(),
-];
 // Google Pay implementation
 class GooglePayment {
     processPayment(amount) {
@@ -366,42 +313,47 @@ class PaymentManager {
 // 3. Liskov Substitution Principle (LSP)
 // LSP states that objects of a superclass should be replaceable with objects of its subclasses without affecting the correctness of the program. In simpler terms, subtypes must be substitutable for their base types.
 // LSP violation
-class RectangleNo {
-    width;
-    height;
-    constructor(width, height) {
-        this.width = width;
-        this.height = height;
-    }
-    getArea() {
-        return this.width * this.height;
-    }
-}
-class Square extends Rectangle {
-    constructor(side) {
-        super(side, side); // This violates LSP
-    }
-}
-class RectangleYes {
-    width;
-    height;
-    constructor(width, height) {
-        this.width = width;
-        this.height = height;
-    }
-    getArea() {
-        return this.width * this.height;
-    }
-}
-class SquareYes {
-    side;
-    constructor(side) {
-        this.side = side;
-    }
-    getArea() {
-        return this.side * this.side;
-    }
-}
+// class RectangleNo {
+//   width: number;
+//   height: number;
+//   constructor(width: number, height: number) {
+//     this.width = width;
+//     this.height = height;
+//   }
+//   getArea(): number {
+//     return this.width * this.height;
+//   }
+// }
+// class Square extends RectangleNo {
+//   constructor(side: number) {
+//     super(side, side); // This violates LSP
+//   }
+// }
+// In this example, Square inherits from Rectangle, but it violates LSP because a square's width and height are always equal. If we replace a Rectangle with a Square in a function that expects a Rectangle, the behavior might change unexpectedly, as the Square's area calculation might not be what's expected.
+// LSP correct implementation
+// interface ShapeYes {
+//   getArea(): number;
+// }
+// class RectangleYes implements ShapeYes {
+//   width: number;
+//   height: number;
+//   constructor(width: number, height: number) {
+//     this.width = width;
+//     this.height = height;
+//   }
+//   getArea(): number {
+//     return this.width * this.height;
+//   }
+// }
+// class SquareYes implements ShapeYes {
+//   side: number;
+//   constructor(side: number) {
+//     this.side = side;
+//   }
+//   getArea(): number {
+//     return this.side * this.side;
+//   }
+// }
 // Here, Rectangle and Square both implement the Shape interface, ensuring that they can be substituted for each other without breaking the code. Both classes have a common getArea() method, and their implementations are consistent with their respective shapes.
 // Key Points:
 // Subclasses should not weaken the preconditions or strengthen the post-conditions of the base class.
@@ -549,6 +501,14 @@ class AbstractShapeManager2 {
         this.shapeRegistryDatabase = shapeRegistryDatabase;
     }
 }
+class AbstractShapeApplication {
+    shapeRegistry;
+    shapeManager;
+    constructor(shapeRegistry = new ShapeRegistry2(), shapeManager = new ShapeManager2(this.shapeRegistry)) {
+        this.shapeRegistry = shapeRegistry;
+        this.shapeManager = shapeManager;
+    }
+}
 // Concrete implementations (low-level)
 class CircleLSP extends ShapeLSP {
     radius;
@@ -608,7 +568,7 @@ class ShapeRegistry2 extends AbstractShapeRegistry {
     update(name, shape) {
         // Check for the presence of both of parameters
         if (!name || !shape) {
-            throw new Error(`${errorMessages.MISSING_NAME_SHAPE_PARAMETERS}`);
+            throw new Error(`${errorMessages.MISSING_NAME_SERVICE_PARAMETERS}`);
         }
         else {
             // Delete the old one if it exists
@@ -632,7 +592,7 @@ class ShapeRegistry2 extends AbstractShapeRegistry {
         return this.shapeRegistryDatabase.get(name);
     }
 }
-class ShapeManger2 extends AbstractShapeManager2 {
+class ShapeManager2 extends AbstractShapeManager2 {
     shapeRegistryDatabase;
     constructor(shapeRegistryDatabase) {
         super(shapeRegistryDatabase);
@@ -645,18 +605,177 @@ class ShapeManger2 extends AbstractShapeManager2 {
         console.log(this.shapeRegistryDatabase.getShape(name).getArea().toFixed(2));
     }
 }
-// Create shape registry
-const shapeRegistry = new ShapeRegistry2();
-const shapeManager = new ShapeManger2(shapeRegistry);
-// Usage
-shapeRegistry.create("circle", new Circle(8));
-shapeRegistry.create("circle2", new Circle(12));
-shapeRegistry.create("circle3", new Circle(3));
-shapeRegistry.create("circle4", new Circle(2));
-shapeRegistry.read();
-shapeRegistry.update("circle2", new Circle(10));
-shapeRegistry.read();
-shapeRegistry.delete("circle3");
-shapeRegistry.read();
-console.log("");
-shapeManager.showArea("circle4");
+// Implement application of shapes
+class ShapeApplication extends AbstractShapeApplication {
+    shapeRegistry;
+    shapeManager;
+    constructor(shapeRegistry = new ShapeRegistry2(), shapeManager = new ShapeManager2(shapeRegistry)) {
+        super(shapeRegistry, shapeManager);
+        this.shapeRegistry = shapeRegistry;
+        this.shapeManager = shapeManager;
+    }
+    run() {
+        // Usage
+        this.shapeRegistry.create("circle", new CircleLSP(8));
+        this.shapeRegistry.create("circle2", new CircleLSP(12));
+        this.shapeRegistry.create("circle3", new CircleLSP(3));
+        this.shapeRegistry.create("circle4", new CircleLSP(2));
+        this.shapeRegistry.read();
+        this.shapeRegistry.update("circle2", new CircleLSP(10));
+        this.shapeRegistry.read();
+        this.shapeRegistry.delete("circle3");
+        this.shapeRegistry.read();
+        console.log("");
+        this.shapeManager.showArea("circle4");
+    }
+}
+class AbstractMachineServiceRegistry {
+    registry = new Map();
+}
+class AbstractMachineServiceConsumer {
+    registry;
+    action;
+    constructor(registry, action) {
+        this.registry = registry;
+        this.action = action;
+    }
+}
+// Concrete implementations low-level
+class PrintAction {
+    execute(service, document) {
+        if ("print" in service) {
+            service.print(document);
+        }
+        else {
+            console.log("Service does not support printing");
+        }
+    }
+}
+class ScanAction {
+    execute(service, document) {
+        if ("scan" in service) {
+            service.scan(document);
+        }
+        else {
+            console.log("Service does not support scanning");
+        }
+    }
+}
+class FaxAction {
+    execute(service, document) {
+        if ("fax" in service) {
+            service.fax(document);
+        }
+        else {
+            console.log("Service does not support faxing");
+        }
+    }
+}
+class Printer {
+    start() {
+        console.log("Printer is on");
+    }
+    stop() {
+        console.log("Printer is off");
+    }
+    print(document) {
+        console.log(`Printing document: ${document}`);
+    }
+}
+class Scanner {
+    start() {
+        console.log("Scanner is on");
+    }
+    stop() {
+        console.log("Scanner is off");
+    }
+    scan(document) {
+        console.log(`Scanning document: ${document}`);
+    }
+}
+class Fax {
+    start() {
+        console.log("Fax machine is on");
+    }
+    stop() {
+        console.log("Fax machine is off");
+    }
+    fax(document) {
+        console.log(`Faxing document: ${document}`);
+    }
+}
+// Machine service registry implementation
+class MachineServiceRegistry extends AbstractMachineServiceRegistry {
+    registry = new Map();
+    registerService(name, machine) {
+        this.registry.set(name, machine);
+        console.log(`${name} registered`);
+    }
+    deregisterService(name, machine) {
+        if (!validateShapeData(name, machine)) {
+            return;
+        }
+        this.registry.delete(name);
+        console.log(`${name} deregistered`);
+    }
+    getService(name) {
+        return this.registry.get(name);
+    }
+}
+// Service Consumer with Decoupled Actions
+class MachineServiceConsumer extends AbstractMachineServiceConsumer {
+    registry;
+    action;
+    constructor(registry, action) {
+        super(registry, action);
+        this.registry = registry;
+        this.action = action;
+    }
+    useService(name, document) {
+        const service = this.registry.getService(name);
+        if (!service) {
+            throw new Error(`${name} not found`);
+        }
+        this.action.execute(service, document);
+    }
+}
+const main = () => {
+    // Create machines (food)
+    const printer = new Printer();
+    const scanner = new Scanner();
+    const fax = new Fax();
+    // create actions (food purpose)
+    const printAction = new PrintAction();
+    const scanAction = new ScanAction();
+    const faxAction = new FaxAction();
+    // Create service registry (fridge)
+    const machineServiceRegistry = new MachineServiceRegistry();
+    // Register machines (label and put food into the fridge)
+    machineServiceRegistry.registerService("printer", printer);
+    machineServiceRegistry.registerService("scanner", scanner);
+    machineServiceRegistry.registerService("fax", fax);
+    // create machines and actions consumer (take food from the fridge and use(consume) it for different purposes)
+    const printerServiceConsumer = new MachineServiceConsumer(machineServiceRegistry, printAction);
+    const scannerServiceConsumer = new MachineServiceConsumer(machineServiceRegistry, scanAction);
+    const faxServiceConsumer = new MachineServiceConsumer(machineServiceRegistry, faxAction);
+    // Usage
+    printerServiceConsumer.useService("printer", "Hello, world!");
+    scannerServiceConsumer.useService("scanner", "Hello, again!");
+    faxServiceConsumer.useService("fax", "Hello, world!");
+};
+main();
+// Exercise 2: Animal Behavior System
+// Scenario: You are designing a system for animals in a zoo. The system tracks various animal behaviors such as flying, swimming, and walking. A single Animal interface currently looks like this:
+// interface Animal {
+//   fly(): void;
+//   swim(): void;
+//   walk(): void;
+// }
+// Problem:
+// Birds can fly and walk but don’t swim.
+// Fish can swim but don’t fly or walk.
+// Mammals can walk and sometimes swim but don’t fly.
+// This design forces all animals to implement behaviors they don’t need, violating ISP.
+// Task:
+// Refactor the Animal interface to follow ISP.
+// Implement classes for Bird, Fish, and Mammal, ensuring each class only implements the methods relevant to its abilities.
