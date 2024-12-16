@@ -771,12 +771,14 @@ class Eagle {
 }
 // Storage implementation
 class RegistryStorage extends AbstractRegistryStorage {
+    // This class inherits "protected registry: Map<string, Animal> = new Map()" from abstract class AbstractRegistryStorage 
     register(name, animal) {
         if (this.registry.has(name)) {
             throw new Error(`${name} ${errorMessages.ALREADY_EXIST}`);
         }
         else {
             this.registry.set(name, animal);
+            console.log(`${name} registered successful`);
         }
     }
     deregister(name) {
@@ -797,7 +799,12 @@ class RegistryStorage extends AbstractRegistryStorage {
         }
     }
     readRegistry() {
-        console.log(...this.registry);
+        if (this.registry.size === 0) {
+            console.log(`Registry ${errorMessages.EMPTINESS}`);
+        }
+        for (const [key, value] of this.registry.entries()) {
+            console.log(`${key}: ${JSON.stringify(value)}`);
+        }
     }
 }
 // Animal service registry
@@ -811,17 +818,13 @@ class AnimalServiceRegistry extends AbstractAnimalServiceRegistry {
         this.registry.register(name, animal);
     }
     deregister(name) {
-        if (!this.registry.getService(name)) {
-            throw new Error(`${name} ${errorMessages.NO_EXISTENCE}`);
-        }
-        else {
-            this.registry.deregister(name);
-        }
+        this.registry.deregister(name);
+        console.log(`${name} deregistered successfully`);
     }
     getService(name) {
         const service = this.registry.getService(name);
         if (!service) {
-            console.log(`${name} ${errorMessages.NO_EXISTENCE}`);
+            throw new Error(`${name} ${errorMessages.NO_EXISTENCE}`);
         }
         else {
             return service;
@@ -838,9 +841,64 @@ const mainISP2 = () => {
     animalRegistry.register("bald eagle", new Eagle());
     animalRegistry.register("harpy eagle", new Eagle());
     animalRegistry.deregister("bald eagle");
+    animalRegistry.register("bald eagle2", new Eagle());
     const bengalTiger = animalRegistry.getService("bengal tiger");
+    const harpyEagle = animalRegistry.getService("harpy eagle");
+    // const baldEagle = animalRegistry.getService("bald eagle") as Eagle; // Error does not exist
     animalRegistry.readRegistry();
     bengalTiger.walk();
+    harpyEagle.fly();
+    const baldEagle2 = animalRegistry.getService("bald eagle2");
+    animalRegistry.readRegistry();
 };
 // Use this approach to avoid 'global variables' pollution
 mainISP2();
+// Exercise 2 solution of AI version:
+// enum ErrorMessages {
+//   ALREADY_EXIST = "already exists in the registry.",
+//   NO_EXISTENCE = "does not exist in the registry."
+// }
+// class RegistryError extends Error {
+//   constructor(message: string) {
+//     super(message);
+//     this.name = "RegistryError";
+//   }
+// }
+// class RegistryStorage<T extends Animal> extends AbstractRegistryStorage {
+//   // Inject an initial registry (optional)
+//   constructor(initialRegistry: Map<string, T> = new Map()) {
+//     super();
+//     this.registry = initialRegistry;
+//   }
+//   register(name: string, animal: T): void {
+//     if (this.registry.has(name)) {
+//       throw new RegistryError(`"${name}" ${ErrorMessages.ALREADY_EXIST}`);
+//     }
+//     this.registry.set(name, animal);
+//     console.log(`"${name}" registered successfully.`);
+//   }
+//   deregister(name: string): void {
+//     if (!this.registry.has(name)) {
+//       throw new RegistryError(`"${name}" ${ErrorMessages.NO_EXISTENCE}`);
+//     }
+//     this.registry.delete(name);
+//     console.log(`"${name}" deregistered successfully.`);
+//   }
+//   getService(name: string): T {
+//     const service = this.registry.get(name);
+//     if (!service) {
+//       throw new RegistryError(`"${name}" ${ErrorMessages.NO_EXISTENCE}`);
+//     }
+//     return service;
+//   }
+//   readRegistry(): void {
+//     if (this.registry.size === 0) {
+//       console.log("Registry is empty.");
+//       return;
+//     }
+//     console.log("Registry contents:");
+//     for (const [name, animal] of this.registry.entries()) {
+//       console.log(`- ${name}: ${animal.constructor.name}`);
+//     }
+//   }
+// }
