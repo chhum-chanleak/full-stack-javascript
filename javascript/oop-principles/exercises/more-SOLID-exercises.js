@@ -935,29 +935,34 @@ class VehicleStorage extends AbstractVehicleStorage {
         return this.vehicles;
     }
 }
+class VehicleStorageGetter {
+    static getVehicles(vehiclesStorage) {
+        return vehiclesStorage.getVehicles();
+    }
+}
 class VehicleController {
     vehiclesStorage;
     constructor(vehiclesStorage = new VehicleStorage()) {
         this.vehiclesStorage = vehiclesStorage;
     }
     register(name, vehicle) {
-        if (this.vehiclesStorage.getVehicles().has(name)) {
+        if (VehicleStorageGetter.getVehicles(this.vehiclesStorage).has(name)) {
             throw new Error(`${name} ${errorMessages.ALREADY_EXIST}`);
         }
         else if (name.length === 0) {
             throw new Error(`Name cannot be an empty string`);
         }
-        this.vehiclesStorage.getVehicles().set(name, vehicle);
+        VehicleStorageGetter.getVehicles(this.vehiclesStorage).set(name, vehicle);
         console.log(`${name} registered successfully`);
     }
     getVehicle(name) {
-        if (!this.vehiclesStorage.getVehicles().has(name)) {
+        if (!VehicleStorageGetter.getVehicles(this.vehiclesStorage).has(name)) {
             throw new Error(`${name} ${errorMessages.NO_EXISTENCE}`);
         }
-        return this.vehiclesStorage.getVehicles().get(name);
+        return VehicleStorageGetter.getVehicles(this.vehiclesStorage).get(name);
     }
     readStorage() {
-        VehicleStorageLogger.logStorage(this.vehiclesStorage.getVehicles());
+        VehicleStorageLogger.logStorage(VehicleStorageGetter.getVehicles(this.vehiclesStorage));
     }
 }
 class VehicleStorageLogger {
