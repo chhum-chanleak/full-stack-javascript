@@ -741,32 +741,10 @@ class MachineServiceConsumer extends AbstractMachineServiceConsumer {
         service.stop();
     }
 }
-const ispMain1 = () => {
-    // Create machines (food)
-    const printer = new Printer();
-    const scanner = new Scanner();
-    const fax = new Fax();
-    // create actions (food purpose)
-    const printAction = new PrintAction();
-    const scanAction = new ScanAction();
-    const faxAction = new FaxAction();
-    // Create service registry (fridge)
-    const machineServiceRegistry = new MachineServiceRegistry();
-    // Register machines (label and put food into the fridge)
-    machineServiceRegistry.registerService("printer", printer);
-    machineServiceRegistry.registerService("scanner", scanner);
-    machineServiceRegistry.registerService("fax", fax);
-    // create machines and actions consumer (take food from the fridge and use(consume) it for different purposes)
-    const printerServiceConsumer = new MachineServiceConsumer(machineServiceRegistry, printAction);
-    const scannerServiceConsumer = new MachineServiceConsumer(machineServiceRegistry, scanAction);
-    const faxServiceConsumer = new MachineServiceConsumer(machineServiceRegistry, faxAction);
-    // Usage
-    printerServiceConsumer.useService("printer", "Hello, world!");
-    scannerServiceConsumer.useService("scanner", "Hello, again!");
-    faxServiceConsumer.useService("fax", "Hello, world!");
-};
-class AbstractAnimalServiceRegistry {
+class AbstractRegistryStorage {
     registry = new Map();
+}
+class AbstractAnimalServiceRegistry {
 }
 // Concrete implementations (low-level)
 class Tiger {
@@ -791,9 +769,8 @@ class Eagle {
         console.log("Eagle flying");
     }
 }
-// Animal service registry
-class AnimalServiceRegistry extends AbstractAnimalServiceRegistry {
-    registry = new Map();
+// Storage implementation
+class RegistryStorage extends AbstractRegistryStorage {
     register(name, animal) {
         if (this.registry.has(name)) {
             throw new Error(`${name} ${errorMessages.ALREADY_EXIST}`);
@@ -802,7 +779,7 @@ class AnimalServiceRegistry extends AbstractAnimalServiceRegistry {
             this.registry.set(name, animal);
         }
     }
-    deregister(name, animal) {
+    deregister(name) {
         if (!this.registry.has(name)) {
             throw new Error(`${name} ${errorMessages.NO_EXISTENCE}`);
         }
@@ -819,10 +796,51 @@ class AnimalServiceRegistry extends AbstractAnimalServiceRegistry {
             return service;
         }
     }
+    readRegistry() {
+        console.log(...this.registry);
+    }
 }
-// Create animal service registry
-const animalServiceRegistry = new AnimalServiceRegistry();
-// low-level instantiations
-const bengalTiger = new Tiger();
-// Register services
-animalServiceRegistry.register("bengal tiger", bengalTiger);
+// Animal service registry
+class AnimalServiceRegistry extends AbstractAnimalServiceRegistry {
+    registry;
+    constructor(registry) {
+        super();
+        this.registry = registry;
+    }
+    register(name, animal) {
+        this.registry.register(name, animal);
+    }
+    deregister(name) {
+        if (!this.registry.getService(name)) {
+            throw new Error(`${name} ${errorMessages.NO_EXISTENCE}`);
+        }
+        else {
+            this.registry.deregister(name);
+        }
+    }
+    getService(name) {
+        const service = this.registry.getService(name);
+        if (!service) {
+            console.log(`${name} ${errorMessages.NO_EXISTENCE}`);
+        }
+        else {
+            return service;
+        }
+    }
+    readRegistry() {
+        this.registry.readRegistry();
+    }
+}
+// High-level instantiations
+const mainISP2 = () => {
+    const animalRegistry = new AnimalServiceRegistry(new RegistryStorage());
+    animalRegistry.register("bengal tiger", new Tiger());
+    animalRegistry.register("bald eagle", new Eagle());
+    animalRegistry.register("harpy eagle", new Eagle());
+    animalRegistry.deregister("bald eagle");
+    const bengalTiger = animalRegistry.getService("bengal tiger");
+    animalRegistry.readRegistry();
+    bengalTiger.walk();
+};
+// Use this approach to avoid 'global variables' pollution
+mainISP2();

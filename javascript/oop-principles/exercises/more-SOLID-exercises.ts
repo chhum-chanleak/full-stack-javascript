@@ -1161,35 +1161,35 @@ class MachineServiceConsumer extends AbstractMachineServiceConsumer {
   }
 }
 
-const ispMain1 = (): void =>  {
-// Create machines (food)
-const printer = new Printer();
-const scanner = new Scanner();
-const fax = new Fax();
+// const ispMain1 = (): void =>  {
+// // Create machines (food)
+// const printer = new Printer();
+// const scanner = new Scanner();
+// const fax = new Fax();
 
-// create actions (food purpose)
-const printAction = new PrintAction();
-const scanAction = new ScanAction();
-const faxAction = new FaxAction();
+// // create actions (food purpose)
+// const printAction = new PrintAction();
+// const scanAction = new ScanAction();
+// const faxAction = new FaxAction();
 
-// Create service registry (fridge)
-const machineServiceRegistry = new MachineServiceRegistry();
+// // Create service registry (fridge)
+// const machineServiceRegistry = new MachineServiceRegistry();
 
-// Register machines (label and put food into the fridge)
-machineServiceRegistry.registerService("printer", printer);
-machineServiceRegistry.registerService("scanner", scanner);
-machineServiceRegistry.registerService("fax", fax);
+// // Register machines (label and put food into the fridge)
+// machineServiceRegistry.registerService("printer", printer);
+// machineServiceRegistry.registerService("scanner", scanner);
+// machineServiceRegistry.registerService("fax", fax);
 
-// create machines and actions consumer (take food from the fridge and use(consume) it for different purposes)
-const printerServiceConsumer = new MachineServiceConsumer(machineServiceRegistry, printAction);
-const scannerServiceConsumer = new MachineServiceConsumer(machineServiceRegistry, scanAction);
-const faxServiceConsumer = new MachineServiceConsumer(machineServiceRegistry, faxAction);
+// // create machines and actions consumer (take food from the fridge and use(consume) it for different purposes)
+// const printerServiceConsumer = new MachineServiceConsumer(machineServiceRegistry, printAction);
+// const scannerServiceConsumer = new MachineServiceConsumer(machineServiceRegistry, scanAction);
+// const faxServiceConsumer = new MachineServiceConsumer(machineServiceRegistry, faxAction);
 
-// Usage
-printerServiceConsumer.useService("printer", "Hello, world!");
-scannerServiceConsumer.useService("scanner", "Hello, again!");
-faxServiceConsumer.useService("fax", "Hello, world!")
-};
+// // Usage
+// printerServiceConsumer.useService("printer", "Hello, world!");
+// scannerServiceConsumer.useService("scanner", "Hello, again!");
+// faxServiceConsumer.useService("fax", "Hello, world!")
+// };
 
 // ispMain1();
 
@@ -1212,6 +1212,7 @@ faxServiceConsumer.useService("fax", "Hello, world!")
 // Refactor the Animal interface to follow ISP.
 // Implement classes for Bird, Fish, and Mammal, ensuring each class only implements the methods relevant to its abilities.
 
+// This is a very good and well refined solution please follow this solution
 // Abstractions
 interface Animal {
   eat(): void;
@@ -1230,16 +1231,20 @@ interface SwimmingAnimal extends Animal {
   swim(): void;
 }
 
-abstract class AbstractAnimalServiceRegistry {
+abstract class AbstractRegistryStorage {
   protected registry: Map<string, Animal> = new Map();
 
   abstract register(name: string, animal: Animal): void;
-  abstract deregister(name: string, animal: Animal): void;
+  abstract deregister(name: string): void;
   abstract getService(name: string): Animal | undefined;
+  abstract readRegistry(): void;
 }
 
-interface IAction {
-
+abstract class AbstractAnimalServiceRegistry {
+  abstract register(name: string, animal: Animal): void;
+  abstract deregister(name: string): void;
+  abstract getService(name: string): Animal | undefined;
+  abstract readRegistry(): void;
 }
 
 // Concrete implementations (low-level)
@@ -1271,9 +1276,8 @@ class Eagle implements WalkingAnimal, FlyingAnimal {
   }
 }
 
-// Animal service registry
-class AnimalServiceRegistry extends AbstractAnimalServiceRegistry {
-  protected registry: Map<string, Animal> = new Map();
+// Storage implementation
+class RegistryStorage extends AbstractRegistryStorage {
 
   register(name: string, animal: Animal): void {
     if (this.registry.has(name)) {
@@ -1283,7 +1287,7 @@ class AnimalServiceRegistry extends AbstractAnimalServiceRegistry {
     }
   }
 
-  deregister(name: string, animal: Animal): void {
+  deregister(name: string): void {
     if (!this.registry.has(name)) {
       throw new Error(`${name} ${errorMessages.NO_EXISTENCE}`)
     } else {
@@ -1300,18 +1304,59 @@ class AnimalServiceRegistry extends AbstractAnimalServiceRegistry {
       return service;
     }
   }
+
+  readRegistry(): void {
+    console.log(...this.registry);
+  }
 }
 
-// Create animal service registry
-const animalServiceRegistry = new AnimalServiceRegistry();
+// Animal service registry
+class AnimalServiceRegistry extends AbstractAnimalServiceRegistry {
+  constructor(private registry: AbstractRegistryStorage) {
+    super();
+  }
 
-// low-level instantiations
-const bengalTiger = new Tiger();
+  register(name: string, animal: Animal): void {
+      this.registry.register(name, animal);
+  }
 
-// Register services
-animalServiceRegistry.register("bengal tiger", bengalTiger);
+  deregister(name: string): void {
+    if (!this.registry.getService(name)) {
+      throw new Error(`${name} ${errorMessages.NO_EXISTENCE}`)
+    } else {
+      this.registry.deregister(name);
+    }
+  }
 
+  getService(name: string): Animal | undefined {
+    const service = this.registry.getService(name);
 
+    if (!service) {
+      console.log(`${name} ${errorMessages.NO_EXISTENCE}`);
+    } else {
+      return service;
+    }
+  }
 
+  readRegistry(): void {
+    this.registry.readRegistry();
+  }
+}
 
+// High-level instantiations
+const mainISP2 = () => {
+  const animalRegistry = new AnimalServiceRegistry(new RegistryStorage());
 
+  animalRegistry.register("bengal tiger", new Tiger());
+  animalRegistry.register("bald eagle", new Eagle());
+  animalRegistry.register("harpy eagle", new Eagle());
+  animalRegistry.deregister("bald eagle");
+
+  const bengalTiger = animalRegistry.getService("bengal tiger") as Tiger;
+
+  animalRegistry.readRegistry();
+  bengalTiger.walk();
+};
+
+// Use this approach to avoid 'global variables' pollution
+mainISP2();
