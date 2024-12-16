@@ -1528,7 +1528,7 @@ interface IVehicle3 {
   stop(): void;
 }
 
-abstract class AbstractVehicleServiceStorage {
+abstract class AbstractVehicleStorage {
   protected vehicles: Map<string, IVehicle3> = new Map();
 
   abstract getVehicles(): Map<string, IVehicle3>;
@@ -1567,8 +1567,8 @@ class Bike3 implements IVehicle3 {
   }
 }
 
-class VehicleStorage extends AbstractVehicleServiceStorage {
-  // This class inherits "protected services: Map<string, IVehicle3>" from its parent class
+class VehicleStorage extends AbstractVehicleStorage {
+  // This class inherits "protected vehicles: Map<string, IVehicle3>" from its parent class
   getVehicles(): Map<string, IVehicle3> {
     return this.vehicles;
   }
@@ -1576,7 +1576,7 @@ class VehicleStorage extends AbstractVehicleServiceStorage {
 
 class VehicleController {
   constructor(
-    private vehiclesStorage: AbstractVehicleServiceStorage = new VehicleStorage()
+    private vehiclesStorage: AbstractVehicleStorage = new VehicleStorage()
   ) {}
 
   register(name: string, vehicle: IVehicle3): void {
@@ -1600,32 +1600,37 @@ class VehicleController {
   }
 
   readStorage(): void {
-    if (this.vehiclesStorage.getVehicles().size === 0) {
-      console.log(`Storage ${errorMessages.EMPTINESS}`);
+    VehicleStorageLogger.logStorage(this.vehiclesStorage.getVehicles());
+  }  
+  
+}
+
+class VehicleStorageLogger {
+  static logStorage(vehiclesStorage: Map<string, IVehicle3>) {
+    if (vehiclesStorage.size === 0) {
+      console.log("Storage is empty");
       return;
     }
 
-    for (const [key, value] of this.vehiclesStorage.getVehicles().entries()) {
+    for (const [key, value] of vehiclesStorage.entries()) {
       console.log(`${key}: ${JSON.stringify(value, null, 2)}`);
     }
   }
 }
 
 // Usage
-// const vehicleController = new VehicleController();
+const vehicleController = new VehicleController();
 
-// vehicleController.register("bmw", new Car3(1990));
-// vehicleController.register("yamaha bike", new Bike3(2012));
+vehicleController.register("bmw", new Car3(1990));
+vehicleController.register("yamaha bike", new Bike3(2012));
 
-// vehicleController.readStorage();
+const bmw = vehicleController.getVehicle("bmw") as Car3;
+const racingBike = vehicleController.getVehicle("yamaha bike") as Bike3;
 
-// const bmw = vehicleController.getVehicle("bmw") as Car3;
-// const racingBike = vehicleController.getVehicle("yamaha bike") as Bike3;
-
-// bmw.start();
-// console.log(racingBike.getYear());
-
-
+bmw.start();
+console.log(racingBike.getYear());
+vehicleController.readStorage();
+vehicleController.readStorage();
 
 // Exercise 2: Logging System
 // Create an abstraction Logger with a method log(message: string): void.

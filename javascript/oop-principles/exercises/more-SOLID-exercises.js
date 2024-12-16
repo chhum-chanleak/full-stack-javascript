@@ -895,7 +895,7 @@ class ShoppingCart3 {
         this.paymentProcessor.processPayment(amount);
     }
 }
-class AbstractVehicleServiceStorage {
+class AbstractVehicleStorage {
     vehicles = new Map();
 }
 // Concrete implementations (low-level) 
@@ -929,8 +929,8 @@ class Bike3 {
         return this.year;
     }
 }
-class VehicleStorage extends AbstractVehicleServiceStorage {
-    // This class inherits "protected services: Map<string, IVehicle3>" from its parent class
+class VehicleStorage extends AbstractVehicleStorage {
+    // This class inherits "protected vehicles: Map<string, IVehicle3>" from its parent class
     getVehicles() {
         return this.vehicles;
     }
@@ -957,24 +957,30 @@ class VehicleController {
         return this.vehiclesStorage.getVehicles().get(name);
     }
     readStorage() {
-        if (this.vehiclesStorage.getVehicles().size === 0) {
-            console.log(`Storage ${errorMessages.EMPTINESS}`);
+        VehicleStorageLogger.logStorage(this.vehiclesStorage.getVehicles());
+    }
+}
+class VehicleStorageLogger {
+    static logStorage(vehiclesStorage) {
+        if (vehiclesStorage.size === 0) {
+            console.log("Storage is empty");
             return;
         }
-        for (const [key, value] of this.vehiclesStorage.getVehicles().entries()) {
+        for (const [key, value] of vehiclesStorage.entries()) {
             console.log(`${key}: ${JSON.stringify(value, null, 2)}`);
         }
     }
 }
 // Usage
-// const vehicleController = new VehicleController();
-// vehicleController.register("bmw", new Car3(1990));
-// vehicleController.register("yamaha bike", new Bike3(2012));
-// vehicleController.readStorage();
-// const bmw = vehicleController.getVehicle("bmw") as Car3;
-// const racingBike = vehicleController.getVehicle("yamaha bike") as Bike3;
-// bmw.start();
-// console.log(racingBike.getYear());
+const vehicleController = new VehicleController();
+vehicleController.register("bmw", new Car3(1990));
+vehicleController.register("yamaha bike", new Bike3(2012));
+const bmw = vehicleController.getVehicle("bmw");
+const racingBike = vehicleController.getVehicle("yamaha bike");
+bmw.start();
+console.log(racingBike.getYear());
+vehicleController.readStorage();
+vehicleController.readStorage();
 // Exercise 2: Logging System
 // Create an abstraction Logger with a method log(message: string): void.
 // Implement ConsoleLogger and FileLogger as low-level modules.
