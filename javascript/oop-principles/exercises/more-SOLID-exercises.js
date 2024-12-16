@@ -746,7 +746,7 @@ class AbstractRegistryStorage {
 }
 class AbstractAnimalServiceRegistry {
 }
-// Concrete implementations (low-level)
+// Concrete implementations (low-level) or (details)
 class Tiger {
     eat() {
         console.log("Tiger eating.");
@@ -807,7 +807,7 @@ class RegistryStorage extends AbstractRegistryStorage {
         }
     }
 }
-// Animal service registry
+// Animal service registry (high-level)
 class AnimalServiceRegistry extends AbstractAnimalServiceRegistry {
     registry;
     constructor(registry) {
@@ -834,7 +834,6 @@ class AnimalServiceRegistry extends AbstractAnimalServiceRegistry {
         this.registry.readRegistry();
     }
 }
-// High-level instantiations
 const mainISP2 = () => {
     const animalRegistry = new AnimalServiceRegistry(new RegistryStorage());
     animalRegistry.register("bengal tiger", new Tiger());
@@ -851,54 +850,132 @@ const mainISP2 = () => {
     const baldEagle2 = animalRegistry.getService("bald eagle2");
     animalRegistry.readRegistry();
 };
-// Use this approach to avoid 'global variables' pollution
-mainISP2();
-// Exercise 2 solution of AI version:
-// enum ErrorMessages {
-//   ALREADY_EXIST = "already exists in the registry.",
-//   NO_EXISTENCE = "does not exist in the registry."
-// }
-// class RegistryError extends Error {
-//   constructor(message: string) {
-//     super(message);
-//     this.name = "RegistryError";
-//   }
-// }
-// class RegistryStorage<T extends Animal> extends AbstractRegistryStorage {
-//   // Inject an initial registry (optional)
-//   constructor(initialRegistry: Map<string, T> = new Map()) {
-//     super();
-//     this.registry = initialRegistry;
-//   }
-//   register(name: string, animal: T): void {
-//     if (this.registry.has(name)) {
-//       throw new RegistryError(`"${name}" ${ErrorMessages.ALREADY_EXIST}`);
-//     }
-//     this.registry.set(name, animal);
-//     console.log(`"${name}" registered successfully.`);
-//   }
-//   deregister(name: string): void {
-//     if (!this.registry.has(name)) {
-//       throw new RegistryError(`"${name}" ${ErrorMessages.NO_EXISTENCE}`);
-//     }
-//     this.registry.delete(name);
-//     console.log(`"${name}" deregistered successfully.`);
-//   }
-//   getService(name: string): T {
-//     const service = this.registry.get(name);
-//     if (!service) {
-//       throw new RegistryError(`"${name}" ${ErrorMessages.NO_EXISTENCE}`);
-//     }
-//     return service;
-//   }
-//   readRegistry(): void {
-//     if (this.registry.size === 0) {
-//       console.log("Registry is empty.");
-//       return;
-//     }
-//     console.log("Registry contents:");
-//     for (const [name, animal] of this.registry.entries()) {
-//       console.log(`- ${name}: ${animal.constructor.name}`);
-//     }
-//   }
-// }
+// Low-level module: EmailNotifier
+class EmailNotifier {
+    send(message, recipient) {
+        console.log(`Email sent to ${recipient}: ${message}`);
+    }
+}
+// Low-level module: SMSNotifier
+class SMSNotifier {
+    send(message, recipient) {
+        console.log(`SMS sent to ${recipient}: ${message}`);
+    }
+}
+// High-level module
+class NotificationService {
+    notifier;
+    constructor(notifier) {
+        this.notifier = notifier;
+    }
+    notify(message, recipient) {
+        this.notifier.send(message, recipient);
+    }
+}
+// Low-level module: PayPal
+class PayPalProcessor3 {
+    processPayment(amount) {
+        console.log(`Processing PayPal payment of $${amount}`);
+    }
+}
+// Low-level module: Stripe
+class StripeProcessor3 {
+    processPayment(amount) {
+        console.log(`Processing Stripe payment of $${amount}`);
+    }
+}
+// High-level module
+class ShoppingCart3 {
+    paymentProcessor;
+    constructor(paymentProcessor) {
+        this.paymentProcessor = paymentProcessor;
+    }
+    checkout(amount) {
+        console.log("Checking out...");
+        this.paymentProcessor.processPayment(amount);
+    }
+}
+class AbstractVehicleServiceStorage {
+    vehicles = new Map();
+}
+// Concrete implementations (low-level) 
+class Car3 {
+    year;
+    constructor(year) {
+        this.year = year;
+    }
+    start() {
+        console.log("Car starts the machine");
+    }
+    stop() {
+        console.log("Car stops the machine");
+    }
+    getYear() {
+        return this.year;
+    }
+}
+class Bike3 {
+    year;
+    constructor(year) {
+        this.year = year;
+    }
+    start() {
+        console.log("Bike starts moving forward");
+    }
+    stop() {
+        console.log("Bike stops moving");
+    }
+    getYear() {
+        return this.year;
+    }
+}
+class VehicleStorage extends AbstractVehicleServiceStorage {
+    // This class inherits "protected services: Map<string, IVehicle3>" from its parent class
+    getVehicles() {
+        return this.vehicles;
+    }
+}
+class VehicleController {
+    vehiclesStorage;
+    constructor(vehiclesStorage = new VehicleStorage()) {
+        this.vehiclesStorage = vehiclesStorage;
+    }
+    register(name, vehicle) {
+        if (this.vehiclesStorage.getVehicles().has(name)) {
+            throw new Error(`${name} ${errorMessages.ALREADY_EXIST}`);
+        }
+        else if (name.length === 0) {
+            throw new Error(`Name cannot be an empty string`);
+        }
+        this.vehiclesStorage.getVehicles().set(name, vehicle);
+        console.log(`${name} registered successfully`);
+    }
+    getVehicle(name) {
+        if (!this.vehiclesStorage.getVehicles().has(name)) {
+            throw new Error(`${name} ${errorMessages.NO_EXISTENCE}`);
+        }
+        return this.vehiclesStorage.getVehicles().get(name);
+    }
+    readStorage() {
+        if (this.vehiclesStorage.getVehicles().size === 0) {
+            console.log(`Storage ${errorMessages.EMPTINESS}`);
+            return;
+        }
+        for (const [key, value] of this.vehiclesStorage.getVehicles().entries()) {
+            console.log(`${key}: ${JSON.stringify(value, null, 2)}`);
+        }
+    }
+}
+// Usage
+// const vehicleController = new VehicleController();
+// vehicleController.register("bmw", new Car3(1990));
+// vehicleController.register("yamaha bike", new Bike3(2012));
+// vehicleController.readStorage();
+// const bmw = vehicleController.getVehicle("bmw") as Car3;
+// const racingBike = vehicleController.getVehicle("yamaha bike") as Bike3;
+// bmw.start();
+// console.log(racingBike.getYear());
+// Exercise 2: Logging System
+// Create an abstraction Logger with a method log(message: string): void.
+// Implement ConsoleLogger and FileLogger as low-level modules.
+// Write a LogService class that logs messages using the Logger abstraction. Allow switching between ConsoleLogger and FileLogger at runtime.

@@ -1247,7 +1247,7 @@ abstract class AbstractAnimalServiceRegistry {
   abstract readRegistry(): void;
 }
 
-// Concrete implementations (low-level)
+// Concrete implementations (low-level) or (details)
 class Tiger implements WalkingAnimal, SwimmingAnimal {
   eat(): void {
     console.log("Tiger eating.");
@@ -1318,7 +1318,7 @@ class RegistryStorage extends AbstractRegistryStorage {
   }
 }
 
-// Animal service registry
+// Animal service registry (high-level)
 class AnimalServiceRegistry extends AbstractAnimalServiceRegistry {
   constructor(private registry: AbstractRegistryStorage) {
     super();
@@ -1348,7 +1348,6 @@ class AnimalServiceRegistry extends AbstractAnimalServiceRegistry {
   }
 }
 
-// High-level instantiations
 const mainISP2 = () => {
   const animalRegistry = new AnimalServiceRegistry(new RegistryStorage());
 
@@ -1372,7 +1371,7 @@ const mainISP2 = () => {
 };
 
 // Use this approach to avoid 'global variables' pollution
-mainISP2();
+// mainISP2();
 
 // Exercise 2 solution of AI version:
 // enum ErrorMessages {
@@ -1430,3 +1429,205 @@ mainISP2();
 //     }
 //   }
 // }
+
+// 5. Dependency inversion principles (DIP)
+
+// Example 1: Notification System
+// Abstraction
+interface Notifier {
+  send(message: string, recipient: string): void;
+}
+
+// Low-level module: EmailNotifier
+class EmailNotifier implements Notifier {
+  send(message: string, recipient: string): void {
+    console.log(`Email sent to ${recipient}: ${message}`);
+  }
+}
+
+// Low-level module: SMSNotifier
+class SMSNotifier implements Notifier {
+  send(message: string, recipient: string): void {
+    console.log(`SMS sent to ${recipient}: ${message}`);
+  }
+}
+
+// High-level module
+class NotificationService {
+  constructor(private notifier: Notifier) {}
+
+  notify(message: string, recipient: string): void {
+    this.notifier.send(message, recipient);
+  }
+}
+
+// // Usage
+// const emailService = new NotificationService(new EmailNotifier());
+// emailService.notify("Hello via Email!", "email@example.com");
+
+// const smsService = new NotificationService(new SMSNotifier());
+// smsService.notify("Hello via SMS!", "1234567890");
+
+// Explanation:
+// Abstraction: Notifier interface.
+// High-level module: NotificationService depends only on the Notifier abstraction, not on concrete classes.
+// Low-level modules: EmailNotifier and SMSNotifier.
+
+// Example 2: Payment Processing
+// Abstraction
+interface PaymentProcessor3 {
+  processPayment(amount: number): void;
+}
+
+// Low-level module: PayPal
+class PayPalProcessor3 implements PaymentProcessor3 {
+  processPayment(amount: number): void {
+    console.log(`Processing PayPal payment of $${amount}`);
+  }
+}
+
+// Low-level module: Stripe
+class StripeProcessor3 implements PaymentProcessor3 {
+  processPayment(amount: number): void {
+    console.log(`Processing Stripe payment of $${amount}`);
+  }
+}
+
+// High-level module
+class ShoppingCart3 {
+  constructor(private paymentProcessor: PaymentProcessor3) {}
+
+  checkout(amount: number): void {
+    console.log("Checking out...");
+    this.paymentProcessor.processPayment(amount);
+  }
+}
+
+// // Usage
+// const cart1 = new ShoppingCart(new PayPalProcessor());
+// cart1.checkout(100);
+
+// const cart2 = new ShoppingCart(new StripeProcessor());
+// cart2.checkout(150);
+
+// Explanation:
+// Abstraction: PaymentProcessor interface.
+// High-level module: ShoppingCart depends only on the abstraction.
+// Low-level modules: PayPalProcessor and StripeProcessor.
+
+// Exercise 1: Vehicle Control System
+// Create an abstraction Vehicle with methods start() and stop().
+// Implement Car and Bike as concrete classes of Vehicle.
+// Write a VehicleController class that can start or stop a Vehicle without depending on the concrete implementations.
+
+// Solution of exercise 1 (well done)
+
+// Abstractions
+interface IVehicle3 {
+  start(): void;
+  stop(): void;
+}
+
+abstract class AbstractVehicleServiceStorage {
+  protected vehicles: Map<string, IVehicle3> = new Map();
+
+  abstract getVehicles(): Map<string, IVehicle3>;
+}
+
+// Concrete implementations (low-level) 
+class Car3 implements IVehicle3 {
+  constructor(protected year: number) {}
+
+  start(): void {
+    console.log("Car starts the machine");
+  }
+
+  stop(): void {
+    console.log("Car stops the machine");
+  }
+
+  getYear(): number {
+    return this.year;
+  }
+}
+
+class Bike3 implements IVehicle3 {
+  constructor(protected year: number) {}
+
+  start(): void {
+    console.log("Bike starts moving forward");
+  }
+
+  stop(): void {
+    console.log("Bike stops moving");
+  }
+
+  getYear(): number {
+    return this.year;
+  }
+}
+
+class VehicleStorage extends AbstractVehicleServiceStorage {
+  // This class inherits "protected services: Map<string, IVehicle3>" from its parent class
+  getVehicles(): Map<string, IVehicle3> {
+    return this.vehicles;
+  }
+}
+
+class VehicleController {
+  constructor(
+    private vehiclesStorage: AbstractVehicleServiceStorage = new VehicleStorage()
+  ) {}
+
+  register(name: string, vehicle: IVehicle3): void {
+
+    if (this.vehiclesStorage.getVehicles().has(name)) {
+      throw new Error(`${name} ${errorMessages.ALREADY_EXIST}`);
+    } else if (name.length === 0) {
+      throw new Error(`Name cannot be an empty string`);
+    }
+
+    this.vehiclesStorage.getVehicles().set(name, vehicle);
+    console.log(`${name} registered successfully`);
+  }
+
+  getVehicle(name: string): IVehicle3 | undefined {
+    if (!this.vehiclesStorage.getVehicles().has(name)) {
+      throw new Error(`${name} ${errorMessages.NO_EXISTENCE}`);
+    }
+
+    return this.vehiclesStorage.getVehicles().get(name);
+  }
+
+  readStorage(): void {
+    if (this.vehiclesStorage.getVehicles().size === 0) {
+      console.log(`Storage ${errorMessages.EMPTINESS}`);
+      return;
+    }
+
+    for (const [key, value] of this.vehiclesStorage.getVehicles().entries()) {
+      console.log(`${key}: ${JSON.stringify(value, null, 2)}`);
+    }
+  }
+}
+
+// Usage
+// const vehicleController = new VehicleController();
+
+// vehicleController.register("bmw", new Car3(1990));
+// vehicleController.register("yamaha bike", new Bike3(2012));
+
+// vehicleController.readStorage();
+
+// const bmw = vehicleController.getVehicle("bmw") as Car3;
+// const racingBike = vehicleController.getVehicle("yamaha bike") as Bike3;
+
+// bmw.start();
+// console.log(racingBike.getYear());
+
+
+
+// Exercise 2: Logging System
+// Create an abstraction Logger with a method log(message: string): void.
+// Implement ConsoleLogger and FileLogger as low-level modules.
+// Write a LogService class that logs messages using the Logger abstraction. Allow switching between ConsoleLogger and FileLogger at runtime.
