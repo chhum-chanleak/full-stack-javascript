@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8"/>
+    <title>JSON: Task 1</title>
+    <style>
+      p {
+        color: purple;
+        margin: 0.5em 0;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+    </style>
+  </head>
+
+  <body>
+    Please go to the console =>
+
+    <section class="preview">
+
+
+
+    </section>
+
+  </body>
+  <script>
+    const section = document.querySelector('section');
+
+    let para1 = document.createElement('p');
+    let para2 = document.createElement('p');
+    let motherInfo = 'The mother cats are called ';
+    let kittenInfo;
+    const requestURL = 'https://mdn.github.io/learning-area/javascript/oojs/tasks/json/sample.json';
+
+    // fetch(requestURL)
+    // .then(response => response.text())
+    // .then(text => displayCatInfo(text))
+
+    // Get cats
+    const fetchCat = async () => {
+      const request = new Request(requestURL); // resource request
+      const response = await fetch(request);
+      const catsData = await response.json();
+
+      console.log(`Fetched cats data: ${JSON.stringify(catsData, null, 2)}`);
+
+      return catsData;
+    };
+    
+    let cats;
+
+    // Assign the resolved value to 'cats'
+    fetchCat()
+    .then(data => {
+      cats = data;
+      console.log(cats);
+    });
+
+    // Get number of mommyCats
+    const getMommyCats = (cats) => {
+      return cats.length;
+    };
+
+    // Get babyCats
+    const getKittens = (cats) => {
+      const kittens = [];
+
+      for (let i = 0; i < cats.length; i += 1) {
+        kittens.push(cats[i].kittens);
+      }
+
+      console.log(`Kittens: ${kittens.flat()}`);
+
+      return kittens.flat();
+    };
+
+    // Get male cats and kittens
+    const getMaleCats = (kittens) => {
+      const maleCats = [];
+
+      for (let i = 0; i < kittens.length; i += 1) {
+        if (kittens[i].gender === 'm') {
+          maleCats.push(kittens[i]);
+        }
+      }
+      
+      return maleCats;
+    };
+
+    // Get mommy cats' names
+    const getMommyCatsNames = (cats) => {
+      const mommyCatsNames = [];
+
+      for (let i = 0; i < cats.length; i += 1) {
+        mommyCatsNames.push(cats[i].name);
+      }
+
+      return mommyCatsNames;
+    };
+
+    function displayCatInfo(catString) {
+      let total = 0;
+      let male = getMaleCats(getKittens(cats)).length;
+      const female = getKittens(cats).length - male;
+
+      // Add your code here
+      const motherInfo = `${getMommyCatsNames(cats).join(", ")}`;
+      const kittenInfo = getKittens(cats).length;
+
+      // Don't edit the code below here!
+
+      para1.textContent = `Mother cats names: ${motherInfo}`;
+      para2.textContent = `Total kittens: ${kittenInfo} --- Male: ${male} --- Female: ${female}`;
+    }
+
+    section.appendChild(para1);
+    section.appendChild(para2);
+  </script>
+
+</html>
