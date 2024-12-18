@@ -1534,6 +1534,21 @@ abstract class AbstractVehicleStorage {
   abstract getVehicles(): Map<string, IVehicle3>;
 }
 
+abstract class AbstractVehicleStorageLogger {
+  abstract logStorage(vehiclesStorage: Map<string, IVehicle3>): void;
+}
+
+// Validators implementations
+abstract class AbstractVehicleStorageValidators {
+  abstract validateUniqueVehicle(name: string, vehiclesStorage: Map<string, IVehicle3>): boolean;
+
+  // Check whether the name is an empty string
+  abstract validateEmptyString(name: string): boolean;
+
+  // Check for existence
+  abstract validateExistence(name: string, vehiclesStorage: Map<string, IVehicle3>): boolean;
+}
+
 // Concrete implementations (low-level) 
 class Car3 implements IVehicle3 {
   constructor(protected year: number) {}
@@ -1544,10 +1559,6 @@ class Car3 implements IVehicle3 {
 
   stop(): void {
     console.log("Car stops the machine");
-  }
-
-  getYear(): number {
-    return this.year;
   }
 }
 
@@ -1561,10 +1572,6 @@ class Bike3 implements IVehicle3 {
   stop(): void {
     console.log("Bike stops moving");
   }
-
-  getYear(): number {
-    return this.year;
-  }
 }
 
 class VehicleStorage extends AbstractVehicleStorage {
@@ -1574,71 +1581,217 @@ class VehicleStorage extends AbstractVehicleStorage {
   }
 }
 
-class VehicleStorageGetter {
-  static getVehicles(vehiclesStorage: VehicleStorage): Map<string, IVehicle3> {
-    return vehiclesStorage.getVehicles();
-  }
-}
-
 class VehicleController {
   constructor(
-    private vehiclesStorage: AbstractVehicleStorage = new VehicleStorage()
+    private vehiclesStorage: AbstractVehicleStorage = new VehicleStorage(),
+    private logger: AbstractVehicleStorageLogger = new VehicleStorageLogger(),
+    private validators: AbstractVehicleStorageValidators = new VehicleStorageValidators()
   ) {}
 
   register(name: string, vehicle: IVehicle3): void {
+    this.validators.validateUniqueVehicle(name, this.vehiclesStorage.getVehicles());
+    this.validators.validateEmptyString(name);
 
-    if (VehicleStorageGetter.getVehicles(this.vehiclesStorage).has(name)) {
-      throw new Error(`${name} ${errorMessages.ALREADY_EXIST}`);
-    } else if (name.length === 0) {
-      throw new Error(`Name cannot be an empty string`);
-    }
-
-    VehicleStorageGetter.getVehicles(this.vehiclesStorage).set(name, vehicle);
+    this.vehiclesStorage.getVehicles().set(name, vehicle);
     console.log(`${name} registered successfully`);
   }
 
   getVehicle(name: string): IVehicle3 | undefined {
-    if (!VehicleStorageGetter.getVehicles(this.vehiclesStorage).has(name)) {
-      throw new Error(`${name} ${errorMessages.NO_EXISTENCE}`);
-    }
+    this.validators.validateExistence(name, this.vehiclesStorage.getVehicles());
 
-    return VehicleStorageGetter.getVehicles(this.vehiclesStorage).get(name);
+    return this.vehiclesStorage.getVehicles().get(name);
   }
 
   readStorage(): void {
-    VehicleStorageLogger.logStorage(VehicleStorageGetter.getVehicles(this.vehiclesStorage));
-  }  
-  
+    this.logger.logStorage(this.vehiclesStorage.getVehicles());
+  }    
 }
 
-class VehicleStorageLogger {
-  static logStorage(vehiclesStorage: Map<string, IVehicle3>) {
+class VehicleStorageLogger extends AbstractVehicleStorageLogger{
+  logStorage(vehiclesStorage: Map<string, IVehicle3>) {
     if (vehiclesStorage.size === 0) {
       console.log("Storage is empty");
       return;
     }
 
     for (const [key, value] of vehiclesStorage.entries()) {
-      console.log(`${key}: ${JSON.stringify(value, null, 2)}`);
+      console.log(`${key}:`);
+      console.log(`Type: ${value.constructor.name}`);
     }
   }
 }
 
+class VehicleStorageValidators extends AbstractVehicleStorageValidators {
+  validateUniqueVehicle(name: string, vehiclesStorage: Map<string, IVehicle3>): boolean {
+   // Check whether it already exist
+   if (vehiclesStorage.has(name)) {
+     throw new Error(`${name} ${errorMessages.ALREADY_EXIST}`);
+   }
+
+   return true;
+ }
+
+ // Check whether the name is an empty string
+  validateEmptyString(name: string): boolean {
+   if (name.length === 0) {
+     throw new Error(`Name ${errorMessages.CANNOT_BE_AN_EMPTY_STRING}`);
+   }
+
+   return true;
+ }
+
+ // Check for existence
+  validateExistence(name: string, vehiclesStorage: Map<string, IVehicle3>): boolean {
+   // Check whether it exist or not
+   if (!vehiclesStorage.has(name)) {
+     throw new Error(`${name} ${errorMessages.NO_EXISTENCE}`);
+   }
+
+   return true;
+ }
+}
+
 // Usage
-const vehicleController = new VehicleController();
+const dip1Main = () => {
+  const vehicleController = new VehicleController();
 
 vehicleController.register("bmw", new Car3(1990));
 vehicleController.register("yamaha bike", new Bike3(2012));
+// vehicleController.register("", new Bike3(2013)); // Error: "cannot be an empty string"
+// vehicleController.register("bmw", new Car3(2015)); // Error: already exist
 
 const bmw = vehicleController.getVehicle("bmw") as Car3;
 const racingBike = vehicleController.getVehicle("yamaha bike") as Bike3;
+// const volkswagen = vehicleController.getVehicle("volkswagen") as Car3; // Error: does not exist
 
 bmw.start();
-console.log(racingBike.getYear());
+racingBike.stop();
 vehicleController.readStorage();
-vehicleController.readStorage();
+};
+
+// dip1Main();
 
 // Exercise 2: Logging System
 // Create an abstraction Logger with a method log(message: string): void.
 // Implement ConsoleLogger and FileLogger as low-level modules.
 // Write a LogService class that logs messages using the Logger abstraction. Allow switching between ConsoleLogger and FileLogger at runtime.
+
+// Solution of exercise 2
+
+// Abstractions
+
+interface ILogger2 {
+  log(message: string): void;
+}
+
+abstract class AbstractLogServiceStorage {
+  protected logs: Map<string, ILogger2> = new Map();
+  abstract getLogs(): Map<string, ILogger2>;
+}
+
+interface ILogServiceStorageLogger {
+  log(logStorage: Map<string, ILogger2>): void;
+}
+
+interface ILogService {
+  register(name: string, log: ILogger2): void;
+  deregister(name: string): void;
+  getLog(name: string, log: ILogger2): ILogger2 | undefined;
+}
+
+// Concrete implementations (low-level)
+
+class ConsoleLogger implements ILogger2 {
+  log(message: string): void {
+    console.log(`Console logs: ${message}`);
+  }
+}
+
+class FileLogger implements ILogger2 {
+  log(message: string): void {
+    console.log(`File logs: ${message}`);
+  }
+}
+
+
+class LogServiceStorage extends AbstractLogServiceStorage {
+  // This class inherits "protected logStorage: Map<string, ILogger2> = new Map()" from its parent class
+  getLogs(): Map<string, ILogger2> {
+    return this.logs;
+  }
+}
+
+class LogServiceStorageLogger implements ILogServiceStorageLogger {
+  log(logs: Map<string, ILogger2>) {
+    if (logs.size === 0) {
+      console.error(`Storage ${errorMessages.EMPTINESS}`);
+      return;
+    }
+
+    for (const [key, value] of logs.entries()) {
+      console.log(`${key}:`);
+      console.log(`${value.constructor.name}`);
+    }
+  }
+}
+
+
+// log services (high-level)
+class LogService implements ILogService {
+  constructor(
+    private logStorage: AbstractLogServiceStorage = new LogServiceStorage(),
+    private logger: ILogServiceStorageLogger = new LogServiceStorageLogger()
+  ) {}
+
+  register(name: string, log: ILogger2): void {
+    if (this.logStorage.getLogs().has(name)) {
+      throw new Error(`${name} ${errorMessages.ALREADY_EXIST}`);
+    }
+
+    this.logStorage.getLogs().set(name, log);
+    console.log(`${name} registered successfully`);
+  }
+
+  deregister(name: string): void {
+    if (!this.logStorage.getLogs().has(name)) {
+      throw new Error(`${name} ${errorMessages.ALREADY_EXIST}`);
+    }
+
+    this.logStorage.getLogs().delete(name);
+    console.log(`${name} deregistered successfully`);
+  }
+
+  getLog(name: string): ILogger2 | undefined {
+    if (!this.logStorage.getLogs().has(name)) {
+      throw new Error(`${name} ${errorMessages.ALREADY_EXIST}`);
+    }
+
+    return this.logStorage.getLogs().get(name);
+  }
+
+  readLog(): void {
+    this.logger.log(this.logStorage.getLogs());
+  }
+}
+
+// Usage
+const dip2Main = (): void => {
+  const logService = new LogService();
+
+  logService.register("console", new ConsoleLogger());
+  logService.register("file", new FileLogger());
+
+  const consoleLogger = logService.getLog("console") as ConsoleLogger;
+  const fileLogger = logService.getLog("file") as FileLogger;
+
+  logService.readLog();
+
+  const logger = prompt("console or file? : ");
+  
+  (logger === "console") ? consoleLogger.log("Hello, console!") :
+  (logger === "file") ? fileLogger.log("Hello, file!") : 
+  console.log("Unknown logger");
+  logService.readLog();
+};
+
+// dip2Main();

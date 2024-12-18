@@ -5,4 +5,5 @@ export const errorMessages = {
   EMPTINESS: "is empty",
   PLEASE_REGISTER_THE_SERVICE: "Please register the service",
   ALREADY_EXIST: "already exists",
+  CANNOT_BE_AN_EMPTY_STRING: "cannot be an empty string",
 };

@@ -898,6 +898,11 @@ class ShoppingCart3 {
 class AbstractVehicleStorage {
     vehicles = new Map();
 }
+class AbstractVehicleStorageLogger {
+}
+// Validators implementations
+class AbstractVehicleStorageValidators {
+}
 // Concrete implementations (low-level) 
 class Car3 {
     year;
@@ -909,9 +914,6 @@ class Car3 {
     }
     stop() {
         console.log("Car stops the machine");
-    }
-    getYear() {
-        return this.year;
     }
 }
 class Bike3 {
@@ -925,9 +927,6 @@ class Bike3 {
     stop() {
         console.log("Bike stops moving");
     }
-    getYear() {
-        return this.year;
-    }
 }
 class VehicleStorage extends AbstractVehicleStorage {
     // This class inherits "protected vehicles: Map<string, IVehicle3>" from its parent class
@@ -935,58 +934,155 @@ class VehicleStorage extends AbstractVehicleStorage {
         return this.vehicles;
     }
 }
-class VehicleStorageGetter {
-    static getVehicles(vehiclesStorage) {
-        return vehiclesStorage.getVehicles();
-    }
-}
 class VehicleController {
     vehiclesStorage;
-    constructor(vehiclesStorage = new VehicleStorage()) {
+    logger;
+    validators;
+    constructor(vehiclesStorage = new VehicleStorage(), logger = new VehicleStorageLogger(), validators = new VehicleStorageValidators()) {
         this.vehiclesStorage = vehiclesStorage;
+        this.logger = logger;
+        this.validators = validators;
     }
     register(name, vehicle) {
-        if (VehicleStorageGetter.getVehicles(this.vehiclesStorage).has(name)) {
-            throw new Error(`${name} ${errorMessages.ALREADY_EXIST}`);
-        }
-        else if (name.length === 0) {
-            throw new Error(`Name cannot be an empty string`);
-        }
-        VehicleStorageGetter.getVehicles(this.vehiclesStorage).set(name, vehicle);
+        this.validators.validateUniqueVehicle(name, this.vehiclesStorage.getVehicles());
+        this.validators.validateEmptyString(name);
+        this.vehiclesStorage.getVehicles().set(name, vehicle);
         console.log(`${name} registered successfully`);
     }
     getVehicle(name) {
-        if (!VehicleStorageGetter.getVehicles(this.vehiclesStorage).has(name)) {
-            throw new Error(`${name} ${errorMessages.NO_EXISTENCE}`);
-        }
-        return VehicleStorageGetter.getVehicles(this.vehiclesStorage).get(name);
+        this.validators.validateExistence(name, this.vehiclesStorage.getVehicles());
+        return this.vehiclesStorage.getVehicles().get(name);
     }
     readStorage() {
-        VehicleStorageLogger.logStorage(VehicleStorageGetter.getVehicles(this.vehiclesStorage));
+        this.logger.logStorage(this.vehiclesStorage.getVehicles());
     }
 }
-class VehicleStorageLogger {
-    static logStorage(vehiclesStorage) {
+class VehicleStorageLogger extends AbstractVehicleStorageLogger {
+    logStorage(vehiclesStorage) {
         if (vehiclesStorage.size === 0) {
             console.log("Storage is empty");
             return;
         }
         for (const [key, value] of vehiclesStorage.entries()) {
-            console.log(`${key}: ${JSON.stringify(value, null, 2)}`);
+            console.log(`${key}:`);
+            console.log(`Type: ${value.constructor.name}`);
         }
     }
 }
+class VehicleStorageValidators extends AbstractVehicleStorageValidators {
+    validateUniqueVehicle(name, vehiclesStorage) {
+        // Check whether it already exist
+        if (vehiclesStorage.has(name)) {
+            throw new Error(`${name} ${errorMessages.ALREADY_EXIST}`);
+        }
+        return true;
+    }
+    // Check whether the name is an empty string
+    validateEmptyString(name) {
+        if (name.length === 0) {
+            throw new Error(`Name ${errorMessages.CANNOT_BE_AN_EMPTY_STRING}`);
+        }
+        return true;
+    }
+    // Check for existence
+    validateExistence(name, vehiclesStorage) {
+        // Check whether it exist or not
+        if (!vehiclesStorage.has(name)) {
+            throw new Error(`${name} ${errorMessages.NO_EXISTENCE}`);
+        }
+        return true;
+    }
+}
 // Usage
-const vehicleController = new VehicleController();
-vehicleController.register("bmw", new Car3(1990));
-vehicleController.register("yamaha bike", new Bike3(2012));
-const bmw = vehicleController.getVehicle("bmw");
-const racingBike = vehicleController.getVehicle("yamaha bike");
-bmw.start();
-console.log(racingBike.getYear());
-vehicleController.readStorage();
-vehicleController.readStorage();
-// Exercise 2: Logging System
-// Create an abstraction Logger with a method log(message: string): void.
-// Implement ConsoleLogger and FileLogger as low-level modules.
-// Write a LogService class that logs messages using the Logger abstraction. Allow switching between ConsoleLogger and FileLogger at runtime.
+const dip1Main = () => {
+    const vehicleController = new VehicleController();
+    vehicleController.register("bmw", new Car3(1990));
+    vehicleController.register("yamaha bike", new Bike3(2012));
+    // vehicleController.register("", new Bike3(2013)); // Error: "cannot be an empty string"
+    // vehicleController.register("bmw", new Car3(2015)); // Error: already exist
+    const bmw = vehicleController.getVehicle("bmw");
+    const racingBike = vehicleController.getVehicle("yamaha bike");
+    // const volkswagen = vehicleController.getVehicle("volkswagen") as Car3; // Error: does not exist
+    bmw.start();
+    racingBike.stop();
+    vehicleController.readStorage();
+};
+class AbstractLogServiceStorage {
+    logs = new Map();
+}
+// Concrete implementations (low-level)
+class ConsoleLogger {
+    log(message) {
+        console.log(`Console logs: ${message}`);
+    }
+}
+class FileLogger {
+    log(message) {
+        console.log(`File logs: ${message}`);
+    }
+}
+class LogServiceStorage extends AbstractLogServiceStorage {
+    // This class inherits "protected logStorage: Map<string, ILogger2> = new Map()" from its parent class
+    getLogs() {
+        return this.logs;
+    }
+}
+class LogServiceStorageLogger {
+    log(logs) {
+        if (logs.size === 0) {
+            console.error(`Storage ${errorMessages.EMPTINESS}`);
+            return;
+        }
+        for (const [key, value] of logs.entries()) {
+            console.log(`${key}:`);
+            console.log(`${value.constructor.name}`);
+        }
+    }
+}
+// log services (high-level)
+class LogService {
+    logStorage;
+    logger;
+    constructor(logStorage = new LogServiceStorage(), logger = new LogServiceStorageLogger()) {
+        this.logStorage = logStorage;
+        this.logger = logger;
+    }
+    register(name, log) {
+        if (this.logStorage.getLogs().has(name)) {
+            throw new Error(`${name} ${errorMessages.ALREADY_EXIST}`);
+        }
+        this.logStorage.getLogs().set(name, log);
+        console.log(`${name} registered successfully`);
+    }
+    deregister(name) {
+        if (!this.logStorage.getLogs().has(name)) {
+            throw new Error(`${name} ${errorMessages.ALREADY_EXIST}`);
+        }
+        this.logStorage.getLogs().delete(name);
+        console.log(`${name} deregistered successfully`);
+    }
+    getLog(name) {
+        if (!this.logStorage.getLogs().has(name)) {
+            throw new Error(`${name} ${errorMessages.ALREADY_EXIST}`);
+        }
+        return this.logStorage.getLogs().get(name);
+    }
+    readLog() {
+        this.logger.log(this.logStorage.getLogs());
+    }
+}
+// Usage
+const dip2Main = () => {
+    const logService = new LogService();
+    logService.register("console", new ConsoleLogger());
+    logService.register("file", new FileLogger());
+    const consoleLogger = logService.getLog("console");
+    const fileLogger = logService.getLog("file");
+    logService.readLog();
+    const logger = prompt("console or file? : ");
+    (logger === "console") ? consoleLogger.log("Hello, console!") :
+        (logger === "file") ? fileLogger.log("Hello, file!") :
+            console.log("Unknown logger");
+    logService.readLog();
+};
+// dip2Main();
