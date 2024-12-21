@@ -1,3 +1,4 @@
+import { LoggerService } from "./exercises.js";
 import { errorMessages } from "./errors.js";
 // Validators for Order
 export const validateUniqueName = (name, services) => {
@@ -7,7 +8,7 @@ export const validateUniqueName = (name, services) => {
         }
     }
     catch (error) {
-        console.error(`Error registering service: ${error.message}`);
+        (new LoggerService()).log(`Error registering service: ${error.message}`, "error");
         return false;
     }
     return true;
@@ -19,7 +20,7 @@ export const validateExistence = (name, services) => {
         }
     }
     catch (error) {
-        console.error(`Error unregistering service: ${error.message}`);
+        (new LoggerService()).log(`Error unregistering service: ${error.message}`, "error");
         return false;
     }
     return true;

@@ -10,15 +10,15 @@ export class AbstractOrderServicesStorage {
 }
 class AbstractOrderServiceRegistry {
     servicesStorage;
-    constructor(servicesStorage) {
+    logger;
+    constructor(servicesStorage, logger) {
         this.servicesStorage = servicesStorage;
+        this.logger = logger;
     }
 }
 // Concrete implementations (low-level)
 // Data related class
 class Order extends AbstractOrder {
-    items = [];
-    totalAmount = 0;
     addItem(item, price) {
         this.items.push(item);
         this.totalAmount += price;
@@ -43,17 +43,19 @@ class InvoiceGenerator {
     }
 }
 class EmailConfirmation {
-    execute(order, invoiceGenerator) {
-        console.log("Sending email confirmation...");
-        console.log(`Order Confirmation: ${invoiceGenerator.execute(order)}`);
+    execute(order, invoiceGenerator, logger) {
+        logger.log("Sending email confirmation...");
+        logger.log(`Order Confirmation: ${invoiceGenerator.execute(order)}`);
     }
 }
 // (high-level)
 class OrderServiceRegistry extends AbstractOrderServiceRegistry {
     servicesStorage;
-    constructor(servicesStorage) {
-        super(servicesStorage);
+    logger;
+    constructor(servicesStorage, logger) {
+        super(servicesStorage, logger);
         this.servicesStorage = servicesStorage;
+        this.logger = logger;
     }
     register(name, service) {
         // Check whether service is already exists
@@ -62,7 +64,7 @@ class OrderServiceRegistry extends AbstractOrderServiceRegistry {
         }
         ;
         this.servicesStorage.getServices().set(name, service);
-        console.log(`${name} service registered successfully`);
+        this.logger.log(`${name} service registered successfully`);
     }
     unregister(name) {
         // Check whether service exists
@@ -71,22 +73,29 @@ class OrderServiceRegistry extends AbstractOrderServiceRegistry {
         }
         ;
         this.servicesStorage.getServices().delete(name);
-        console.log(`${name} service unregistered successfully`);
+        this.logger.log(`${name} service unregistered successfully`);
     }
     getService(name) {
         // Check whether service exists
         if (!validateExistence(name, this.servicesStorage)) {
-            return;
+            return undefined;
         }
         return this.servicesStorage.getServices().get(name);
     }
     listServices() {
         // Check wether storage is empty
         if (validateEmptiness(this.servicesStorage)) {
-            console.log(`Services storage ${errorMessages.EMPTINESS}`);
+            this.logger.log(`Services storage ${errorMessages.EMPTINESS}`);
             return;
         }
         console.log(this.servicesStorage.getServices());
+    }
+}
+// Utilities implementations
+export class LoggerService {
+    log(message, level = "info") {
+        const timeStamp = new Date().toISOString();
+        console[level](`${timeStamp} ${level.toUpperCase()}: ${message}`);
     }
 }
 // Usage
@@ -94,77 +103,207 @@ const orderMain = () => {
     const order = new Order();
     order.addItem("apple", 10);
     order.addItem("banana", 20);
-    const orderServiceRegistry = new OrderServiceRegistry(new OrderServicesStorage());
+    const orderServiceRegistry = new OrderServiceRegistry(new OrderServicesStorage(), new LoggerService());
     orderServiceRegistry.listServices();
     orderServiceRegistry.register("email confirmation", new EmailConfirmation());
+    orderServiceRegistry.register("email confirmation", new EmailConfirmation());
     orderServiceRegistry.register("invoice generator", new InvoiceGenerator());
+    orderServiceRegistry.register("email confirmation2", new EmailConfirmation());
+    orderServiceRegistry.unregister("email confirmation2");
+    orderServiceRegistry.unregister("email confirmation2");
     const emailConfirmation = orderServiceRegistry.getService("email confirmation");
     const invoiceGenerator = orderServiceRegistry.getService("invoice generator");
-    console.log(invoiceGenerator.execute(order));
-    emailConfirmation.execute(order, new InvoiceGenerator());
+    emailConfirmation.execute(order, new InvoiceGenerator(), new LoggerService());
     orderServiceRegistry.listServices();
 };
-orderMain();
-// 2. Open-closed (OCP)
-// The Open-Closed Principle (OCP) is one of the SOLID principles of object-oriented design. It states that:
-// A class or module should be open for extension (i.e., you can add new functionality) but closed for modification (i.e., you shouldn’t have to change the existing code to add new functionality).
-// This principle helps us achieve flexibility and maintainability, as we can extend the behavior of a system without changing its existing parts.
-// Key Ideas:
-// Open for Extension: You should be able to extend the behavior of a class or module.
-// Closed for Modification: Once a class or module is written, its existing code should remain untouched.
-// Example in TypeScript:
-// Let’s start with an example that violates OCP and then refactor it to adhere to the principle.
-// Exercise: Refactor Code to Follow OCP
-// You are given the following code that calculates discounts for different types of customers. It violates OCP because adding a new customer type requires modifying the 'DiscountCalculator' class.
-class DiscountCalculator {
-    calculateDiscount(customer) {
-        if (customer.type === 'regular') {
-            return 0.1; // 10% discount
-        }
-        else if (customer.type === 'premium') {
-            return 0.2; // 20% discount
-        }
+class AbstractCustomerServiceStorage {
+    services = new Map();
+}
+class AbstractCustomerServiceRegistry {
+    serviceStorage;
+    existenceValidator;
+    nameAbsenceValidator;
+    logger;
+    storageLogger;
+    constructor(serviceStorage, existenceValidator = new ExistenceValidator(), nameAbsenceValidator = new NameAbsenceValidator(), logger = new CustomerLogger(), storageLogger = new CustomerStorageLogger()) {
+        this.serviceStorage = serviceStorage;
+        this.existenceValidator = existenceValidator;
+        this.nameAbsenceValidator = nameAbsenceValidator;
+        this.logger = logger;
+        this.storageLogger = storageLogger;
     }
 }
-const regularCustomer = { type: 'regular' };
-const premiumCustomer = { type: 'premium' };
-// Concretes
+class AbstractCustomerValidatorStorage {
+    validators = new Map();
+}
+// Concrete implementations (low-level)
+// Customer concrete implementations
 class RegularCustomer {
-    discountPercent;
-    constructor(discountPercent) {
-        this.discountPercent = discountPercent;
-    }
-    getDiscountPercent() {
-        return this.discountPercent;
+    discountPercentage = 0.1;
+    getDiscountPercentage() {
+        return this.discountPercentage;
     }
 }
 class PremiumCustomer {
-    discountPercent;
-    constructor(discountPercent) {
-        this.discountPercent = discountPercent;
-    }
-    getDiscountPercent() {
-        return this.discountPercent;
+    discountPercentage = 0.2;
+    getDiscountPercentage() {
+        return this.discountPercentage;
     }
 }
-// 'Handler' (Calculator) class
-class DiscountCalculator2 {
-    calculateCustomerDiscountedPayment(customer, totalPayment) {
-        if (customer.getDiscountPercent() < 0) {
-            throw new Error("Invalid discount percentage.");
-        }
-        if (totalPayment < 0) {
-            throw new Error("Total payment must be a positive number.");
-        }
-        const discount = totalPayment * customer.getDiscountPercent();
-        return totalPayment - discount;
+// Utility concrete implementations
+// Logger
+class CustomerLogger {
+    log(message, level = "info") {
+        const timeStamp = new Date().toISOString();
+        console[level](`${timeStamp} ${level.toUpperCase()}: ${message}`);
     }
 }
-const regularCustomer2 = new RegularCustomer(0.1);
-const premiumCustomer2 = new PremiumCustomer(0.3);
-const discountCalculator = new DiscountCalculator2();
-// console.log(discountCalculator.calculateCustomerDiscountedPayment(regularCustomer2, 20));
-// console.log(discountCalculator.calculateCustomerDiscountedPayment(premiumCustomer2, 10));
+class CustomerStorageLogger {
+    log(message, level, serviceStorage) {
+        const timeStamp = new Date().toISOString();
+        console[level](`${timeStamp} ${level.toUpperCase()}: ${message}:`, serviceStorage.getServices());
+    }
+}
+// Validators
+class ExistenceValidator {
+    logger;
+    constructor(logger = new CustomerLogger()) {
+        this.logger = logger;
+    }
+    validate(serviceStorage, name) {
+        // Check whether name is undefined
+        try {
+            if (!name || !serviceStorage) {
+                throw new Error(`${errorMessages.PARAMETERS_NAME_SERVICE_STORAGE_REQUIRED}`);
+            }
+        }
+        catch (error) {
+            this.logger.log(`${error.message}`, "error", serviceStorage);
+        }
+        try {
+            if (!serviceStorage.getServices().has(name)) {
+                throw new Error(`'${name}' ${errorMessages.NO_EXISTENCE}`);
+            }
+        }
+        catch (error) {
+            this.logger.log(`${error.message}`, "error");
+            return false;
+        }
+        return true;
+    }
+}
+class NameAbsenceValidator {
+    logger;
+    constructor(logger = new CustomerLogger()) {
+        this.logger = logger;
+    }
+    validate(serviceStorage, name) {
+        // Check whether name is undefined
+        try {
+            if (!name || !serviceStorage) {
+                throw new Error(`${errorMessages.PARAMETERS_NAME_SERVICE_STORAGE_REQUIRED}`);
+            }
+        }
+        catch (error) {
+            this.logger.log(`${error.message}`, "error", serviceStorage);
+        }
+        try {
+            if (serviceStorage.getServices().has(name)) {
+                throw new Error(`'${name}' ${errorMessages.ALREADY_EXIST}`);
+            }
+        }
+        catch (error) {
+            this.logger.log(`${error.message}`, "error");
+            return false;
+        }
+        return true;
+    }
+}
+class StorageIsEmptyValidator {
+    validate(serviceStorage) {
+        if (serviceStorage.getServices().size !== 0) {
+            return false;
+        }
+        return true;
+    }
+}
+// Data storage implementations
+// Customer service storage
+class CustomerServiceStorage extends AbstractCustomerServiceStorage {
+    // This class inherits "validators: Map<string, ICustomerValidator> = new Map()" from its parents
+    getServices() {
+        return this.services;
+    }
+}
+// Customer validator storage
+class CustomerValidatorStorage extends AbstractCustomerValidatorStorage {
+    // This class inherits "validators: Map<string, ICustomerValidator> = new Map()" from its parents
+    getValidators() {
+        return this.validators;
+    }
+}
+// Registries (high-level)
+// Customer service registry (high-level)
+class CustomerServiceRegistry extends AbstractCustomerServiceRegistry {
+    serviceStorage;
+    existenceValidator;
+    nameAbsenceValidator;
+    storageIsEmptyValidator;
+    logger;
+    storageLogger;
+    constructor(serviceStorage, existenceValidator = new ExistenceValidator(), nameAbsenceValidator = new NameAbsenceValidator(), storageIsEmptyValidator = new StorageIsEmptyValidator(), logger = new CustomerLogger(), storageLogger = new CustomerStorageLogger()) {
+        super(serviceStorage, existenceValidator, nameAbsenceValidator, logger, storageLogger);
+        this.serviceStorage = serviceStorage;
+        this.existenceValidator = existenceValidator;
+        this.nameAbsenceValidator = nameAbsenceValidator;
+        this.storageIsEmptyValidator = storageIsEmptyValidator;
+        this.logger = logger;
+        this.storageLogger = storageLogger;
+    }
+    register(name, service) {
+        // Check whether name is absent
+        if (this.nameAbsenceValidator.validate(this.serviceStorage, name)) {
+            this.serviceStorage.getServices().set(name, service);
+            this.logger.log(`'${name}' customer registered successfully`);
+        }
+    }
+    unregister(name) {
+        // Check whether name exist
+        if (!this.existenceValidator.validate(this.serviceStorage, name)) {
+            return;
+        }
+        this.serviceStorage.getServices().delete(name);
+        this.logger.log(`${name} customer unregistered successfully`);
+    }
+    getService(name) {
+        if (!this.existenceValidator.validate(this.serviceStorage, name)) {
+            return undefined;
+        }
+        return this.serviceStorage.getServices().get(name);
+    }
+    listServices() {
+        if (this.storageIsEmptyValidator.validate(this.serviceStorage)) {
+            this.logger.log(`Storage ${errorMessages.EMPTINESS}`, "info");
+            return;
+        }
+        this.storageLogger.log("", "info", this.serviceStorage);
+    }
+}
+// Usage
+const customerMain = () => {
+    const customerServiceRegistry = new CustomerServiceRegistry(new CustomerServiceStorage());
+    customerServiceRegistry.register("regular2", new RegularCustomer());
+    customerServiceRegistry.register("regular", new RegularCustomer());
+    customerServiceRegistry.register("premium", new PremiumCustomer());
+    // customerServiceRegistry.register("premium", new PremiumCustomer());
+    // customerServiceRegistry.register("regular", new RegularCustomer());
+    customerServiceRegistry.unregister("premium");
+    customerServiceRegistry.unregister("premium");
+    customerServiceRegistry.unregister("regular");
+    // customerServiceRegistry.unregister("regular2");
+    customerServiceRegistry.listServices();
+};
+customerMain();
 // Once you’ve completed the refactor, the DiscountCalculator2 class should remain unchanged when adding new customer types.
 // 3. Liskov substitution (LSP)
 // The Liskov Substitution Principle states that subtypes must be substitutable for their base types without altering the correctness of the program. This means that objects of a superclass should be replaceable with objects of a subclass without causing errors or unexpected behavior.

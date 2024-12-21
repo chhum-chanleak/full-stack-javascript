@@ -1,4 +1,4 @@
-import { type AbstractOrderServicesStorage } from "./exercises.js"
+import { type AbstractOrderServicesStorage, LoggerService } from "./exercises.js"
 import { errorMessages } from "./errors.js";
 
 // Validators for Order
@@ -9,7 +9,7 @@ export const validateUniqueName = (name: string, services: AbstractOrderServices
       throw new Error(`${name} ${errorMessages.ALREADY_EXIST}`);
     }
   } catch(error) {
-    console.error(`Error registering service: ${(error as Error).message}`);
+    (new LoggerService()).log(`Error registering service: ${(error as Error).message}`, "error");
     return false;
   }
 
@@ -22,7 +22,7 @@ export const validateExistence = (name: string, services: AbstractOrderServicesS
       throw new Error(`${name} ${errorMessages.NO_EXISTENCE}`);
     }
   } catch(error) {
-    console.error(`Error unregistering service: ${(error as Error).message}`);
+    (new LoggerService()).log(`Error unregistering service: ${(error as Error).message}`, "error");
     return false;
   }
 

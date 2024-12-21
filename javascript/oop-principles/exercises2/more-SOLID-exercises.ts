@@ -1794,4 +1794,4 @@ const dip2Main = (): void => {
   logService.readLog();
 };
 
-dip2Main();
+// dip2Main();

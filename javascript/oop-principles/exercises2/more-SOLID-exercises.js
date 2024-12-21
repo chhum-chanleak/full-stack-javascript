@@ -1086,4 +1086,4 @@ const dip2Main = () => {
             console.log("Unknown logger");
     logService.readLog();
 };
-dip2Main();
+// dip2Main();
