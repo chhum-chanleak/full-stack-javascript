@@ -133,9 +133,6 @@ class AbstractCustomerServiceRegistry {
         this.storageLogger = storageLogger;
     }
 }
-class AbstractCustomerValidatorStorage {
-    validators = new Map();
-}
 // Concrete implementations (low-level)
 // Customer concrete implementations
 class RegularCustomer {
@@ -235,13 +232,6 @@ class CustomerServiceStorage extends AbstractCustomerServiceStorage {
         return this.services;
     }
 }
-// Customer validator storage
-class CustomerValidatorStorage extends AbstractCustomerValidatorStorage {
-    // This class inherits "validators: Map<string, ICustomerValidator> = new Map()" from its parents
-    getValidators() {
-        return this.validators;
-    }
-}
 // Registries (high-level)
 // Customer service registry (high-level)
 class CustomerServiceRegistry extends AbstractCustomerServiceRegistry {
@@ -249,22 +239,22 @@ class CustomerServiceRegistry extends AbstractCustomerServiceRegistry {
     existenceValidator;
     nameAbsenceValidator;
     storageIsEmptyValidator;
-    logger;
+    customerLogger;
     storageLogger;
-    constructor(serviceStorage, existenceValidator = new ExistenceValidator(), nameAbsenceValidator = new NameAbsenceValidator(), storageIsEmptyValidator = new StorageIsEmptyValidator(), logger = new CustomerLogger(), storageLogger = new CustomerStorageLogger()) {
-        super(serviceStorage, existenceValidator, nameAbsenceValidator, logger, storageLogger);
+    constructor(serviceStorage, existenceValidator = new ExistenceValidator(), nameAbsenceValidator = new NameAbsenceValidator(), storageIsEmptyValidator = new StorageIsEmptyValidator(), customerLogger = new CustomerLogger(), storageLogger = new CustomerStorageLogger()) {
+        super(serviceStorage, existenceValidator, nameAbsenceValidator, customerLogger, storageLogger);
         this.serviceStorage = serviceStorage;
         this.existenceValidator = existenceValidator;
         this.nameAbsenceValidator = nameAbsenceValidator;
         this.storageIsEmptyValidator = storageIsEmptyValidator;
-        this.logger = logger;
+        this.customerLogger = customerLogger;
         this.storageLogger = storageLogger;
     }
     register(name, service) {
         // Check whether name is absent
         if (this.nameAbsenceValidator.validate(this.serviceStorage, name)) {
             this.serviceStorage.getServices().set(name, service);
-            this.logger.log(`'${name}' customer registered successfully`);
+            this.customerLogger.log(`'${name}' customer registered successfully`);
         }
     }
     unregister(name) {
@@ -273,7 +263,7 @@ class CustomerServiceRegistry extends AbstractCustomerServiceRegistry {
             return;
         }
         this.serviceStorage.getServices().delete(name);
-        this.logger.log(`${name} customer unregistered successfully`);
+        this.customerLogger.log(`${name} customer unregistered successfully`);
     }
     getService(name) {
         if (!this.existenceValidator.validate(this.serviceStorage, name)) {
@@ -283,7 +273,7 @@ class CustomerServiceRegistry extends AbstractCustomerServiceRegistry {
     }
     listServices() {
         if (this.storageIsEmptyValidator.validate(this.serviceStorage)) {
-            this.logger.log(`Storage ${errorMessages.EMPTINESS}`, "info");
+            this.customerLogger.log(`Storage ${errorMessages.EMPTINESS}`, "info");
             return;
         }
         this.storageLogger.log("", "info", this.serviceStorage);
@@ -298,100 +288,149 @@ const customerMain = () => {
     // customerServiceRegistry.register("premium", new PremiumCustomer());
     // customerServiceRegistry.register("regular", new RegularCustomer());
     customerServiceRegistry.unregister("premium");
-    customerServiceRegistry.unregister("premium");
+    // customerServiceRegistry.unregister("premium");
     customerServiceRegistry.unregister("regular");
     // customerServiceRegistry.unregister("regular2");
     customerServiceRegistry.listServices();
 };
-customerMain();
-// Once you’ve completed the refactor, the DiscountCalculator2 class should remain unchanged when adding new customer types.
-// 3. Liskov substitution (LSP)
-// The Liskov Substitution Principle states that subtypes must be substitutable for their base types without altering the correctness of the program. This means that objects of a superclass should be replaceable with objects of a subclass without causing errors or unexpected behavior.
-// In TypeScript, we ensure this by designing classes and interfaces such that derived classes adhere to the expected behavior of the base class or interface.
-// Violating the Liskov substitution (LSP) Principle:
-class RectangleNo {
-    width;
-    height;
-    constructor(width, height) {
-        this.width = width;
-        this.height = height;
-    }
-    setWidth(width) {
-        this.width = width;
-    }
-    setHeight(height) {
-        this.height = height;
-    }
-    getArea() {
-        return this.width * this.height;
+class AbstractBirdStorage {
+    birds = new Map();
+}
+class AbstractBirdRegistry {
+    birdStorage;
+    birdIsAbsentValidator;
+    logger;
+    constructor(birdStorage, birdIsAbsentValidator, logger) {
+        this.birdStorage = birdStorage;
+        this.birdIsAbsentValidator = birdIsAbsentValidator;
+        this.logger = logger;
     }
 }
-class SquareNo extends RectangleNo {
-    setWidth(width) {
-        this.width = width;
-        this.height = width; // Ensure square properties
-    }
-    setHeight(height) {
-        this.width = height;
-        this.height = height; // Ensure square properties
+class AbstractBirdLogger {
+    log(message, level = "info", birdStorage) {
+        const timeStamp = new Date().toISOString();
+        console[level](`${timeStamp} ${level.toUpperCase()}: ${message}`);
     }
 }
-function printArea(rectangle) {
-    rectangle.setWidth(5);
-    rectangle.setHeight(10);
-    console.log(`Area: ${rectangle.getArea()}`);
-}
-// Test with Rectangle
-const rectNo = new RectangleNo(2, 3);
-// printArea(rectNo); // Correct output: Area: 50
-// Test with Square (violates LSP)
-const squareNo = new SquareNo(2, 2);
-class RectangleYes {
-    width;
-    height;
-    constructor(width, height) {
-        this.width = width;
-        this.height = height;
-    }
-    getArea() {
-        return this.width * this.height;
-    }
-}
-class SquareYes {
-    side;
-    constructor(side) {
-        this.side = side;
-    }
-    getArea() {
-        return this.side * this.side;
-    }
-}
-function printShapeArea(shape) {
-    console.log(`Area: ${shape.getArea()}`);
-}
-// Test with Rectangle
-const rectYes = new RectangleYes(5, 10);
-// printShapeArea(rectYes); // Output: Area: 50
-// Test with Square
-const squareYes = new SquareYes(5);
+// Concrete implementations (low-level)
+// Flying birds
 class Eagle {
-    eat() {
-        console.log("Eagle swallows snakes.");
+    walk() {
+        console.log("Eagle walks on grass");
     }
     fly() {
-        console.log("Eagle flies high.");
+        console.log("Eagle flies high");
     }
 }
+class Hawk {
+    walk() {
+        console.log("Hawk walks on grass");
+    }
+    fly() {
+        console.log("Hawk flies high");
+    }
+}
+// Flightless birds
 class Penguin {
-    eat() {
-        console.log("Penguin munches fish.");
+    walk() {
+        console.log("Penguin walks on ice");
     }
-    swim() {
-        console.log("Penguin swim swiftly.");
+    runOrSwimVeryWell() {
+        console.log("Penguin swims swiftly");
     }
 }
-const baldEagle = new Eagle();
-const kingPenguin = new Penguin();
+class Ostrich {
+    walk() {
+        console.log("Ostrich walks on Savannah grassland");
+    }
+    runOrSwimVeryWell() {
+        console.log("Ostrich runs very fast");
+    }
+}
+// Storage of birds
+class BirdStorage extends AbstractBirdStorage {
+    // This class inherits "protected birds: Map<string, Bird> = new Map()" from its parent
+    getBirds() {
+        return this.birds;
+    }
+}
+// Bird registry (high-level)
+class BirdRegistry extends AbstractBirdRegistry {
+    birdStorage;
+    birdIsAbsentValidator;
+    logger;
+    constructor(birdStorage, birdIsAbsentValidator, logger) {
+        super(birdStorage, birdIsAbsentValidator, logger);
+        this.birdStorage = birdStorage;
+        this.birdIsAbsentValidator = birdIsAbsentValidator;
+        this.logger = logger;
+    }
+    register(name, bird) {
+        // Check whether name already exists in the storage
+        if (!this.birdIsAbsentValidator.validate(this.birdStorage, name)) {
+            this.logger.log(`${name} ${errorMessages.ALREADY_EXIST}`, "error");
+            return;
+        }
+        // Add bird and log message when the above condition does not check
+        this.birdStorage.getBirds().set(name, bird);
+        this.logger.log(`${name} registered successfully`);
+    }
+    unregister(name) {
+        // Check whether name already exists in the storage
+        if (this.birdIsAbsentValidator.validate(this.birdStorage, name)) {
+            this.logger.log(`${name} ${errorMessages.NO_EXISTENCE}`, "error");
+            return;
+        }
+        // Delete bird and log a message when the above condition does not check
+        this.birdStorage.getBirds().delete(name);
+        this.logger.log(`${name} unregistered successfully`);
+    }
+    getBird(name) {
+        if (this.birdIsAbsentValidator.validate(this.birdStorage, name)) {
+            this.logger.log(`${name} ${errorMessages.NO_EXISTENCE}`, "error");
+            return;
+        }
+        // Return bird when the above condition does not check
+        return this.birdStorage.getBirds().get(name);
+    }
+    listBirds() {
+        (this.birdStorage.getBirds().size !== 0) ? this.logger.log("Storage: ", "info", this.birdStorage)
+            : this.logger.log(`Storage ${errorMessages.EMPTINESS}`);
+    }
+}
+// Utility implementations
+// Validators
+class BirdIsAbsentValidator {
+    validate(birdStorage, name) {
+        // When a certain bird exists
+        if (birdStorage.getBirds().get(name)) {
+            return false;
+        }
+        return true;
+    }
+}
+// Loggers
+class RegistryLogger extends AbstractBirdLogger {
+}
+// Usage
+const birdMain = () => {
+    const birdRegistry = new BirdRegistry(new BirdStorage(), new BirdIsAbsentValidator(), new RegistryLogger());
+    birdRegistry.register("eagle", new Eagle());
+    birdRegistry.register("eagle", new Eagle());
+    birdRegistry.register("ostrich", new Ostrich());
+    birdRegistry.unregister("eele");
+    birdRegistry.unregister("eagle");
+    birdRegistry.register("eagle", new Eagle());
+    const eagle = birdRegistry.getBird("eagle");
+    const ostrich = birdRegistry.getBird("ostrich");
+    eagle.fly();
+    eagle.walk();
+    console.log("");
+    ostrich.walk();
+    ostrich.runOrSwimVeryWell();
+    birdRegistry.listBirds();
+};
+birdMain();
 class EagleNo {
     fly() {
         console.log("The eagle is flying!");

@@ -276,11 +276,7 @@ interface ICustomerValidator {
   validate(serviceStorage: AbstractCustomerServiceStorage, name?: string, ): boolean;
 }
 
-abstract class AbstractCustomerValidatorStorage {
-  protected validators: Map<string, ICustomerValidator> = new Map();
-
-  abstract getValidators(): Map<string, ICustomerValidator>;
-}
+// Logger abstractions
 
 type CustomerLevel = "info" | "warn" | "error" | "debug";
 interface ILogger {
@@ -328,7 +324,7 @@ class CustomerStorageLogger implements ILogger {
 // Validators
 
 class ExistenceValidator implements ICustomerValidator {
-  constructor(private logger: ILogger = new CustomerLogger()) {}
+  constructor(private readonly logger: ILogger = new CustomerLogger()) {}
 
   validate(serviceStorage: AbstractCustomerServiceStorage, name: string): boolean {
   // Check whether name is undefined
@@ -353,7 +349,7 @@ class ExistenceValidator implements ICustomerValidator {
 }
 
 class NameAbsenceValidator implements ICustomerValidator {
-  constructor(private logger: ILogger = new CustomerLogger()) {}
+  constructor(private readonly  logger: ILogger = new CustomerLogger()) {}
 
   validate(serviceStorage: AbstractCustomerServiceStorage, name: string): boolean {
   // Check whether name is undefined
@@ -397,14 +393,6 @@ class CustomerServiceStorage extends AbstractCustomerServiceStorage {
   }
 }
 
-// Customer validator storage
-class CustomerValidatorStorage extends AbstractCustomerValidatorStorage {
-  // This class inherits "validators: Map<string, ICustomerValidator> = new Map()" from its parents
-  getValidators(): Map<string, ICustomerValidator> {
-    return this.validators;
-  }
-}
-
 // Registries (high-level)
 
 // Customer service registry (high-level)
@@ -414,14 +402,14 @@ class CustomerServiceRegistry extends AbstractCustomerServiceRegistry {
     protected existenceValidator: ICustomerValidator = new ExistenceValidator(),
     protected nameAbsenceValidator: ICustomerValidator = new NameAbsenceValidator(),
     protected storageIsEmptyValidator: ICustomerValidator = new StorageIsEmptyValidator(),
-    protected logger: ILogger = new CustomerLogger(),
+    protected customerLogger: ILogger = new CustomerLogger(),
     protected storageLogger: ILogger = new CustomerStorageLogger()
   ) {
     super(
       serviceStorage,
       existenceValidator,
       nameAbsenceValidator,
-      logger,
+      customerLogger,
       storageLogger
     );
   }
@@ -430,7 +418,7 @@ class CustomerServiceRegistry extends AbstractCustomerServiceRegistry {
     // Check whether name is absent
     if (this.nameAbsenceValidator.validate(this.serviceStorage, name)) {
       this.serviceStorage.getServices().set(name, service);
-      this.logger.log(`'${name}' customer registered successfully`);
+      this.customerLogger.log(`'${name}' customer registered successfully`);
     }
   }
 
@@ -441,7 +429,7 @@ class CustomerServiceRegistry extends AbstractCustomerServiceRegistry {
     }
 
     this.serviceStorage.getServices().delete(name);
-    this.logger.log(`${name} customer unregistered successfully`);
+    this.customerLogger.log(`${name} customer unregistered successfully`);
   }
 
   getService(name: string): Customer | undefined {
@@ -454,7 +442,7 @@ class CustomerServiceRegistry extends AbstractCustomerServiceRegistry {
 
   listServices(): void {
     if (this.storageIsEmptyValidator.validate(this.serviceStorage)) {
-      this.logger.log(`Storage ${errorMessages.EMPTINESS}`, "info");
+      this.customerLogger.log(`Storage ${errorMessages.EMPTINESS}`, "info");
       return;
     }
 
@@ -472,103 +460,19 @@ const customerMain = () => {
   // customerServiceRegistry.register("premium", new PremiumCustomer());
   // customerServiceRegistry.register("regular", new RegularCustomer());
   customerServiceRegistry.unregister("premium");
-  customerServiceRegistry.unregister("premium");
+  // customerServiceRegistry.unregister("premium");
   customerServiceRegistry.unregister("regular");
   // customerServiceRegistry.unregister("regular2");
 
   customerServiceRegistry.listServices();
 };
 
-customerMain();
-
-// Once you’ve completed the refactor, the DiscountCalculator2 class should remain unchanged when adding new customer types.
+// customerMain();
 
 // 3. Liskov substitution (LSP)
 // The Liskov Substitution Principle states that subtypes must be substitutable for their base types without altering the correctness of the program. This means that objects of a superclass should be replaceable with objects of a subclass without causing errors or unexpected behavior.
 
 // In TypeScript, we ensure this by designing classes and interfaces such that derived classes adhere to the expected behavior of the base class or interface.
-
-// Violating the Liskov substitution (LSP) Principle:
-class RectangleNo {
-  constructor(protected width: number, protected height: number) {}
-
-  setWidth(width: number): void {
-    this.width = width;
-  }
-
-  setHeight(height: number): void {
-    this.height = height;
-  }
-
-  getArea(): number {
-    return this.width * this.height;
-  }
-}
-
-class SquareNo extends RectangleNo {
-  setWidth(width: number): void {
-    this.width = width;
-    this.height = width; // Ensure square properties
-  }
-
-  setHeight(height: number): void {
-    this.width = height;
-    this.height = height; // Ensure square properties
-  }
-}
-
-function printArea(rectangle: RectangleNo): void {
-  rectangle.setWidth(5);
-  rectangle.setHeight(10);
-  console.log(`Area: ${rectangle.getArea()}`);
-}
-
-// Test with Rectangle
-const rectNo = new RectangleNo(2, 3);
-// printArea(rectNo); // Correct output: Area: 50
-
-// Test with Square (violates LSP)
-const squareNo = new SquareNo(2, 2);
-// printArea(squareNo); // Incorrect behavior: Area: 100
-
-// Why does this violate LSP?
-// The Square class overrides the behavior of Rectangle. When using printArea with a Square, the result is inconsistent with the expectation for a rectangle, causing incorrect behavior.
-
-// Correct Implementation: Adhering to LSP
-// To follow LSP, we can refactor to separate the interfaces for Rectangle and Square:
-interface ShapeYes {
-  getArea(): number;
-}
-
-class RectangleYes implements ShapeYes {
-  constructor(private width: number, private height: number) {}
-
-  getArea(): number {
-    return this.width * this.height;
-  }
-}
-
-class SquareYes implements ShapeYes {
-  constructor(private side: number) {}
-
-  getArea(): number {
-    return this.side * this.side;
-  }
-}
-
-function printShapeArea(shape: ShapeYes): void {
-  console.log(`Area: ${shape.getArea()}`);
-}
-
-// Test with Rectangle
-const rectYes = new RectangleYes(5, 10);
-// printShapeArea(rectYes); // Output: Area: 50
-
-// Test with Square
-const squareYes = new SquareYes(5);
-// printShapeArea(squareYes); // Output: Area: 25
-
-// Here, Square and Rectangle both implement the ShapeYes interface and can be used interchangeably, preserving LSP.
 
 // Exercise: Applying LSP in TypeScript
 // Create an interface Bird with a method fly. Then, implement two classes: Eagle (a bird that can fly) and Penguin (a bird that cannot fly). Ensure the implementation adheres to the Liskov Substitution Principle.
@@ -577,47 +481,214 @@ const squareYes = new SquareYes(5);
 // Define an interface Bird with appropriate methods.
 // Implement classes Eagle and Penguin.
 // Ensure the design does not violate LSP.
+
+// Solution
+
+// Abstractions
+
 interface Bird {
-  eat(): void;
+  walk(): void;
 }
 
-// FlyingBird can 'eat()' and 'fly()'
 interface FlyingBird extends Bird {
+  // This interface inherits "walk()" from its parent
+
   fly(): void;
 }
 
-// SwimmingBird can 'eat()' and 'swim()'
-interface SwimmingBird extends Bird {
-  swim(): void;
+interface FlightlessBird extends Bird {
+  // This interface inherits "walk()" from its parent
+
+  runOrSwimVeryWell(): void;
 }
+
+abstract class AbstractBirdStorage {
+  protected birds: Map<string, Bird> = new Map();
+
+  abstract getBirds(): Map<string, Bird>;
+}
+
+abstract class AbstractBirdRegistry {
+  constructor(
+    protected birdStorage: AbstractBirdStorage,
+    protected birdIsAbsentValidator: IBirdValidator,
+    protected logger: AbstractBirdLogger
+  ) {}
+
+  abstract register(name: string, bird: Bird): void;
+  abstract unregister(name: string): void;
+  abstract getBird(name: string): Bird | undefined;
+  abstract listBirds(): void;
+}
+
+// Utility abstractions
+interface IBirdValidator {
+  validate(birdStorage: AbstractBirdStorage, name: string): boolean;
+}
+
+type Level2 = "info" | "warn" | "error" | "debug";
+abstract class AbstractBirdLogger {
+  log(message?: string, level: Level2 = "info", birdStorage?: AbstractBirdStorage): void {
+    const timeStamp = new Date().toISOString();
+
+    console[level](`${timeStamp} ${level.toUpperCase()}: ${message}`);
+  }
+}
+
+// Concrete implementations (low-level)
+
+// Flying birds
 
 class Eagle implements FlyingBird {
-  eat(): void {
-      console.log("Eagle swallows snakes.");
+  walk(): void {
+    console.log("Eagle walks on grass");
   }
-  
+
   fly(): void {
-      console.log("Eagle flies high.");
+    console.log("Eagle flies high");
   }
 }
 
-class Penguin implements SwimmingBird {
-  eat(): void {
-      console.log("Penguin munches fish.");
+class Hawk implements FlyingBird {
+  walk(): void {
+    console.log("Hawk walks on grass");
   }
 
-  swim(): void {
-      console.log("Penguin swim swiftly.");
+  fly(): void {
+    console.log("Hawk flies high");
   }
 }
 
-const baldEagle = new Eagle();
-const kingPenguin = new Penguin();
+// Flightless birds
 
-// baldEagle.eat();
-// baldEagle.fly();
-// kingPenguin.eat();
-// kingPenguin.swim();
+class Penguin implements FlightlessBird {
+  walk(): void {
+    console.log("Penguin walks on ice");
+  }
+
+  runOrSwimVeryWell(): void {
+    console.log("Penguin swims swiftly");
+  }
+}
+
+class Ostrich implements FlightlessBird {
+  walk(): void {
+    console.log("Ostrich walks on Savannah grassland");
+  }
+
+  runOrSwimVeryWell(): void {
+    console.log("Ostrich runs very fast");
+  }
+}
+
+// Storage of birds
+class BirdStorage extends AbstractBirdStorage {
+  // This class inherits "protected birds: Map<string, Bird> = new Map()" from its parent
+  
+  getBirds(): Map<string, Bird> {
+    return this.birds;
+  }
+}
+
+// Bird registry (high-level)
+class BirdRegistry extends AbstractBirdRegistry {
+  constructor(
+    protected birdStorage: AbstractBirdStorage,
+    protected birdIsAbsentValidator: IBirdValidator,
+    protected logger: AbstractBirdLogger
+  ) {
+    super(birdStorage, birdIsAbsentValidator, logger);
+  }
+
+  register(name: string, bird: Bird): void {
+    // Check whether name already exists in the storage
+    if (!this.birdIsAbsentValidator.validate(this.birdStorage, name)) {
+      this.logger.log(`${name} ${errorMessages.ALREADY_EXIST}`, "error");
+      return;
+    }
+
+    // Add bird and log message when the above condition does not check
+    this.birdStorage.getBirds().set(name, bird);
+    this.logger.log(`${name} registered successfully`);
+  }
+
+  unregister(name: string): void {
+    // Check whether name already exists in the storage
+    if (this.birdIsAbsentValidator.validate(this.birdStorage, name)) {
+      this.logger.log(`${name} ${errorMessages.NO_EXISTENCE}`, "error");
+      return;
+    }
+
+    // Delete bird and log a message when the above condition does not check
+    this.birdStorage.getBirds().delete(name);
+    this.logger.log(`${name} unregistered successfully`);
+  }
+
+  getBird(name: string): Bird | undefined {
+    if (this.birdIsAbsentValidator.validate(this.birdStorage, name)) {
+      this.logger.log(`${name} ${errorMessages.NO_EXISTENCE}`, "error");
+      return;
+    }
+
+    // Return bird when the above condition does not check
+    return this.birdStorage.getBirds().get(name);
+  }
+
+  listBirds(): void {
+    (this.birdStorage.getBirds().size !== 0) ? this.logger.log("Storage: ", "info", this.birdStorage)
+    : this.logger.log(`Storage ${errorMessages.EMPTINESS}`);
+  }
+}
+
+// Utility implementations
+
+// Validators
+
+class BirdIsAbsentValidator implements IBirdValidator {
+  validate(birdStorage: AbstractBirdStorage, name: string): boolean {
+    // When a certain bird exists
+    if (birdStorage.getBirds().get(name)) {    
+      return false;
+    }
+
+    return true;
+  }
+}
+
+// Loggers
+
+class RegistryLogger extends AbstractBirdLogger {}
+
+// Usage
+const birdMain = () => {
+  const birdRegistry = new BirdRegistry(
+    new BirdStorage(),
+    new BirdIsAbsentValidator(), 
+    new RegistryLogger()
+  );
+
+  birdRegistry.register("eagle", new Eagle());
+  birdRegistry.register("eagle", new Eagle());
+  birdRegistry.register("ostrich", new Ostrich());
+
+  birdRegistry.unregister("eele");
+  birdRegistry.unregister("eagle");
+
+  birdRegistry.register("eagle", new Eagle());
+
+  const eagle = birdRegistry.getBird("eagle") as Eagle;
+  const ostrich = birdRegistry.getBird("ostrich") as Ostrich;
+
+  eagle.fly();
+  eagle.walk();
+  console.log("");
+  ostrich.walk();
+  ostrich.runOrSwimVeryWell();
+
+  birdRegistry.listBirds();
+};
+
+birdMain();
 
 // 4. Interface segregation
 // The Interface Segregation Principle (ISP) states that a class should not be forced to implement interfaces it does not use. Instead, you should break down interfaces into smaller, more specific ones to ensure classes only implement what they actually need.
