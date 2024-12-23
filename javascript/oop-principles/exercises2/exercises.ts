@@ -528,7 +528,7 @@ interface IBirdValidator {
 
 type Level2 = "info" | "warn" | "error" | "debug";
 abstract class AbstractBirdLogger {
-  log(message?: string, level: Level2 = "info", birdStorage?: AbstractBirdStorage): void {
+  log( message: string, level: Level2 = "info", birdStorage?: AbstractBirdStorage,): void {
     const timeStamp = new Date().toISOString();
 
     console[level](`${timeStamp} ${level.toUpperCase()}: ${message}`);
@@ -595,7 +595,7 @@ class BirdRegistry extends AbstractBirdRegistry {
   constructor(
     protected birdStorage: AbstractBirdStorage,
     protected birdIsAbsentValidator: IBirdValidator,
-    protected logger: AbstractBirdLogger
+    protected logger: AbstractBirdLogger,
   ) {
     super(birdStorage, birdIsAbsentValidator, logger);
   }
@@ -635,8 +635,16 @@ class BirdRegistry extends AbstractBirdRegistry {
   }
 
   listBirds(): void {
-    (this.birdStorage.getBirds().size !== 0) ? this.logger.log("Storage: ", "info", this.birdStorage)
-    : this.logger.log(`Storage ${errorMessages.EMPTINESS}`);
+    const birds = this.birdStorage.getBirds();
+
+    this.logger.log("List of all birds:");
+
+    birds.forEach((key, value) => {
+      console.log(`Key: ${JSON.stringify(key)}`);
+      console.log(`Value: ${JSON.stringify(value)}`);
+    });
+    // Space for readability
+    console.log("");
   }
 }
 
@@ -664,7 +672,7 @@ const birdMain = () => {
   const birdRegistry = new BirdRegistry(
     new BirdStorage(),
     new BirdIsAbsentValidator(), 
-    new RegistryLogger()
+    new RegistryLogger(),
   );
 
   birdRegistry.register("eagle", new Eagle());
@@ -688,73 +696,14 @@ const birdMain = () => {
   birdRegistry.listBirds();
 };
 
-birdMain();
+// birdMain();
 
 // 4. Interface segregation
 // The Interface Segregation Principle (ISP) states that a class should not be forced to implement interfaces it does not use. Instead, you should break down interfaces into smaller, more specific ones to ensure classes only implement what they actually need.
 
 // This principle is one of the SOLID principles of object-oriented design and helps avoid bloated, "fat" interfaces.
 
-// Example: Violating ISP in TypeScript
-// Consider a scenario where we have a Bird interface for all bird types:
-interface BirdNo {
-  fly(): void;
-  swim(): void;
-}
-
-class EagleNo implements BirdNo {
-  fly(): void {
-    console.log("The eagle is flying!");
-  }
-
-  swim(): void {
-    throw new Error("Eagles can't swim!");
-  }
-}
-
-class PenguinNo implements BirdNo {
-  fly(): void {
-    throw new Error("Penguins can't fly!");
-  }
-
-  swim(): void {
-    console.log("The penguin is swimming!");
-  }
-}
-
-// Problem:
-// The Eagle class is forced to implement swim, even though eagles cannot swim.
-// The Penguin class is forced to implement fly, even though penguins cannot fly.
-// This violates ISP because Bird is a "fat" interface containing methods not relevant to certain bird types.
-
-// Correct Implementation: Adhering to ISP
-// We can split the Bird interface into smaller, more specific interfaces:
-interface FlyableYes {
-  fly(): void;
-}
-
-interface SwimmableYes {
-  swim(): void;
-}
-
-class EagleYes implements FlyableYes {
-  fly(): void {
-    console.log("The eagle is flying!");
-  }
-}
-
-class PenguinYes implements SwimmableYes {
-  swim(): void {
-    console.log("The penguin is swimming!");
-  }
-}
-
-// Benefits:
-// Eagle only implements the Flyable interface and is not forced to implement Swimmable.
-// Penguin only implements the Swimmable interface and is not forced to implement Flyable.
-
 // Exercise: Apply ISP in TypeScript
-// Scenario:
 
 // You are building a system for various types of machines.
 // Define a base interface Machine with methods for start, stop, refuel, and chargeBattery.
@@ -769,58 +718,269 @@ class PenguinYes implements SwimmableYes {
 // Requirements:
 // Avoid forcing any class to implement methods irrelevant to its functionality.
 
-// 'Intersection' interface
-interface Machine {
+// Abstractions
+
+interface IMachine {
   start(): void;
   stop(): void;
 }
 
-interface FuelPoweredMachine extends Machine {
-  refuel(): void;
+abstract class AbstractCar implements IMachine {
+  constructor(
+    protected manufacturer: string
+  ) {}
+
+  abstract start(): void;
+  abstract stop(): void;
+  abstract refuel(): void;
 }
 
-interface ElectricPoweredMachine extends Machine {
-  chargeBattery(): void;
+abstract class AbstractElectricScooter implements IMachine {
+  constructor(
+    protected manufacturer: string
+  ) {}
+
+  abstract start(): void;
+  abstract stop(): void;
+  abstract chargeBattery(): void;
 }
 
-class Car implements FuelPoweredMachine {
+// Logger abstraction
+type MachineLogLevel = "info" | "warn" | "error" | "debug";
+interface IMachineLogger {
+  log(message: string, level?: MachineLogLevel): void;
+}
+
+// Machine storage abstraction
+abstract class AbstractMachineStorage {
+  protected machines: Map<string, IMachine> = new Map();
+
+  abstract getMachines(): Map<string, IMachine>;
+}
+
+// Service(Machine) registry abstraction
+abstract class AbstractMachineRegistry {
+  constructor(
+    protected machineStorage: AbstractMachineStorage
+  ) {}
+
+  abstract register(name: string, machine: IMachine): void;
+  abstract unregister(name: string): void;
+  abstract getMachine(name: string): IMachine | undefined;
+  abstract listMachines(): void;
+}
+
+// Machine validator abstractions
+interface IMachineValidator {
+  validate(name: string, machineStorage: AbstractMachineStorage): boolean;
+}
+
+interface ILogLevelValidator {
+  validate(level: MachineLogLevel): boolean;
+}
+
+// Concrete implementations (low-level)
+
+class Car extends AbstractCar {
+  constructor(
+    protected manufacturer: string,
+    protected logger: IMachineLogger,
+  ) {
+    super(manufacturer);
+  }
+
   start(): void {
-    console.log("Car starts engine.");
+    this.logger.log("Car starts moving");
   }
 
   stop(): void {
-    console.log("Car stops engine.");
+    this.logger.log("Car has stopped");
   }
 
   refuel(): void {
-    console.log("Car refuels at gas-station.");
+    this.logger.log("Car is refueling diesel/gasoline");
   }
 }
 
-class ElectricScooter implements ElectricPoweredMachine {
+class ElectricScooter extends AbstractElectricScooter {
+  constructor(
+    protected manufacturer: string,
+    protected logger: IMachineLogger,
+  ) {
+    super(manufacturer);
+  }
+
   start(): void {
-    console.log("Scooter starts engine.");
+    this.logger.log("Scooter starts moving");
   }
 
   stop(): void {
-    console.log("Scooter stops engine.");
+    this.logger.log("Scooter has stopped");
   }
 
   chargeBattery(): void {
-    console.log("Scooter recharges electricity.");
+    this.logger.log("Scooter is recharging power");
   }
 }
 
-const e_scooter = new ElectricScooter();
-const car = new Car();
+// Service(Machines) storage
+class MachineStorage extends AbstractMachineStorage {
+  // This class inherit "protected machines: Map<string, IMachine> = new Map()" from its parent
 
-// e_scooter.start();
-// e_scooter.stop();
-// e_scooter.chargeBattery();
-// console.log("");
-// car.start();
-// car.stop();
-// car.refuel();
+  getMachines(): Map<string, IMachine> {
+    return this.machines;
+  }
+}
+
+// Service(Machine) registry (high-level)
+class MachineRegistry extends AbstractMachineRegistry {
+  constructor(
+    protected machineStorage: AbstractMachineStorage,
+    protected nameIsAbsentValidator: IMachineValidator,
+    protected emptyStorageValidator: IMachineValidator,
+    protected logger: IMachineLogger,
+  ) {
+    super(machineStorage);
+  }
+
+  register(name: string, machine: IMachine): void {
+    // Check whether passed name exists and return if it does throw an error message
+    if (!this.nameIsAbsentValidator.validate(name, this.machineStorage)) {
+      this.logger.log(`${name} ${errorMessages.ALREADY_EXIST}`, "error");
+      return;
+    }
+    
+    // Execute this when passed name does not exist
+    this.machineStorage.getMachines().set(name, machine);
+    this.logger.log(`${name} registered successfully`);
+  }
+
+  unregister(name: string): void {
+    // When passed name does not exist, then throw an error message
+    if (this.nameIsAbsentValidator.validate(name, this.machineStorage)) {
+      this.logger.log(`${name} ${errorMessages.NO_EXISTENCE}`, "error");
+      return;
+    }
+
+    // Execute this when passed name exists
+    this.machineStorage.getMachines().delete(name);
+    this.logger.log(`${name} unregistered from the storage`);
+  }
+
+  // Return abstraction (IMachine) or undefined. So use type assertion when you want to return any concrete of IMachine
+  getMachine(name: string): IMachine | undefined {
+    // When passed name does not exist, then throw an error message
+    if (this.nameIsAbsentValidator.validate(name, this.machineStorage)) {
+      this.logger.log(`${name} ${errorMessages.NO_EXISTENCE}`, "error");
+      return undefined;
+    }
+
+    // Execute this when passed name exists
+    return this.machineStorage.getMachines().get(name);
+  }
+
+  listMachines(): void {
+    const machines = this.machineStorage.getMachines();
+
+    if (this.emptyStorageValidator.validate("", this.machineStorage)) {
+      this.logger.log(`Storage ${errorMessages.EMPTINESS}`, "error");
+      return;
+    }
+
+    this.logger.log("List of machines: ");
+    for (const [key, value] of machines.entries()) {
+      this.logger.log(`Key: ${JSON.stringify(key, null, 2)} Value: ${JSON.stringify(value.constructor.name, null, 2)}`);
+    }
+  }
+}
+
+// Utility implementations
+
+// Machine logger implementations
+
+class MachineRegistryLogger implements IMachineLogger {
+  constructor(
+    protected logLevelValidator: ILogLevelValidator = new InvalidLevelValidator()
+  ) {}
+
+  log(message: string, level: MachineLogLevel = "info"): void {
+    const timeStamp = new Date().toISOString();
+
+    if (!this.logLevelValidator.validate(level)) {
+      console.error(`${timeStamp} Error: Invalid log level` );
+      return;
+    }
+
+    console[level](`${timeStamp} ${level.toUpperCase()}: ${message}`);
+  }
+}
+
+// Machine validator implementations
+
+class NameIsAbsentValidator implements IMachineValidator {
+  validate(name: string, machineStorage: AbstractMachineStorage): boolean {
+    // Return false when a certain machine exists
+    if (machineStorage.getMachines().has(name)) {
+      return false;
+    }
+
+    // Return true otherwise
+    return true;
+  }
+}
+
+class EmptyStorageValidator implements IMachineValidator {
+  validate(name: string = "", machineStorage: AbstractMachineStorage): boolean {
+    if (machineStorage.getMachines().size !== 0) {
+      return false;
+    }
+
+    return true;
+  }
+}
+
+class InvalidLevelValidator implements ILogLevelValidator {
+  validate(level: MachineLogLevel): boolean {
+    if (!["info", "warn", "error", "debug"].includes(level)) {
+      return false;
+    }
+
+    return true;
+  }
+}
+
+// Usage
+const carMain = () => {
+  const machineRegistry = new MachineRegistry(
+    new MachineStorage(),
+    new NameIsAbsentValidator(),
+    new EmptyStorageValidator(),
+    new MachineRegistryLogger(),
+  );
+
+  machineRegistry.register("toyota prius", new Car("toyota", new MachineRegistryLogger));
+  machineRegistry.register("toyota prius2", new Car("toyota", new MachineRegistryLogger));
+  machineRegistry.register("hybrid scooter", new ElectricScooter("Baidu", new MachineRegistryLogger));
+  machineRegistry.register("hybrid scooter", new ElectricScooter("Baidu", new MachineRegistryLogger));
+
+  machineRegistry.unregister("toyota prius2");
+  // machineRegistry.unregister("toyota prius2");
+
+  const toyotaPrius = machineRegistry.getMachine("toyota prius") as Car;
+  const hybridScooter = machineRegistry.getMachine("hybrid scooter") as ElectricScooter;
+
+  toyotaPrius.start();
+  toyotaPrius.stop();
+  toyotaPrius.refuel();
+
+  hybridScooter.start();
+  hybridScooter.stop();
+  hybridScooter.chargeBattery();
+
+  machineRegistry.listMachines();
+};
+
+carMain();
 
 // 5. Dependency inversion
 // The Dependency Inversion Principle (DIP) is the "D" in the SOLID principles. It emphasizes designing systems where high-level modules (policies) are not directly dependent on low-level modules (details). Instead, both should depend on abstractions.
@@ -830,166 +990,18 @@ const car = new Car();
 // Abstractions should not depend on details. Details should depend on abstractions.
 // This promotes flexibility and scalability by decoupling high-level logic from low-level implementations.
 
-// DIP in TypeScript: Example
-// Without DIP (Tightly Coupled Code)
-// Here, the DatabaseServiceNo is tightly coupled to the App class.
-class DatabaseServiceNo {
-  save(data: string): void {
-    console.log(`Data saved to the database: ${data}`);
-  }
-}
-
-class AppNo {
-  private dbService: DatabaseServiceNo;
-
-  constructor() {
-    this.dbService = new DatabaseServiceNo(); // Direct dependency
-  }
-
-  saveData(data: string): void {
-    this.dbService.save(data);
-  }
-}
-
-const appNo = new AppNo();
-// appNo.saveData("User data");
-
-// Issues:
-// The App class is tightly coupled to the DatabaseService class.
-// If we want to switch to another storage mechanism (e.g., a file), we must modify the App class.
-
-// With DIP (Loosely Coupled Code)
-// Introduce an abstraction to decouple the high-level module (App) from the low-level module (DatabaseService).
-
-// Abstraction
-interface StorageServiceYes {
-  save(data: string): void;
-}
-
-// Low-level implementation 1
-class DatabaseService implements StorageServiceYes {
-  save(data: string): void {
-    console.log(`Data saved to the database: ${data}`);
-  }
-}
-
-// Low-level implementation 2
-class FileServiceYes implements StorageServiceYes {
-  save(data: string): void {
-    console.log(`Data saved to a file: ${data}`);
-  }
-}
-
-// High-level module
-class AppYes {
-  private storageServiceYes: StorageServiceYes;
-
-  constructor(storageServiceYes: StorageServiceYes) {
-    this.storageServiceYes = storageServiceYes;
-  }
-
-  saveData(data: string): void {
-    this.storageServiceYes.save(data);
-  }
-}
-
-// Use with DatabaseService
-const app1 = new AppYes(new DatabaseService());
-// app1.saveData("Database User Data");
-
-// Use with FileServiceYes
-const app2 = new AppYes(new FileServiceYes());
-// app2.saveData("File User Data");
-
 // Benefits:
-
 // Decoupling: The App class depends on the abstraction (StorageService), not the concrete implementations (DatabaseService, FileService).
 // Flexibility: New storage implementations can be added without modifying the App class.
 // Testability: Mock services can be injected for testing.
 
 // Exercise
 // You are tasked with building a system to notify users. The system should:
-
 // Send notifications via email.
 // Be flexible to support SMS notifications in the future.
 // Create a Notifier abstraction.
 // Implement EmailNotifier as a low-level module.
 // Design a high-level module NotificationService that depends on the Notifier abstraction.
 // Add an additional implementation for SmsNotifier.
-
 // Add a PushNotificationNotifier class to the above system to send push notifications.
 // Test it by injecting it into the NotificationService class.
-
-// Expected Solution:
-// Abstraction
-// interface Notifier {
-//   sendNotification(message: string): void;
-// }
-
-// Low-level implementations
-// // Email Notifier Implementation
-// class EmailNotifier implements Notifier {
-//   sendNotification(message: string): void {
-//     console.log(`Email sent: ${message}`);
-//   }
-// }
-
-// // SMS Notifier Implementation
-// class SmsNotifier implements Notifier {
-//   sendNotification(message: string): void {
-//     console.log(`SMS sent: ${message}`);
-//   }
-// }
-
-// // High-level Module
-// class NotificationService {
-//   private notifier: Notifier;
-
-//   constructor(notifier: Notifier) {
-//     this.notifier = notifier;
-//   }
-
-//   notify(message: string): void {
-//     this.notifier.sendNotification(message);
-//   }
-// }
-
-// // Example Usage
-// const emailService = new NotificationService(new EmailNotifier());
-// emailService.notify("Welcome via Email!");
-
-// const smsService = new NotificationService(new SmsNotifier());
-// smsService.notify("Welcome via SMS!");
-
-// Abstraction
-interface Notifier2 {
-  send(message: string): void;
-}
-
-// Low-level module implementation
-class EmailNotifier implements Notifier2 {
-  send(message: string): void {
-    console.log(`Email notifier: ${message}`);
-  }
-}
-
-class MSNNotifier implements Notifier2 {
-  send(message: string): void {
-    console.log(`MSN notifier: ${message}`)
-  }
-}
-
-// High-level module (policies)
-class NotifierManager {
-  constructor(private notifier: Notifier2) {}
-
-  notify(message: string): void {
-    this.notifier.send(message);
-  }
-}
-
-const emailNotifier = new NotifierManager(new EmailNotifier());
-const msnNotifier = new NotifierManager(new MSNNotifier());
-
-// emailNotifier.notify("Dear example");
-// msnNotifier.notify("Hi there");
