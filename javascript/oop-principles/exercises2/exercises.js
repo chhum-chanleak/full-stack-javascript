@@ -620,24 +620,146 @@ const carMain = () => {
     hybridScooter.chargeBattery();
     machineRegistry.listMachines();
 };
-carMain();
-// 5. Dependency inversion
-// The Dependency Inversion Principle (DIP) is the "D" in the SOLID principles. It emphasizes designing systems where high-level modules (policies) are not directly dependent on low-level modules (details). Instead, both should depend on abstractions.
-// Definition of DIP
-// High-level modules should not depend on low-level modules. Both should depend on abstractions.
-// Abstractions should not depend on details. Details should depend on abstractions.
-// This promotes flexibility and scalability by decoupling high-level logic from low-level implementations.
-// Benefits:
-// Decoupling: The App class depends on the abstraction (StorageService), not the concrete implementations (DatabaseService, FileService).
-// Flexibility: New storage implementations can be added without modifying the App class.
-// Testability: Mock services can be injected for testing.
-// Exercise
-// You are tasked with building a system to notify users. The system should:
-// Send notifications via email.
-// Be flexible to support SMS notifications in the future.
-// Create a Notifier abstraction.
-// Implement EmailNotifier as a low-level module.
-// Design a high-level module NotificationService that depends on the Notifier abstraction.
-// Add an additional implementation for SmsNotifier.
-// Add a PushNotificationNotifier class to the above system to send push notifications.
-// Test it by injecting it into the NotificationService class.
+// Notifier storage
+class AbstractNotifierStorage {
+    notifiers = new Map();
+}
+// Notifier registry
+class AbstractNotifierRegistry {
+    notifierStorage;
+    constructor(notifierStorage) {
+        this.notifierStorage = notifierStorage;
+    }
+}
+// Concrete implementations (low-level)
+class EmailNotification {
+    logger = new NotificationLogger();
+    notify() {
+        this.logger.log(`Sending email notification...`);
+    }
+}
+class SMSNotification {
+    logger = new NotificationLogger();
+    notify() {
+        this.logger.log(`Sending SMS notification...`);
+    }
+}
+// Notifier storage
+class NotifierStorage extends AbstractNotifierStorage {
+    // This class inherits "protected notifiers: Map<string, INotifier> = new Map()" from its parent
+    getNotifiers() {
+        return this.notifiers;
+    }
+}
+// Notifier registry
+class NotifierRegistry extends AbstractNotifierRegistry {
+    notifierStorage;
+    nameExistsValidator;
+    logger;
+    notificationStorageIsEmptyValidator;
+    constructor(notifierStorage, nameExistsValidator = new NameExistsValidator(), logger = new NotificationLogger(), notificationStorageIsEmptyValidator = new NotifierStorageIsEmptyValidator()) {
+        super(notifierStorage);
+        this.notifierStorage = notifierStorage;
+        this.nameExistsValidator = nameExistsValidator;
+        this.logger = logger;
+        this.notificationStorageIsEmptyValidator = notificationStorageIsEmptyValidator;
+    }
+    register(name, notifier) {
+        // Check whether passed name exists, if it does, then log an error message
+        if (this.nameExistsValidator.validate(name, this.notifierStorage)) {
+            this.logger.log(`${name} ${errorMessages.ALREADY_EXIST}`, "error");
+            return;
+        }
+        this.notifierStorage.getNotifiers().set(name, notifier);
+        this.logger.log(`${name} registered successfully`);
+    }
+    unregister(name) {
+        // Check whether passed name exists, if it does not, then then log an error message
+        if (!this.nameExistsValidator.validate(name, this.notifierStorage)) {
+            this.logger.log(`${name} ${errorMessages.NO_EXISTENCE}`, "error");
+            return;
+        }
+        this.notifierStorage.getNotifiers().delete(name);
+        this.logger.log(`${name} unregistered successfully`);
+    }
+    // Use type assertion when call this method, since it only returns the abstraction of the low-level.
+    // Example: const emailNotification = 
+    getNotifier(name) {
+        // Check whether passed name exists, if it does not, then then log an error message
+        if (!this.nameExistsValidator.validate(name, this.notifierStorage)) {
+            this.logger.log(`${name} ${errorMessages.NO_EXISTENCE}`, "error");
+            return undefined;
+        }
+        return this.notifierStorage.getNotifiers().get(name);
+    }
+    listNotifiers() {
+        // Check whether the storage is empty, then throw a warning message if it is
+        if (this.notificationStorageIsEmptyValidator.validate(this.notifierStorage)) {
+            this.logger.log(`Storage ${errorMessages.EMPTINESS}`, "warn");
+            return;
+        }
+        const notifiers = this.notifierStorage.getNotifiers();
+        console.log("");
+        this.logger.log("List of notifiers: ");
+        for (const [key, value] of notifiers.entries()) {
+            console.log(`Key: ${key}, Value: ${value.constructor.name}`);
+        }
+    }
+}
+// Utility implementations
+// Logger
+class NotificationLogger {
+    levelValidator = new NotificationLevelValidator();
+    log(message, level = "info") {
+        // Check whether passed level is valid
+        if (!this.levelValidator.validate(level)) {
+            console.error(`${level} is a invalid level`);
+            return;
+        }
+        const timeStamp = new Date().toISOString();
+        console[level](`${timeStamp} ${level.toUpperCase()}: ${message}`);
+    }
+}
+// Validators
+class NotificationLevelValidator {
+    validate(level) {
+        // Check whether passed level is valid
+        if (!["info", "warn", "debug", "error"].includes(level)) {
+            return false;
+        }
+        return true;
+    }
+}
+class NameExistsValidator {
+    validate(name, notifierStorage) {
+        // Check whether passed name exists
+        if (!notifierStorage.getNotifiers().has(name)) {
+            return false;
+        }
+        return true;
+    }
+}
+class NotifierStorageIsEmptyValidator {
+    validate(notifierStorage) {
+        // Check whether the storage is empty
+        if (notifierStorage.getNotifiers().size !== 0) {
+            return false;
+        }
+        return true;
+    }
+}
+// Usage
+const notifierMain = () => {
+    const notifierRegistry = new NotifierRegistry(new NotifierStorage());
+    notifierRegistry.listNotifiers();
+    notifierRegistry.register("email notification", new EmailNotification());
+    notifierRegistry.register("sms notification", new SMSNotification());
+    // notifierRegistry.unregister("email notification");
+    // notifierRegistry.unregister("email notification");
+    const emailNotification = notifierRegistry.getNotifier("email notification");
+    const smsNotification = notifierRegistry.getNotifier("sms notification");
+    emailNotification.notify();
+    smsNotification.notify();
+    notifierRegistry.listNotifiers();
+};
+// notifierMain();
