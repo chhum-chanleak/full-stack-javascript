@@ -17,8 +17,6 @@ import { add, Capitalizer, IsEvenNumberValidator, FindMaxNumber, IsOddNumberVali
 //   });
 // });
 
-
-
 // describe("capitalizer.capitalize method", () => {
   // const capitalizer = new Capitalizer();
 
@@ -32,8 +30,6 @@ import { add, Capitalizer, IsEvenNumberValidator, FindMaxNumber, IsOddNumberVali
 //     expect(capitalizer.capitalize("Hello")).toBe("Hello");
 //   });
 // });
-
-
 
 // describe("isEvenNumberValidator.isEven method", () => {
   // const isEvenNumberValidator = new IsEvenNumberValidator(); 

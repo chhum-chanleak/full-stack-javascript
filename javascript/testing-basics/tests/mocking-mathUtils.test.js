@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const mocking_mathUtils_1 = require("../src/mocking-mathUtils");
-// All the created mock functions and objects in this 'jest.mock()' implementation can be accessed and called outside of the jest.mock block(scope), but only within the scope of the test file where the module is mocked.
+// All the created mock functions and objects in this 'jest.mock()' implementation can be accessed and called outside of the 'jest.mock' block(scope), but only within the scope of the test file where the module is mocked.
 // Test setup
 // The classes, objects, functions and methods defined inside the jest.mock() block are the subjects to be mocked and subsequently tested
 jest.mock("../src/mocking-mathUtils", () => ({
@@ -13,7 +13,7 @@ jest.mock("../src/mocking-mathUtils", () => ({
         log: jest.fn(),
         warn: jest.fn(),
     })),
-    // config is an object which contains no method
+    // config is an object which contains no methods
     config: {
         apiEndpoint: "https://api.example.com",
         timeout: 5000,
@@ -37,7 +37,7 @@ it("should call add with correct arguments", () => {
 });
 // subtract function
 it("should call subtract with correct arguments", () => {
-    // Mocking the subtract Function
+    // Mocking the subtract Function using type assertion
     const mockSubtract = mocking_mathUtils_1.subtract; // In Jest, the "jest.Mock" type is used to define the type of a mocked function. It provides you with
     // Defining a Return Value
     mockSubtract.mockReturnValue(2);
@@ -82,3 +82,53 @@ test("a Calculator class", () => {
     expect(mockCalculator.multiply).toHaveBeenCalledWith(2, 1);
     expect(mockCalculator.multiply(2, 1)).toBe(2);
 });
+// Please read this code below
+// In Jest, the beforeEach() function is used to set up some common state or behavior before each test in a test suite. It runs before every individual test in the describe block or globally for all tests if defined outside of describe.
+// Purpose:
+// To perform setup actions that need to be done before each test runs, such as resetting mock states, initializing variables, or preparing other pre-test configurations.
+// Syntax
+beforeEach(() => {
+    // Setup code runs before each test
+});
+// Example
+// import { add, subtract, Logger, config, Calculator } from "../src/mocking-mathUtils";
+// // Mocking functions and classes
+// jest.mock("../src/mocking-mathUtils", () => ({
+//   add: jest.fn(),
+//   subtract: jest.fn(),
+//   Logger: jest.fn().mockImplementation(() => ({
+//     log: jest.fn()
+//   })),
+//   config: {
+//     module: "ESM",
+//     language: "TypeScript",
+//   },
+//   Calculator: jest.fn().mockImplementation(() => ({
+//     multiply: jest.fn(),
+//   })),
+// }));
+// // Reset mocks before each test
+// beforeEach(() => {
+//   // Clears all mock calls and reset their state
+//   add.mockClear();
+//   subtract.mockClear();
+//   Logger.mockClear();
+//   Calculator.mockClear();
+// });
+// it("calls add function with correct arguments", () => {
+//   const mockAdd = add as jest.Mock;
+//   mockAdd.mockReturnValue(2);
+//   add(1, 1);
+//   expect(mockAdd).toHaveBeenCalledWith(1, 1);
+//   expect(add(1, 1)).toBe(2);
+// });
+// it("calls subtract function with correct arguments", () => {
+//   const mockSubtract = subtract as jest.Mock;
+//   mockSubtract.mockReturnValue(0);
+//   subtract(1, 1);
+//   expect(mockSubtract).toHaveBeenCalledWith(1, 1);
+//   expect(subtract(1, 1)).toBe(0);
+// });
+// Explanation of beforeEach() in the Example:
+// beforeEach() ensures that before each test (it()), the mocks are cleared using mockClear(). This prevents tests from being affected by state left over from previous tests.
+// mockClear() resets the mock function’s state (call count, arguments, etc.), so each test runs independently with a fresh mock state.
