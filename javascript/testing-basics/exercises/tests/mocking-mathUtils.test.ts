@@ -53,8 +53,8 @@ test("log method of class Logger", () => {
 
 // config Object
 test("a config object", () => {
-  expect(config.module).toBe("ESM");
-  expect(config.language).toBe("TypeScript");
+  // Use 'toEqual' for checking the value of an object
+  expect(config).toEqual({ module: "ESM", language: "TypeScript"});
 });
 
 // multiply method of class Calculator
@@ -69,15 +69,3 @@ test("multiply method of class Calculator", () => {
   expect(mockCalculator.multiply).toHaveBeenCalledWith(0, 1);
   expect(mockCalculator.multiply(0, 1)).toBe(0);
 });
-
-// Please read this code below
-
-// In Jest, the beforeEach() function is used to set up some common state or behavior before each test in a test suite. It runs before every individual test in the describe block or globally for all tests if defined outside of describe.
-
-beforeEach(() => {
-  // Setup code runs before each test
-});
-
-// Explanation of beforeEach() in the Example:
-// beforeEach() ensures that before each test (it()), the mocks are cleared using mockClear(). This prevents tests from being affected by state left over from previous tests.
-// mockClear() resets the mock function’s state (call count, arguments, etc.), so each test runs independently with a fresh mock state.

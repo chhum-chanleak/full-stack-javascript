@@ -41,5 +41,74 @@ Mocking basics: (Mocking is primarily about isolating the logic of the unit you 
 jest.mock('./myModule', () => ({
 myFunction: jest.fn(), 
 })); -->
-Projects for testability:
+Red, Green, Refactor and Jest:
+
+TTD (Test Driven Development):
+Test-Driven Development (TDD) is a software development approach where tests are written before the actual code. TDD has a set of clear rules and principles designed to guide developers in writing reliable, maintainable code.
+Test Driven Development is not the same thing as unit tests. Unit tests are a type of test. TDD is a coding technique.
+
+Core Rules of TDD
+
+1. Write a Test First:
+Always start by writing a test for a new feature or functionality.
+The test should define the expected behavior of the code.
+
+2. Run the Test and Watch It Fail:
+Ensure the test fails because the feature hasn't been implemented yet.
+This step verifies that the test is meaningful and not a false positive.
+
+3. Write the Minimum Code to Pass the Test:
+Write just enough code to make the failing test pass.
+Avoid implementing extra functionality or over-engineering.
+
+4. Refactor the Code:
+Once the test passes, refactor the code to improve its structure and readability while keeping the test green.
+Ensure all tests still pass after refactoring.
+
+5. Repeat the Cycle:
+Add a new test for the next piece of functionality.
+Follow the "Fail, Pass, Refactor" cycle for each new test.
+
+Principles of TDD
+Test Small Units:
+
+1. Focus on testing individual functions or components in isolation.
+Each test should cover a single aspect of functionality.
+Keep Tests Simple and Fast:
+
+2. Tests should run quickly to enable frequent feedback during development.
+Avoid dependencies that make tests slow or brittle.
+Red-Green-Refactor Workflow:
+
+3. Red: Write a test and see it fail.
+Green: Write code to make the test pass.
+Refactor: Clean up the code without changing its behavior.
+Write Meaningful Tests:
+
+4. Ensure each test validates specific functionality and has a clear purpose.
+Tests should fail for the right reasons and succeed when the functionality works as expected.
+Maintain Test Coverage:
+
+Aim for high test coverage but prioritize meaningful tests over superficial coverage.
+Benefits of TDD
+Improved Code Quality: Forces you to think about edge cases and functionality upfront.
+Regression Prevention: Comprehensive test coverage ensures changes don't break existing functionality.
+Refactoring Confidence: Safe refactoring without fear of breaking code.
+Well-Defined Requirements: Writing tests first clarifies the desired behavior of the system.
+Common TDD Missteps to Avoid
+Skipping the "Fail" Step:
+
+Writing code before the test fails undermines the purpose of TDD.
+Writing Too Much Code:
+
+Avoid implementing features not covered by the test.
+Complex or Fragile Tests:
+
+Tests should be simple and focused. Complex tests are harder to maintain.
+Testing Implementation Details:
+
+Focus on behavior rather than how the code is implemented.
+
+In Test-Driven Development (TDD), you should set up the import for the unit you are about to test even before implementing the unit. This is a key part of the process and ensures that your test is ready to execute once you write the code for the unit.
+
 
