@@ -1,0 +1,29 @@
+{
+  "alligators": [
+    {
+      "id": 1,
+      "name": "Ally",
+      "species": "American Alligator",
+      "age": 12
+    },
+    {
+      "id": 2,
+      "name": "Gator",
+      "species": "Chinese Alligator",
+      "age": 8
+    },
+    {
+      "id": 3,
+      "name": "Snapper",
+      "species": "American Alligator",
+      "age": 15
+    },
+    {
+      "id": 4,
+      "name": "Tiny",
+      "species": "American Alligator",
+      "age": 3
+    }
+  ]
+}
+
