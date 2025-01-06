@@ -50,8 +50,7 @@
   5. Individual files in a module should not be longer than around 150 lines of JavaScript
 
   6. A module shouldn't have more than one level of nested folders full of 
-
-  7. JavaScript files. If it does, it is probably doing too many things
+  JavaScript files. If it does, it is probably doing too many things
   Ask more experienced coders you know to show you examples of good modules until you have a good idea of what they look like. If it takes more than a few minutes to understand what is happening, it probably isn't a very good module.
 
 5. Promise, then, catch, finally:
