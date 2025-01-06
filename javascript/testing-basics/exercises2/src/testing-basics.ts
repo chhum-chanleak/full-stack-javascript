@@ -1,16 +1,25 @@
-export const add = 0;
+export const add = (num1: number, num2: number): number => num1 + num2;
 
-class CapitalizeString {
-
+export class CapitalizedString {
+  capitalize(str: string): string {
+    return str.charAt(0).toUpperCase() + str.slice(1);
+  }
 }
 
-class IsEvenNumberValidator {
-
+export class EvenNumberValidator {
+  isEven(num: number): boolean {
+    return num % 2 === 0;
+  }
 }
 
-class FindMaxNumber {
-
+export class FindMaxNumber {
+  find(...numbers: number[]): number {
+    return Math.max(...numbers);
+  }
 }
 
-class IsOddNumberValidator {
+export class OddNumberValidator {
+  isOdd(num: number): boolean {
+    return num % 2 !== 0;
+  }
 }
