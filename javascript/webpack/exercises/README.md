@@ -77,7 +77,8 @@ module.exports = {
       template: "./src/template.html",
     }),
   ],
-}; -->
+}; 
+-->
 
 5. Loading CSS
 <!-- We don’t just need one new package for CSS, we need two. Gosh, what a greedy little thing… Let’s install them. -->
@@ -111,7 +112,8 @@ module.exports = {
       },
     ],
   },
-}; -->
+}; 
+-->
 
 <!-- Now that Webpack knows what to do with imported CSS files, let’s add some CSS! Create a src/styles.css with the following: 
 
@@ -231,7 +233,8 @@ declare module '*.svg' {
 declare module '*.webp' {
   const value: number;
   export = value;
-} -->
+} 
+-->
 
 8. Webpack dev server
 <!-- During this lesson, did you get a bit annoyed with having to run npx webpack to rebundle with every change? Fortunately, there are multiple solutions for this, and we will focus on what we think is the most useful option: webpack-dev-server. Install it as follows: -->
@@ -281,5 +284,7 @@ module.exports = {
 };
 -->
 
-<!-- Firstly, we add a source map by setting eval-source-map as a devtool option. If we don’t do this, any error messages we get won’t necessarily match up to the correct files and line numbers from our development code. -->
+<!-- Firstly, we add a source map by setting eval-source-map as a devtool option. If we don’t do this, any error messages we get won’t necessarily match up to the correct files and line numbers from our development code. 
+-->
 
+run npx webpack serve. Open http://localhost:8080 in your browser and check your JavaScript is running.
