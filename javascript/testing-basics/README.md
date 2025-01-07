@@ -7,10 +7,14 @@ npx ts-jest config:init <!-- Creating config -->
 npm test or npx jest  <!-- Running tests -->
 
 jest.config.js file must look like this:
-    <!-- module.exports = {
-        preset: 'ts-jest',
-        testEnvironment: 'node',
-    }; -->
+    <!-- @type {import('ts-jest').JestConfigWithTsJest}
+            module.exports = {
+            testEnvironment: "node",
+            transform: {
+                "^.+.tsx?$": ["ts-jest",{}],
+            },
+        }; 
+    -->
 
 ts.config.json file must look like this:
     <!-- {
