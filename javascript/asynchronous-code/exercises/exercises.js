@@ -70,7 +70,7 @@ fetchUserData({ id: "1", name: "coconut" })
 // Error
 
 // Exercise 2: Timeout Promise
-// Create a function timeout that returns a Promise that resolves after a specified number of milliseconds. If the timeout duration is short than 3 seconds, then reject and throw an error message 'Time is too short to process data', the Promise should resolve otherwise.
+// Create a function timeout that returns a Promise that resolves after a specified number of milliseconds. If the timeout duration is shorter than 3 seconds, then reject and throw an error message 'Time is too short to process data', the Promise should resolve otherwise.
 
 // Solution 2
 const timeout = (ms) => {
@@ -132,6 +132,7 @@ const fetchBears = () => {
   // setImmediate() (Node.js)
   // I/O tasks (Node.js)
   // UI rendering (browser)
+  
 // Microtasks:
   // Promises (then(), catch(), finally())
   // queueMicrotask()
