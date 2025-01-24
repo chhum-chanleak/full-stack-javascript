@@ -19,6 +19,13 @@
     .catch(error => console.log(error));
   -->
 
+  The Response object in TypeScript (from fetch()) is closely related to a URL, but it does not represent a URL itself. Instead, it represents the HTTP response received from a request to a URL.
+
+  The URL object in TypeScript provides a powerful way to parse, construct, and manipulate URLs.
+
+  The Request object typically provides information about the HTTP request, such as parameters, body, headers, and more.
+  In the context of web development, request objects are typically created by the client-side when making HTTP requests to a server.
+
 3. CORS (Cross-Origin Resource Sharing)
 
   CORS (Cross-Origin Resource Sharing) is a security feature implemented by web browsers to prevent potentially malicious websites from making unauthorized requests to a different domain (or origin) than the one from which the website was loaded.
