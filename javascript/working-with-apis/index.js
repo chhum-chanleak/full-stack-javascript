@@ -5,12 +5,46 @@
 
 // console.log("Hello, world!");
 
-const img = document.querySelector("img");
-fetch('https://api.giphy.com/v1/gifs/translate?api_key=key_value&s=cats')
-.then((response) => response.json())
-.then((response) => {
-  img.src = `${response.data.images.original.url}`;
-  document.body.appendChild(img);
-  console.log(response);
-})
-.catch((error) => console.log(error));
+// Expand on our little project here by adding a button that fetches a new image without refreshing the page.
+const addImage = (data) => {
+  const ul = document.querySelector("ul.images");
+  const listItem = document.createElement("li");
+  const img = document.createElement("img");
+
+  isAvailable(data);
+
+  const img_url = `${data.data.images.original.url}`
+  img.src = `${img_url}`;
+
+  listItem.appendChild(img);
+  ul.appendChild(listItem);
+  console.log(data);
+};
+
+const isAvailable = (data) => {
+  if (data.data && Array.isArray(data.data) && data.data.length === 0) {
+    console.warn("API returned no results.");
+  } else {
+    console.log(`API data: ${JSON.stringify(data)}`);
+  }
+};
+
+const fetchImages = (query) => {
+  fetch(`https://api.giphy.com/v1/gifs/translate?api_key=qRNih0u5JOyI9FB8Tfpeh6YCTwwbyvph&s=${query}`)
+  .then((response) => response.json())
+  .then(addImage)
+  .catch((error) => console.log(error));
+};
+
+const addImageButton = document.querySelector("#add-image");
+addImageButton.addEventListener("click", fetchImages);
+
+const handleSearch = () => {
+  const searchBar = document.querySelector("input[type='text']");
+  fetchImages(searchBar.value);
+  console.log(searchBar.value);
+  searchBar.value = "";
+};
+
+const searchButton = document.querySelector("button[name='search']");
+searchButton.addEventListener("click", handleSearch);
