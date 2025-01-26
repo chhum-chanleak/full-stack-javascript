@@ -30,7 +30,7 @@ const isAvailable = (data) => {
 };
 
 const fetchImages = (query) => {
-  fetch(`https://api.giphy.com/v1/gifs/translate?api_key=qRNih0u5JOyI9FB8Tfpeh6YCTwwbyvph&s=${query}`)
+  fetch(`https://api.giphy.com/v1/gifs/translate?api_key=insert_your_api_key_here&s=${query}`)
   .then((response) => response.json())
   .then(addImage)
   .catch((error) => console.log(error));
