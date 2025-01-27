@@ -105,7 +105,6 @@ const payload = { // The server might add id and/or creation timestamp to this p
 //   "createdAt": "2025-01-26T10:00:00Z",
 //   "updatedAt": "2025-01-26T10:00:00Z"
 // };
-
 // fetchWithCustomRequest(url, payload);
 
 // 2. Making a request
@@ -232,7 +231,7 @@ const fetchWithPost = (url, option) => {
 
   fetch(request)
   .then((response) => response.json())
-  .then((data) => console.log(`3. Post: ${JSON.stringify(data)}`))
+  .then((data) => console.log(`3. POST: ${JSON.stringify(data)}`))
   .catch((error) => console.log(`3. POST: ${error}`));
 };
 
@@ -255,9 +254,9 @@ fetch('https://jsonplaceholder.typicode.com/posts', {
     userId: 1
   })  // Convert JavaScript object to JSON string
 })
-  .then(response => response.json())
-  // .then(data => console.log('Response:', data))
-  .catch(error => console.error('Error:', error));
+.then(response => response.json())
+// .then(data => console.log('Response:', data))
+.catch(error => console.error('Error:', error));
 
 // Exercise: Setting a Body in a Fetch Request
 
@@ -326,16 +325,15 @@ fetch(url, {
   },
   body: JSON.stringify(payload)  // Convert object to JSON string
 })
-  .then(response => response.json())
-  // .then(data => console.log('5. Response:', data))
-  .catch(error => console.error('5. Error:', error));
+.then(response => response.json())
+// .then(data => console.log('5. Response:', data))
+.catch(error => console.error('5. Error:', error));
 
 // Exercise: Fetch Data with Custom Headers
 
 // Task:
 
 // Write a function named fetchDataWithHeaders that:
-
 // Takes a url as a parameter.
 // Uses fetch() to send a GET request to the given URL.
 // Includes a header:
@@ -343,21 +341,279 @@ fetch(url, {
 // Logs the received response data.
 // Handles and logs any errors.
 
+// Solution
+
+const fetchDataWithHeaders = (url) => {
+  const request = new Request(url, {
+    method: "GET",
+    headers: {
+      "Accept": "application/json",
+    }
+  });
+
+  fetch(request)
+  .then((response) => response.json())
+  // .then((data) => console.log("5. GET:", data))
+  .catch((error) => console.log(`Error: ${error.message}`));
+};
+
+fetchDataWithHeaders(url);
+
 // 6. Making POST requests
+
+// A POST request is used to send data to a server, often to create or update a resource.
+
+// Example: Sending JSON Data
+
+fetch(url, {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify({ name: "Smart", role: "Developer" })
+})
+.then(response => response.json())
+// .then(data => console.log("Success:", data))
+.catch(error => console.error("Error:", error));
+
+// Exercise: Making a POST Request in JavaScript
+
+// You'll send a POST request to a fake API (https://jsonplaceholder.typicode.com/posts) and log the response.
+
+// 📝 Instructions:
+// Use fetch() to send a POST request.
+// Set the Content-Type to application/json.
+// Send the following data:
+// {
+//   "title": "Smart's API Test",
+//   "body": "This is a test post.",
+//   "userId": 1
+// }
+// Log the response data to the console
+
+// Solution
+
+fetch("https://jsonplaceholder.typicode.com/posts", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify({
+    "title": "Smart's API Test",
+    "body": "This is a test post.",
+    "userId": 1
+  }),
+})
+.then((response) => response.json())
+// .then((data) => console.log(`6. POST:`, data))
+.catch((error) => console.log(`6. Error`, error.message));
 
 // 7. Making cross-origin requests
 
+// A cross-origin request occurs when your web page tries to fetch resources (e.g., data, images, scripts) from a different domain (origin) than the one from which the page was loaded. For example, if you're serving a webpage from https://example.com and trying to make a request to https://api.example.com, that's a cross-origin request.
+
+// CORS (Cross-Origin Resource Sharing) is a mechanism that allows or restricts web applications from making requests to domains other than their own.
+
+// Example: Making a Cross-Origin GET Request with fetch()
+
+// This fetches data from a different domain (cross-origin)
+fetch('https://jsonplaceholder.typicode.com/posts')
+.then(response => response.json()) // Parse the JSON response
+// .then(data => console.log(data))    // Log the data from the API
+.catch(error => console.error('Error:', error));  // Handle errors
+
+// Exercise: Making a Cross-Origin POST Request
+
+// Use fetch() to make a POST request to https://jsonplaceholder.typicode.com/posts.
+// Send the following data in the body of the request:
+// {
+//   "title": "New Post",
+//   "body": "This is a test post created by Smart.",
+//   "userId": 1
+// }
+// Log the response data to the console.
+
+// Solution
+
+fetch("https://jsonplaceholder.typicode.com/posts", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify({
+    "title": "New Post",
+    "body": "This is a test post created by Smart.",
+    "userId": 1
+  }),
+})
+.then((response) => response.json())
+// .then((data) => console.log(`7. POST:`, data))
+.catch((error) => console.log(`7. ${error.message}`));
+
 // 8. Credentials
+
+// When making cross-origin requests, sometimes you need to send credentials (such as cookies or HTTP authentication information) along with the request. This can be required if the server needs to know who the user is or maintain the session.
+
+// What are Credentials in HTTP Requests?
+// Credentials include cookies, HTTP authentication (e.g., Basic Auth), and client certificates.
+// CORS (Cross-Origin Resource Sharing) by default does not send credentials in cross-origin requests for security reasons.
+// To send credentials (cookies, authentication) with a cross-origin request, you must set the credentials option to 'include' or 'same-origin'.
+// Credentials Options:
+// same-origin: Sends credentials (cookies) only if the request is to the same origin (domain, protocol, port).
+// include: Sends credentials (cookies, HTTP authentication) with both same-origin and cross-origin requests.
 
 // Credentials are cookies, TLS client certificates, or authentication headers containing a username and password.
 
+// Example: Making a Cross-Origin Request with Credentials (credentials: 'include')
+
+fetch('https://jsonplaceholder.typicode.com/posts', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    title: "Request with Credentials",
+    body: "This is a test post with credentials.",
+    userId: 1
+  }),
+  credentials: 'include'  // Include cookies and other credentials
+})
+.then(response => response.json())
+// .then(data => console.log("Response with credentials:", data))
+.catch(error => console.error("Error:", error));
+
+// Exercise: Sending Credentials with a GET Request
+
+// Task:
+
+// Make a GET request to https://jsonplaceholder.typicode.com/posts with credentials (cookies).
+// Set credentials: 'include' in the fetch() options.
+// Log the response to the console.
+
+// Hint:
+// Since jsonplaceholder.typicode.com doesn't require authentication or set any cookies, this will be a demonstration of how you would include credentials in a request to a valid API that uses cookies.
+
+// Solution
+
+// Request with GET/HEAD cannot have 'body'
+const fetchWithCredentials = (url, option) => {
+  const request = new Request(url, {
+    method: "GET",
+    headers: {
+      "Accept": "application/json",
+    },
+    credentials: "include",
+  });
+
+  fetch(request)
+  .then((response) => response.json())
+  .then((data) => console.log(`8. GET with credential`, data))
+  .catch((error) => console.log(`8. ${error.message}`));
+};
+
+// fetchWithCredentials(url, payload);
+
 // 9. Creating a Request object
+
+// A Request object in JavaScript is part of the Fetch API and represents the request to be sent to the server. This object allows you to specify the HTTP method (GET, POST, etc.), headers, body, and other properties before sending the request to the server.
+
+// The Request object is typically created when using the fetch() API, though you can manually create an instance of it as well.
+
+// Example: Creating and Sending a Request Object
+
+// Create a new Request object
+const request9 = new Request('https://jsonplaceholder.typicode.com/posts', {
+  method: 'POST',  // Specify the HTTP method (POST)
+  headers: {
+    'Content-Type': 'application/json',  // Specify the content type as JSON
+  },
+  body: JSON.stringify({  // Specify the body content in JSON format
+    title: 'My New Post',
+    body: 'This is the content of the new post.',
+    userId: 1
+  })
+});
+
+// Use the fetch API to send the Request object
+fetch(request9)
+.then(response => response.json())  // Parse the JSON response
+// .then(data => console.log(data))    // Log the data received from the server
+.catch(error => console.error('Error:', error));  // Handle any errors
+
+// Exercise: Sending a GET Request with a Request Object
+
+// Task:
+
+// Create a Request object to make a GET request to https://jsonplaceholder.typicode.com/posts/1.
+// Use the Request object to send the request to the server using fetch().
+// Log the JSON data from the server to the console.
+// Hint:
+// A GET request doesn't need a body, so only set the method and headers as necessary.
 
 // The Request() constructor takes the same arguments as fetch() itself. This means that instead of passing options into fetch(), you can pass the same options to the Request() constructor, and then pass that object to fetch().
 
+// Solution
+
+const request99 = new Request("https://jsonplaceholder.typicode.com/posts/1", {
+  method: "GET",
+  headers: {
+    "Accept": "application/json",
+  },
+  credentials: "include",
+});
+
+fetch(request99)
+.then((response) => response.json())
+// .then((data) => console.log("9. GET:", data))
+.catch((error) => console.log(`9. ${error.message}`));
+
 // 10. Canceling a request
 
-// To make a request cancelable, create an AbortController, and assign its AbortSignal to the request's signal property.
+// In JavaScript, you can cancel a request made using the Fetch API using a 'AbortController'. The 'AbortController' allows you to signal that a fetch request should be aborted before it completes. This is useful in scenarios like user navigation, timeouts, or when the user cancels an operation.
+
+// AbortController:
+
+// AbortController is used to create an abort signal.
+// You attach the signal to a fetch request, and when you call abort() on the controller, the request is canceled.
+
+// Example: Canceling a Fetch Request with 'AbortController'
+
+// Create an 'AbortController' instance
+const controller = new AbortController();
+const signal = controller.signal;
+
+// Create a fetch request with the abort signal
+const fetchRequest = fetch('https://jsonplaceholder.typicode.com/posts', {
+  method: 'GET',
+  signal: signal  // Attach the abort signal
+})
+.then(response => response.json())
+.then(data => console.log(data))
+.catch(error => {
+  if (error.name === 'AbortError') {
+    console.log('Request was aborted');
+  } else {
+    console.log('Error:', error);
+  }
+});
+
+// Simulate a situation where the request is canceled after 2 seconds
+setTimeout(() => {
+  controller.abort();  // Abort the request
+}, 2000);
+
+// Exercise: Implementing Request Cancellation in a Timeout Scenario
+
+// Task:
+
+// Create a GET request using fetch() to https://jsonplaceholder.typicode.com/posts/1.
+// Attach an AbortController to the request.
+// Simulate canceling the request after 3 seconds using controller.abort().
+// In the catch block, check for the cancellation and log a custom message ('Request canceled due to timeout') to the console.
+// Hint:
+// Use setTimeout to simulate the cancellation and manage the request timing.
+
+// Solution
 
 // 11. Handling the response
 
