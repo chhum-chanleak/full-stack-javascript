@@ -576,6 +576,8 @@ fetch(request99)
 // AbortController is used to create an abort signal.
 // You attach the signal to a fetch request, and when you call abort() on the controller, the request is canceled.
 
+// In JavaScript, when you attach an 'AbortSignal' (using the AbortController) to a request (e.g., fetch()), and then call '.abort()' on the associated AbortController, the request will be aborted and the Promise will be rejected with an AbortError.
+
 // Example: Canceling a Fetch Request with 'AbortController'
 
 // Create an 'AbortController' instance
@@ -588,7 +590,7 @@ const fetchRequest = fetch('https://jsonplaceholder.typicode.com/posts', {
   signal: signal  // Attach the abort signal
 })
 .then(response => response.json())
-.then(data => console.log(data))
+// .then(data => console.log(data))
 .catch(error => {
   if (error.name === 'AbortError') {
     console.log('Request was aborted');
@@ -615,17 +617,324 @@ setTimeout(() => {
 
 // Solution
 
+const fetchForAbort = (url) => {
+  const controller10 = new AbortController();
+  const signal10 = controller10.signal;
+
+  fetch(url, { signal: signal10 })
+  .then((response) => response.json())
+  // .then((data) => console.log(`10. GET:`, data))
+  .catch((error) => {
+    if (error.name === "AbortError") {
+      console.log("10. Request was aborted");
+    } else {
+      console.log("10.", error.message);
+    }
+  });
+
+  setTimeout(() => {
+    controller10.abort();
+  }, 2000);
+};
+
+// 'controller10.abort' should work correctly if the request takes more than 2 seconds to complete. However, the issue is likely that the request finishes too quickly, meaning the abort() call has no effect.
+// fetchForAbort("https://jsonplaceholder.typicode.com/posts/1");
+
 // 11. Handling the response
 
-// As soon as the browser has received the response status and headers from the server (and potentially before the response body itself has been received), the promise returned by fetch() is fulfilled with a Response object.
+// When working with asynchronous operations, such as fetching data from an API, handling the response properly is crucial. The response typically comes as a Promise, which you can handle using .then() or async/await.
+
+// Example: Fetching and Handling a JSON Response
+
+fetch("https://jsonplaceholder.typicode.com/users/1")
+.then((response) => {
+  if (!response.ok) {
+    throw new Error(`HTTP error! Status: ${response.status}`);
+  }
+  return response.json(); // Parsing the response as JSON
+})
+.then((data) => {
+  // console.log("User Data:", data); // Handling the parsed datas
+})
+.catch((error) => {
+  console.error("Error fetching user data:", error);
+});
+
+// Exercise: Handling API Response
+
+// Task:
+
+// Write a function that fetches a list of posts from https://jsonplaceholder.typicode.com/posts and:
+// Logs the first post’s title.
+// Handles potential errors.
+
+// Solution
+
+const fetchFirstPostTitle = (url) => {
+  const request = new Request(url, {
+    method: "GET",
+    headers: {
+      "Accept": "application/json",
+    },
+    credentials: "include",
+  });
+
+  fetch(request)
+  .then((response) => {
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+
+    return response.json();
+  })
+  .then((data) => console.log(`11. GET first post's title:`, data[0].title))
+  .catch((error) => console.log("Error fetching data: ", error));
+};
+
+// fetchFirstPostTitle("https://jsonplaceholder.typicode.com/posts");
 
 // 12. Checking response status
 
-// The promise returned by fetch() will reject on some errors, such as a network error or a bad scheme. However, if the server responds with an error like 404, then fetch() fulfills with a Response, so we have to check the status before we can read the response body.
+// When making HTTP requests using fetch(), it’s important to check the response status to determine whether the request was successful or encountered an error:
+
+// Example: Checking Response Status
+
+// A successful response typically has a status code between 200-299 (e.g., 200 OK, 201 Created).
+// A failed response may have codes like 404 Not Found, 500 Internal Server Error, etc.
+
+function fetchPost(postId) {
+  fetch(`https://jsonplaceholder.typicode.com/posts/${postId}`)
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      return response.json(); // Convert response to JSON
+    })
+    .then((data) => {
+      console.log("Post Title:", data.title);
+    })
+    .catch((error) => {
+      console.error("Error fetching post:", error);
+    });
+}
+
+// Fetch post with ID 1
+// fetchPost(1);
+
+// Exercise: Checking API Response Status
+
+// Task:
+
+// Write a function that:
+// Fetches a single post from https://jsonplaceholder.typicode.com/posts/{postId}.
+// Checks if the response status is OK (200-299).
+// If the request fails (404, 500, etc.), logs an error message.
+// If successful, logs the post title.
+
+// Solution
+
+const fetchOnePost = (id) => {
+  const request = new Request(`https://jsonplaceholder.typicode.com/posts/${id}`, {
+    method: "GET",
+    headers: {
+      "Accept": "application/json",
+    },
+    credentials: "include",
+  });
+
+  fetch(request)
+  .then((response) => {
+    // Use the 'ok' property of the Response object, which is a shorthand for checking if the status code is in the range 200–299
+    if (!response.ok) {
+      throw new Error("HTTP error! Status:", response.status);
+    }
+
+    return response.json();
+  })
+  .then((data) => console.log("12. GET:", data))
+  .catch((error) => console.log("12. Error fetching data:", error));
+};
+
+// fetchOnePost(1);
 
 // 13. Checking the response type
 
+// Checking the Response Type in JavaScript Using fetch()
+// When making requests with fetch(), it's important to check the response type to know how to properly handle the data returned by the server. The response may come in various formats such as 'JSON', 'text', 'blob', 'form data', etc.
+
+// Example: Checking and Handling the Response Type
+
+// In this example, we check the content type of the response, and based on that, we decide whether to parse the response as JSON or as plain text.
+
+function fetchContent(url) {
+  fetch(url)
+    .then((response) => {
+      // Check the content type
+      const contentType = response.headers.get("content-type");
+      
+      if (contentType && contentType.includes("application/json")) {
+        // If the response is JSON, parse it as JSON
+        return response.json();
+      } else if (contentType && contentType.includes("text/html")) {
+        // If the response is HTML, parse it as text
+        return response.text();
+      } else {
+        throw new Error("Unsupported content type");
+      }
+    })
+    .then((data) => {
+      console.log("Response Data:", data);
+    })
+    .catch((error) => {
+      console.error("Error:", error);
+    });
+}
+
+// Example usage for JSON
+// fetchContent("https://jsonplaceholder.typicode.com/posts/1");
+
+// Example usage for HTML (or any text response)
+// fetchContent("https://www.example.com");
+
+// Exercise: Checking the Response Type
+
+// Task:
+
+// Write a function that:
+// Fetches data from https://jsonplaceholder.typicode.com/posts/{postId}.
+// Checks the response type.
+// If the response is JSON, logs the post’s title.
+// If the response is HTML, logs the page's content.
+// If the content type is unsupported, logs an error.
+
+// Solution
+
+const fetch13 = (postId) => {
+  const request = new Request(`https://jsonplaceholder.typicode.com/posts/${postId}`, {
+    method: "GET",
+    credentials: "include",
+  });
+
+  fetch(request)
+  .then((response) => {
+    if (!response.ok) {
+      throw new Error("HTTP error! Status:", response.status);
+    }
+
+    const contentType = response.headers.get("Content-Type");
+
+    if (contentType && contentType.includes("application/json")) {
+      return response.json();
+    } else if (contentType && contentType.includes("text/html")) {
+      return response.text();
+    } else {
+      throw new Error("Usupported content type");
+    }
+  })
+  .then((data) => console .log("13. GET:", data))
+  .catch((error) => console.log("13. Error", error));
+};
+
+// fetch13(3);
+
 // 14. Checking headers
+
+// Checking Headers in JavaScript Using fetch()
+
+// When making HTTP requests with fetch(), you can access the response headers to gather additional information about the response, such as its content type, length, caching policies, and more.
+
+// You can access the response headers using the response.headers object, which is an instance of Headers that provides methods to query and manipulate headers.
+
+// Common Methods for Accessing Headers:
+
+// response.headers.get(name): Retrieves the value of a specific header.
+// response.headers.has(name): Checks if a specific header exists.
+// response.headers.entries(): Returns an iterator allowing you to loop through all headers.
+
+// Example: Checking Headers
+
+// In this example, we will fetch data from an API and check some of the response headers, such as the Content-Type and Content-Length.
+
+function fetchPostWithHeaders(postId) {
+  fetch(`https://jsonplaceholder.typicode.com/posts/${postId}`)
+    .then((response) => {
+      // Check the content-type header
+      const contentType = response.headers.get("Content-Type");
+      console.log("Content-Type:", contentType);
+
+      // Check if the Content-Length header exists
+      const contentLength = response.headers.get("Content-Length");
+      console.log("Content-Length:", contentLength);
+
+      // Check for custom headers, for example: X-Request-ID
+      const requestId = response.headers.get("X-Request-ID");
+      if (requestId) {
+        console.log("Request ID:", requestId);
+      } else {
+        console.log("No Request ID header found.");
+      }
+
+      // Proceed to parse the JSON body
+      return response.json();
+    })
+    .then((data) => {
+      console.log("Post Title:", data.title);
+    })
+    .catch((error) => {
+      console.error("Error fetching post:", error);
+    });
+}
+
+// Fetch post with ID 1
+// fetchPostWithHeaders(1);
+
+// Exercise: Checking Headers
+
+// Task:
+
+// Write a function that:
+// Fetches data from https://jsonplaceholder.typicode.com/posts/`${postId}`.
+// Checks the following headers:
+// Content-Length to log the length of the response body.
+// Cache-Control to check the cache directives (if present).
+// Content-Type to log if it’s application/json.
+// If the Content-Type is JSON, log the post title.
+
+// Solution
+
+const fetch14 = (postId) => {
+  fetch(`https://jsonplaceholder.typicode.com/posts/${postId}`, {
+    headers: {
+      "Content-Type": "text/html"
+    }
+  })
+  .then((response) => {
+    if (!response.ok) {
+      throw new Error("HTTP error! Status:", response.status);
+    }
+
+    const contentLength = response.headers.get("Content-Length");
+    console.log("Content-Length: ", contentLength);
+
+    const cacheControl = response.headers.get("Cache-Control");
+    if (cacheControl) {
+      console.log("Cache-Control: ", cacheControl);
+    }
+
+    const contentType = response.headers.get("Content-Type");
+    if (contentType.includes("application/json")) {
+      console.log("Content-Type: ", contentType);
+q
+      return response.json();
+    }
+
+    throw new Error("Error: Content-Type is not of JSON format");
+  })
+  .then((data) => console.log("14. GET: ", data))
+  .catch((error) => console.log("14. Error fetching data:", error));
+};
+
+fetch14(1);
 
 // 15. Reading the response body
 
