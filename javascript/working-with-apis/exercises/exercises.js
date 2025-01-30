@@ -809,8 +809,8 @@ function fetchContent(url) {
 
 // Solution
 
-const fetch13 = (postId) => {
-  const request = new Request(`https://jsonplaceholder.typicode.com/posts/${postId}`, {
+const fetch13 = () => {
+  const request = new Request(`https://jsonplaceholder.typicode.com/posts/1`, {
     method: "GET",
     credentials: "include",
   });
@@ -832,10 +832,10 @@ const fetch13 = (postId) => {
     }
   })
   .then((data) => console .log("13. GET:", data))
-  .catch((error) => console.log("13. Error", error));
+  .catch((error) => console.log("13.", error));
 };
 
-// fetch13(3);
+// fetch13();
 
 // 14. Checking headers
 
@@ -934,7 +934,7 @@ q
   .catch((error) => console.log("14. Error fetching data:", error));
 };
 
-fetch14(1);
+// fetch14(1);
 
 // 15. Reading the response body
 
@@ -945,7 +945,76 @@ fetch14(1);
 // Response.json()
 // Response.text()
 
+// Example: Fetching and Reading JSON Data
+fetch("https://jsonplaceholder.typicode.com/todos/1")
+.then(response => response.json()) // Parse response as JSON
+// .then(data => console.log("Todo:", data)) // Log the parsed data
+.catch(error => console.error("Error:", error)); // Handle errors
+
+// Exercise: Fetch and Display a User's Name
+
+// Write a function that fetches user data from an API and logs their name.
+
+// Instructions:
+// Use fetch() to get user data from https://jsonplaceholder.typicode.com/users/1.
+// Extract the response body as JSON.
+// Log only the user's name.
+
+// Solution
+
+const fetch15 = (url) => {
+  fetch(url, {
+    method: "GET",
+    credentials: "include",
+  })
+  .then((response) => {
+    if (!response.ok) {
+      throw new Error("HTTP error! Status: ", response.status);
+    }
+
+    return response.json();
+  })
+  .then((data) => console.log("15. GET:", data))
+  .catch((error) => console.log("15. ", error));
+};
+
+fetch15("https://jsonplaceholder.typicode.com/users/1");
+
 // 16. Streaming the response body
+
+// When fetching large responses (e.g., big JSON files, logs, or videos), reading the entire response at once can be inefficient. Instead, we can stream the response body using the ReadableStream API.
+
+// Example: Streaming Text Data Line by Line
+
+fetch("https://jsonplaceholder.typicode.com/posts")
+.then(response => response.body) // Get the response body as a stream
+.then(body => body?.getReader()) // Get a reader for the stream
+.then(reader => {
+  const decoder = new TextDecoder(); // Decode binary data into text
+
+  function readChunk() {
+    return reader?.read().then(({ done, value }) => {
+      if (done) {
+        console.log("Stream complete.");
+        return;
+      }
+
+      console.log("Chunk received:", decoder.decode(value, { stream: true }));
+
+      return readChunk(); // Recursively read the next chunk
+    });
+  }
+
+  return readChunk();
+})
+.catch(error => console.error("Error:", error));
+
+// Exercise: Stream and Count Words (This exercise is somewhat advanced so you can skip it.)
+
+// Write a function that:
+// Fetches lorem ipsum text from https://www.w3.org/TR/PNG/iso_8859-1.txt.
+// Reads the response as a stream.
+// Counts and logs the total number of words in the streamed text.
 
 // 17. Processing a text file line by line (You can skip this for it is too advanced)
 
